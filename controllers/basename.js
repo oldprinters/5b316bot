@@ -20,29 +20,6 @@ class BaseName {
     this.class_name = class_name.trim()
   }
   //*********************************** */
-  insert(str, callback){
-    this.str = str
-    query("INSERT INTO `basename` SET `name` = '" + str.trim() + "', `class_name` = '" + this.class_name + "';", res=>{
-      if(res.affectedRows > 0){
-        this.id = res.insertId
-        // console.log("insert ", this.id)
-        callback(this)
-      } else {
-        console.error("Error insert")
-      }
-    })
-  }
-  //-------------------------------------------
-  async getListByClass(){
-    try{
-        const sql = `SELECT * FROM audit.basename WHERE class_name = '${this.class_name}'`
-        return await call_q(sql)
-    } catch(err){
-      console.log("ERROR!!! basename.js getListByClass:", err)
-      throw err
-    }
-  }
-  //*********************************** */
   async insert_str(str){
     if(str.length > 0){
         const searchRegExp = /'/g
