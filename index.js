@@ -1,5 +1,6 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
 import Users from './controllers/users.js'
+import MyClass from './controllers/classes.js'
 //const getMainMenu = () => {
 //    return Markup.keyboard([['One'], ['Too'], ['Three']]).resize().expra()
 //}
@@ -14,9 +15,9 @@ bot.use(stage.middleware())
 
 bot.start(async ctx => {
     ctx.reply("Start command.")
-    const user = new Users(ctx)
-    await user.appendUser()
-    const res = await user.getClassList()
+    const myClass = new MyClass(ctx)
+    await myClass.init()
+    const res = await myClass.searchClasses()
     if(res == 0){
         console.log("@@@@ res =", res)
         ctx.scene.enter('CREATE_CLASS')

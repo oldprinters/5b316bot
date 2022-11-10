@@ -1,5 +1,5 @@
 
-import { query, call_q } from '../configs/query.js'
+import { query, call_q } from '../config/query.js'
 /*
 CREATE TABLE `ppk_node`.`basename` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -121,4 +121,4 @@ class BaseName {
   }
 }
 //*********************************** */
-export {BaseName}
+export default BaseName

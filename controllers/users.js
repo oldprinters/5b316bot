@@ -3,6 +3,7 @@ import { call_q } from '../config/query.js'
 class Users {
     #id         //DB
     #tlg_user   //{}
+    #chat_id
     #active
     #isAdmin    //администратор бота
     #classes = []
@@ -10,13 +11,17 @@ class Users {
     constructor(ctx) {
         if(typeof ctx === 'object' && !Array.isArray(ctx) !== null){
             this.#tlg_user = ctx.from
-            // this.appendUser()
+            if(ctx.message?.chat.id != undefined)
+                this.#tlg_user.chat_id = ctx.message.chat.id
+            else
+                this.#tlg_user.chat_id = ctx.chat.id
+            console.log("constructor this.#tlg_user =", this.#tlg_user)
         } else {
             throw 'id пользователя telegram не определен.'
         }
     }
     //---------------------------------------
-    async appendUser () {
+    async init() {
         const user = await this.readUserTlg()
         if(user == undefined){
             const sql = `INSERT INTO ivanych_bot.users (tlg_id) VALUES ('${tlg_id}');`
@@ -31,6 +36,8 @@ class Users {
         }
         return this.#id
     }
+    //---------------------------------------
+    getUserId(){return this.#id}
     //---------------------------------------
     getNewClass(){
         return {class_id: 0, role: 'user', active: 1, name_id: 0, name: ''}
