@@ -6,8 +6,10 @@ import MyClass from './controllers/classes.js'
 //}
 
 import createClass from './scenes/createClass.js'
-
-const stage = new Scenes.Stage([createClass])
+import createSchedule from './scenes/createSchedule.js'
+import selectClass from './scenes/selectClass.js'
+import selectAction from './scenes/selectAction.js'
+const stage = new Scenes.Stage([createClass, createSchedule, selectClass, selectAction])
 
 const bot = new Telegraf("5489794456:AAF89kL1SsQVK2-axyWO8VdARI8rlfAVxdM");
 bot.use(session())
@@ -17,10 +19,17 @@ bot.start(async ctx => {
     ctx.reply("Start command.")
     const myClass = new MyClass(ctx)
     await myClass.init()
-    const res = await myClass.searchClasses()
-    if(res == 0){
-        console.log("@@@@ res =", res)
+    const classList = await myClass.searchClasses()
+    if(classList.length == 0){
         ctx.scene.enter('CREATE_CLASS')
+    } else {
+        ctx.session.classList = classList
+        if(classList.length > 1){
+            ctx.scene.enter('SELECT_CLASS')
+        } else {
+            ctx.session.i = 0   //index текущего класса в массиве
+            ctx.scene.enter('SELECT_ACTION')
+        }
     }
 });
 bot.help( ctx => ctx.reply("help commands: day, /d, /dd"));

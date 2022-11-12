@@ -5,8 +5,10 @@ import Users from './users.js';
 //import
 
 class MyClass extends BaseName {
+    id
     user
     name_id
+    uc_id
     //************************************** */
     constructor(ctx){
         super('classes')
@@ -38,19 +40,28 @@ class MyClass extends BaseName {
         return (await call_q(sql))[0]
     }
     //---------------------------------------------
-    async appendClass(name){
+    async appendClass(name, duration){
         try {
             const name_id = await this.setName(name)
             if(name_id){
-                const sql = `INSERT INTO ivanych_bot.classes (name_id) VALUES (${name_id});`
-                this.name_id = (await call_q(sql)).insertId
-                return this.name_id
+                const sql = `INSERT INTO ivanych_bot.classes (name_id, duration) VALUES (${name_id}, '00:90:00');`// ${duration});`
+                console.log("@@TTT sql =", sql)
+                this.id = (await call_q(sql)).insertId
+                return this.id
             } else {
                 throw 'Ошибка сохранения имени'
             }
         } catch(err){
             console.log("ERROR CATCH!!! classes.js appendClass err:", err)
         }        
+    }
+    //----------------------------------------------
+    async saveClassUserRole(class_id, role){
+        const sql = `
+            INSERT INTO ivanych_bot.user_class (user_id, class_id, role) VALUES (${this.user.getUserId()}, ${class_id}, '${role}');
+        `
+        this.cu_id = (await call_q(sql)).insertId
+        return this.cu_id
     }
 }
 

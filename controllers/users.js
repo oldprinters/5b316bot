@@ -15,7 +15,6 @@ class Users {
                 this.#tlg_user.chat_id = ctx.message.chat.id
             else
                 this.#tlg_user.chat_id = ctx.chat.id
-            console.log("constructor this.#tlg_user =", this.#tlg_user)
         } else {
             throw 'id пользователя telegram не определен.'
         }
@@ -29,7 +28,6 @@ class Users {
             this.#isAdmin = false
             this.#active = 1
         } else {
-            console.log("### user =", user)
             this.#id = user.id
             this.#isAdmin = user.isAdmin
             this.#active = user.active
