@@ -19,6 +19,8 @@ createClass.action('createNewClass', async ctx => {
     ctx.reply('Укажите продолжительность занятия в минутах:')
 })
 
+createClass.start( ctx => {ctx.scene.leave()})
+
 createClass.hears(/[0-9]*/, async (ctx, next) => {
     if(ctx.session.duration == undefined){
         console.log("@#@#@ ctx", ctx.message)

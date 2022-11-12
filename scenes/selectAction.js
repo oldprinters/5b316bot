@@ -10,4 +10,7 @@ selectAction.enter(async ctx => {
     ctx.reply('Выберите дальнейшее действие:')
 })
 
+selectAction.start( async ctx => {return await ctx.scene.leave()})
+selectAction.command('start', async ctx => { return await ctx.scene.leave()})
+
 export default selectAction
