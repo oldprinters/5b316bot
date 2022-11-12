@@ -44,7 +44,13 @@ class MyClass extends BaseName {
         try {
             const name_id = await this.setName(name)
             if(name_id){
-                const sql = `INSERT INTO ivanych_bot.classes (name_id, duration) VALUES (${name_id}, '00:90:00');`// ${duration});`
+                let h = 0
+                let m = duration
+                if(duration > 59){
+                    h = Math.trunc(duration / 60)
+                    m = duration % 60
+                } 
+                const sql = `INSERT INTO ivanych_bot.classes (name_id, duration) VALUES (${name_id}, '${h}:${m}');`
                 console.log("@@TTT sql =", sql)
                 this.id = (await call_q(sql)).insertId
                 return this.id
