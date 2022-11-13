@@ -11,7 +11,12 @@ createSchedule.enter(async ctx => {
         ctx.session.classList = await myClass.searchClasses()
     }
     ctx.reply('Давайте введем настройки расписания занятий.', selectShedActionMenu())
-    console.log("ctx.session.classList = ", ctx.session.classList)
+//    console.log("ctx.session.classList = ", ctx.session.classList)
 })
 createSchedule.start( ctx => { ctx.scene.leave()})
+
+createSchedule.action('setTimesUrMenu', async ctx => {
+    ctx.scene.enter('SET_TIMES_UR')
+})
+
 export default createSchedule

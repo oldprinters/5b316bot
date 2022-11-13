@@ -2,6 +2,13 @@
 import { Markup } from "telegraf";
 
 //------------------------------------------
+const queryYesNoMenu = () => {
+    return Markup.inlineKeyboard([
+        Markup.button.callback("Да", "queryYes"),
+        Markup.button.callback("Нет", "queryNo")
+    ])
+}
+//------------------------------------------
 const createNewClassMenu = () => {
     return Markup.inlineKeyboard([
         Markup.button.callback("Добавить новый класс", "createNewClass")
@@ -27,9 +34,9 @@ const selectClassMenu = (listClass) => {
 //-------------------------------------------
 const selectShedActionMenu = () => {
     return Markup.inlineKeyboard([
-        Markup.button.callback("Время начала уроков", "createNewClass")
+        Markup.button.callback("Установка времени начала уроков", "setTimesUr")
     ])
 
 }
 
-export { createNewClassMenu, selectRoleMenu, selectClassMenu, selectShedActionMenu }
+export { createNewClassMenu, queryYesNoMenu, selectRoleMenu, selectClassMenu, selectShedActionMenu }

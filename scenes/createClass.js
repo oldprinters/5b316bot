@@ -2,7 +2,7 @@ import {Telegraf, Markup, Scenes, session} from "telegraf"
 import Users from '../controllers/users.js'
 import MyClass from '../controllers/classes.js'
 import {createNewClassMenu, selectRoleMenu} from '../keyboards/keyboards.js'
-
+//import { outTime } from '../utils.js'
 const createClass = new Scenes.BaseScene('CREATE_CLASS')
 createClass.enter(async ctx => {
     await ctx.setMyCommands([{command: 'start', description: 'Перезапустить'}])
@@ -21,27 +21,27 @@ createClass.action('createNewClass', async ctx => {
 
 createClass.start( ctx => {ctx.scene.leave()})
 
-createClass.hears(/[0-9]*/, async (ctx, next) => {
-    if(ctx.session.duration == undefined){
-        console.log("@#@#@ ctx", ctx.message)
-        ctx.session.duration = parseInt(ctx.message.text)
-        ctx.reply('Введите код класса, состоящий из номера класса, буквы и номера школы')
-    } else {
-        next()
-    }
-})
-
 createClass.on('text', async ctx => {
-    ctx.session.className = ctx.message.text.match(/[а-яА-ЯёЁa-zA-Z0-9-_ ]*/)[0]
-    console.log("match =", ctx.session)
-    const myClass = new MyClass(ctx)
-    await myClass.init()
-    const tClass = await myClass.searchClassesByName(ctx.session.className)
-    if(tClass == undefined){
-        ctx.session.class_id = await myClass.appendClass(ctx.session.className, ctx.session.duration)
-        ctx.reply(`Код класса "${ctx.session.className}" записан.`, selectRoleMenu())
+    if(ctx.session.duration == undefined){
+        if(/^\d{1,3}$/.test(ctx.message.text)){
+            ctx.session.duration = parseInt(ctx.message.text)
+            ctx.reply('Введите код класса, состоящий из номера класса, буквы и номера школы')
+        } else {
+            ctx.reply('Укажите продолжительность занятия в минутах цифрами (45, 90 и т.д.):')
+        }
     } else {
-        ctx.reply(`Класс с названием "${ctx.session.className}" существует.`)
+        ctx.session.className = ctx.message.text.match(/[а-яА-ЯёЁa-zA-Z0-9-_ ]*/)[0]
+        const myClass = new MyClass(ctx)
+        await myClass.init()
+        const tClass = await myClass.searchClassesByName(ctx.session.className)
+        if(tClass == undefined){
+            ctx.session.class_id = await myClass.appendClass(ctx.session.className, ctx.session.duration)
+            ctx.reply(`Код класса "${ctx.session.className}" записан.`, selectRoleMenu())
+            const classList = await myClass.searchClasses()
+            ctx.session.classList = classList   //сделать отдельную сцену инициализации
+        } else {
+            ctx.reply(`Класс с названием "${ctx.session.className}" существует.`)
+        }
     }
 })
 //-----------------------------------------

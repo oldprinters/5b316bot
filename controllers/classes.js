@@ -21,7 +21,7 @@ class MyClass extends BaseName {
     //-------------------------------------------
     async searchClasses(){
         const sql = `
-            SELECT c.id class_id, uc.role, uc.active, bn.name 
+            SELECT c.id class_id, uc.role, uc.active, bn.name, c.duration
             FROM ivanych_bot.user_class uc
             LEFT JOIN classes c ON c.id = uc.class_id
             LEFT JOIN basename bn ON c.name_id = bn.id
@@ -44,13 +44,7 @@ class MyClass extends BaseName {
         try {
             const name_id = await this.setName(name)
             if(name_id){
-                let h = 0
-                let m = duration
-                if(duration > 59){
-                    h = Math.trunc(duration / 60)
-                    m = duration % 60
-                } 
-                const sql = `INSERT INTO ivanych_bot.classes (name_id, duration) VALUES (${name_id}, '${h}:${m}');`
+                const sql = `INSERT INTO ivanych_bot.classes (name_id, duration) VALUES (${name_id}, '${outTime(duration)}');`
                 console.log("@@TTT sql =", sql)
                 this.id = (await call_q(sql)).insertId
                 return this.id

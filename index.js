@@ -9,7 +9,8 @@ import createClass from './scenes/createClass.js'
 import createSchedule from './scenes/createSchedule.js'
 import selectClass from './scenes/selectClass.js'
 import selectAction from './scenes/selectAction.js'
-const stage = new Scenes.Stage([createClass, createSchedule, selectClass, selectAction])
+import setTimesUr from './scenes/setTimesUr.js'
+const stage = new Scenes.Stage([createClass, createSchedule, selectClass, selectAction, setTimesUr])
 
 const bot = new Telegraf("5489794456:AAF89kL1SsQVK2-axyWO8VdARI8rlfAVxdM");
 bot.use(session())
@@ -28,6 +29,7 @@ bot.start(async ctx => {
             ctx.scene.enter('SELECT_CLASS')
         } else {
             ctx.session.i = 0   //index текущего класса в массиве
+            ctx.session.class_id = classList[0].class_id
             ctx.scene.enter('SELECT_ACTION')
         }
     }
