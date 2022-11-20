@@ -2,10 +2,27 @@
 import { Markup } from "telegraf";
 
 //------------------------------------------
+const queryDelCancelMenu = () => {
+    return Markup.inlineKeyboard([
+        Markup.button.callback("Удалить", "queryDel"),
+        Markup.button.callback("Отказаться", "queryCancel")
+    ])
+}
+//------------------------------------------
 const queryYesNoMenu = () => {
     return Markup.inlineKeyboard([
-        Markup.button.callback("Да", "queryYes"),
-        Markup.button.callback("Нет", "queryNo")
+        Markup.button.callback("Да", "queryYes2"),
+        Markup.button.callback("Нет", "queryNo2")
+    ])
+}
+//------------------------------------------
+const queryYesNoCancelMenu = () => {
+    return Markup.inlineKeyboard([
+        [
+         Markup.button.callback("Да", "queryYes3"),
+         Markup.button.callback("Нет", "queryNo3")
+        ],
+        [Markup.button.callback("Отказаться", "queryCancel")]
     ])
 }
 //------------------------------------------
@@ -39,4 +56,4 @@ const selectShedActionMenu = () => {
 
 }
 
-export { createNewClassMenu, queryYesNoMenu, selectRoleMenu, selectClassMenu, selectShedActionMenu }
+export { createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, selectRoleMenu, selectClassMenu, selectShedActionMenu }

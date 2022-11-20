@@ -7,11 +7,19 @@ class UrTime {
         this.class_id = class_id
     }
     //---------------------------
+    async delTimesForClass(class_id) {
+        const sql = `
+            UPDATE ivanych_bot.urTime SET active = 0 WHERE (class_id = ${class_id});
+        `
+        return await call_q(sql)
+    }
+    //---------------------------
     async getListTimes(class_id) {
         const sql = `
             SELECT * 
             FROM ivanych_bot.urTime
             WHERE class_id = ${class_id}
+                AND active = 1
         `
         return await call_q(sql)
     }

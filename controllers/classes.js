@@ -19,6 +19,15 @@ class MyClass extends BaseName {
         await this.user.init()
     }
     //-------------------------------------------
+    async getClassById(class_id){
+        const sql = `
+            SELECT * 
+            FROM ivanych_bot.classes
+            WHERE id = ${class_id};
+        `
+        return (await call_q(sql))[0]
+    }
+    //-------------------------------------------
     async searchClasses(){
         const sql = `
             SELECT c.id class_id, uc.role, uc.active, bn.name, c.duration
