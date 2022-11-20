@@ -6,7 +6,6 @@ import {selectShedActionMenu} from '../keyboards/keyboards.js'
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
 selectAction.enter(async ctx => {
-    console.log("ctx.session.classList = ", ctx.session.classList)
     ctx.reply('Выберите дальнейшее действие:', selectShedActionMenu())
 })
 //---------

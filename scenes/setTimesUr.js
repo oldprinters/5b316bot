@@ -70,7 +70,6 @@ setTimesUr.hears(/^[0-9]{3,4}$/, async ctx =>{
         } else if(pause <= 0){
             const myClass = new MyClass(ctx)
             const mc = await myClass.getClassById(ctx.session.class_id)
-            console.log("$^$^ mc =", mc)
             return await ctx.reply(`Слишком рано, предыдущий урок ещё не закончен (продолжительность урока ${mc.duration.slice(0,5)}), проверьте и повторите ввод.`)
         } else {
             await ctx.reply(`Перерыв ${outTime(pause)} мин.`)
