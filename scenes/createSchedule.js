@@ -4,6 +4,7 @@ import MyClass from '../controllers/classes.js'
 import {selectShedActionMenu} from '../keyboards/keyboards.js'
 
 const createSchedule = new Scenes.BaseScene('CREATE_SCHEDULE')
+//----------------------------------------------
 createSchedule.enter(async ctx => {
     if(ctx.session.listClass == undefined){
         const myClass = new MyClass(ctx)

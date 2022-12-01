@@ -40,6 +40,18 @@ const selectRoleMenu = () => {
         Markup.button.callback("Классный руководитель", "c_teacherRole")]
     ])
 }
+//------------------------------------------
+const selectDay = () => {
+    return Markup.inlineKeyboard([
+        [Markup.button.callback("Воскресенье", "sundayDay")],
+        [Markup.button.callback("Понедельник", "mondayDay")],
+        [Markup.button.callback("Вторник", "tuesdayDay")],
+        [Markup.button.callback("Среда", "wednesdayDay")],
+        [Markup.button.callback("Четверг", "thursdayDay")],
+        [Markup.button.callback("Пятница", "fridayDay")],
+        [Markup.button.callback("Суббота", "saturdayDay")],
+    ])
+}
 //-------------------------------------------
 const selectClassMenu = (listClass) => {
 //    console.log("selectClassMenu listClass =", listClass)
@@ -51,9 +63,11 @@ const selectClassMenu = (listClass) => {
 //-------------------------------------------
 const selectShedActionMenu = () => {
     return Markup.inlineKeyboard([
-        Markup.button.callback("Установка времени начала уроков", "setTimesUr")
+        [Markup.button.callback("Установка времени начала уроков", "setTimesUr")],
+        [Markup.button.callback("Ввод расписания уроков", "setSheduleDay")],
     ])
 
 }
 
-export { createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, selectRoleMenu, selectClassMenu, selectShedActionMenu }
+export { createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, 
+    selectRoleMenu, selectClassMenu, selectDay, selectShedActionMenu }

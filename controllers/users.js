@@ -9,6 +9,7 @@ class Users {
     #classes = []
     //---------------------------------------
     constructor(ctx) {
+ //       console.log("ctx =", ctx.from)
         if(typeof ctx === 'object' && !Array.isArray(ctx) !== null){
             this.#tlg_user = ctx.from
             if(ctx.message?.chat.id != undefined)
@@ -23,7 +24,7 @@ class Users {
     async init() {
         const user = await this.readUserTlg()
         if(user == undefined){
-            const sql = `INSERT INTO ivanych_bot.users (tlg_id) VALUES ('${tlg_id}');`
+            const sql = `INSERT INTO ivanych_bot.users (tlg_id) VALUES ('${this.#tlg_user.id}');`
             this.#id = (await query(sql)).insertId
             this.#isAdmin = false
             this.#active = 1

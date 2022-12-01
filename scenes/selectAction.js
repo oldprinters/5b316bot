@@ -13,6 +13,11 @@ selectAction.action('setTimesUr', async ctx => {
     await ctx.answerCbQuery()
     await ctx.scene.enter('SET_TIMES_UR')
 })
+//---------
+selectAction.action('setSheduleDay', async ctx => {
+    await ctx.answerCbQuery()
+    await ctx.scene.enter('SET_SHEDULE_DAY')
+})
 
 selectAction.on('text', async ctx => {ctx.scene.reenter()})
 selectAction.start( async ctx => {return await ctx.scene.leave()})

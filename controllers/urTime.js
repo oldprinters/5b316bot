@@ -14,6 +14,18 @@ class UrTime {
         return await call_q(sql)
     }
     //---------------------------
+    async getByOrder(class_id, order){
+        const sql = `
+            SELECT * 
+            FROM ivanych_bot.urTime
+            WHERE class_id = ${class_id}
+            AND order_num = ${order}
+            AND active = 1
+            ;
+        `
+        return await call_q(sql)[0]
+    }
+    //---------------------------
     async getListTimes(class_id) {
         const sql = `
             SELECT * 
