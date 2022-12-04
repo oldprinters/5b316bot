@@ -1,6 +1,11 @@
 import moment from 'moment-timezone'
 
 //-------------------------------------------
+const getDateBD = () => {
+    const d = new Date()
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+}
+//-------------------------------------------
 const compareTime = (t1, t2, dt = 45) => {
     const tt1 = new Date(`2011-05-20 ${t1}`)
     const tt2 = new Date(`2011-05-20 ${t2}`)
@@ -40,4 +45,4 @@ const sumTimes = (t1, dt) => {
     return outTime(tuMin(t1) + tuMin(dt))
 }
 
-export { compareTime, getPause, outTime, outTimeDate, sumTimes }
+export { compareTime, getDateBD, getPause, outTime, outTimeDate, sumTimes }

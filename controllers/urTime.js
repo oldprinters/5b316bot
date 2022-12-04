@@ -23,7 +23,8 @@ class UrTime {
             AND active = 1
             ;
         `
-        return await call_q(sql)[0]
+        console.log("getByOrder sql =", sql)
+        return (await call_q(sql))[0]
     }
     //---------------------------
     async getListTimes(class_id) {

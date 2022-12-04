@@ -2,6 +2,7 @@
 import { call_q } from '../config/query.js'
 import BaseName from './basename.js'
 import Users from './users.js';
+import { outTime } from '../utils.js'
 //import
 
 class MyClass extends BaseName {
