@@ -36,6 +36,8 @@ class Users {
         return this.#id
     }
     //---------------------------------------
+    isAdmin(){return this.#isAdmin}
+    //---------------------------------------
     getUserId(){return this.#id}
     //---------------------------------------
     getNewClass(){

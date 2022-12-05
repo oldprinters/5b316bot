@@ -20,6 +20,19 @@ class MyClass extends BaseName {
         await this.user.init()
     }
     //-------------------------------------------
+    async getAdmin(class_id){
+        const sql = `
+            SELECT * 
+            FROM ivanych_bot.user_class uc
+            LEFT JOIN users u ON u.id = uc.user_id
+            WHERE uc.class_id = 12
+            AND us.isAdmin = 1
+            AND uc.active = 1
+            ;
+            `
+        return await call_q(sql)
+    }
+    //-------------------------------------------
     async getClassById(class_id){
         const sql = `
             SELECT * 
@@ -65,9 +78,9 @@ class MyClass extends BaseName {
         }        
     }
     //----------------------------------------------
-    async saveClassUserRole(class_id, role){
+    async saveClassUserRole(class_id, role, isAdmin = 0){
         const sql = `
-            INSERT INTO ivanych_bot.user_class (user_id, class_id, role) VALUES (${this.user.getUserId()}, ${class_id}, '${role}');
+            INSERT INTO ivanych_bot.user_class (user_id, class_id, role, isAdmin) VALUES (${this.user.getUserId()}, ${class_id}, '${role}', ${isAdmin});
         `
         this.cu_id = (await call_q(sql)).insertId
         return this.cu_id

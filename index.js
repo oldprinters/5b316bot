@@ -1,10 +1,6 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
 import Users from './controllers/users.js'
 import MyClass from './controllers/classes.js'
-//const getMainMenu = () => {
-//    return Markup.keyboard([['One'], ['Too'], ['Three']]).resize().expra()
-//}
-
 import createClass from './scenes/createClass.js'
 import createSchedule from './scenes/createSchedule.js'
 import selectClass from './scenes/selectClass.js'
@@ -20,7 +16,6 @@ bot.use(session())
 bot.use(stage.middleware())
 
 bot.start(async ctx => {
-    ctx.reply("Start command.")
     const myClass = new MyClass(ctx)
     await myClass.init()
     const classList = await myClass.searchClasses()
@@ -37,8 +32,6 @@ bot.start(async ctx => {
         }
     }
 });
-bot.help( ctx => ctx.reply("help commands: day, /d, /dd"));
-bot.settings( ctx => ctx.reply("settings command."));
 
 bot.command('stop', ctx => ctx.reply("stop command."))
 bot.command('d', ctx => ctx.reply("day command."))

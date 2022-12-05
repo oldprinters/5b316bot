@@ -18,9 +18,9 @@ createClass.action('createNewClass', async ctx => {
     await ctx.answerCbQuery()
     ctx.reply('Укажите продолжительность занятия в минутах:')
 })
-
+//---------------------------------------------
 createClass.start( ctx => {ctx.scene.leave()})
-
+//---------------------------------------------
 createClass.on('text', async ctx => {
     if(ctx.session.duration == undefined){
         if(/^\d{1,3}$/.test(ctx.message.text)){
@@ -30,17 +30,20 @@ createClass.on('text', async ctx => {
             ctx.reply('Укажите продолжительность занятия в минутах цифрами (45, 90 и т.д.):')
         }
     } else {
-        ctx.session.className = ctx.message.text.match(/[а-яА-ЯёЁa-zA-Z0-9-_ ]*/)[0]
+        ctx.session.className = await ctx.message.text.match(/[а-яА-ЯёЁa-zA-Z0-9-_ ]*/)[0]
         const myClass = new MyClass(ctx)
         await myClass.init()
         const tClass = await myClass.searchClassesByName(ctx.session.className)
         if(tClass == undefined){
             ctx.session.class_id = await myClass.appendClass(ctx.session.className, ctx.session.duration)
-            ctx.reply(`Код класса "${ctx.session.className}" записан.`, selectRoleMenu())
             const classList = await myClass.searchClasses()
             ctx.session.classList = classList   //сделать отдельную сцену инициализации
+            ctx.session.isAdmin = 1
+            await ctx.reply(`Код класса "${ctx.session.className}" записан.`, selectRoleMenu())
         } else {
-            ctx.reply(`Класс с названием "${ctx.session.className}" существует.`)
+            const res = await myClass.getAdmin(tClass.id)
+            console.log("&&&& res =", res)
+            ctx.reply(`Класс с названием "${ctx.session.className}" существует.`)   //отправить запрос администратору
         }
     }
 })
@@ -50,7 +53,7 @@ createClass.action('studentRole', async ctx => {
     ctx.session.role = 'student'
     const myClass = new MyClass(ctx)
     await myClass.init()
-    myClass.saveClassUserRole(ctx.session.class_id, ctx.session.role)
+    await myClass.saveClassUserRole(ctx.session.class_id, ctx.session.role, ctx.session.isAdmin)
     ctx.reply('Класс ')
     ctx.scene.enter('CREATE_SCHEDULE')
 })
@@ -60,7 +63,7 @@ createClass.action('parentRole', async ctx => {
     ctx.session.role = 'parent'
     const myClass = new MyClass(ctx)
     await myClass.init()
-    myClass.saveClassUserRole(ctx.session.class_id, ctx.session.role)
+    await myClass.saveClassUserRole(ctx.session.class_id, ctx.session.role, ctx.session.isAdmin)
     ctx.scene.enter('CREATE_SCHEDULE')
 })
 //-----------------------------------------
@@ -69,7 +72,7 @@ createClass.action('teacherRole', async ctx => {
     ctx.session.role = 'teacher'
     const myClass = new MyClass(ctx)
     await myClass.init()
-    myClass.saveClassUserRole(ctx.session.class_id, ctx.session.role)
+    await myClass.saveClassUserRole(ctx.session.class_id, ctx.session.role, ctx.session.isAdmin)
     ctx.scene.enter('CREATE_SCHEDULE')
 })
 //-----------------------------------------
@@ -78,7 +81,7 @@ createClass.action('c_teacherRole', async ctx => {
     ctx.session.role = 'c_teacher'
     const myClass = new MyClass(ctx)
     await myClass.init()
-    myClass.saveClassUserRole(ctx.session.class_id, ctx.session.role)
+    await myClass.saveClassUserRole(ctx.session.class_id, ctx.session.role, ctx.session.isAdmin)
     ctx.scene.enter('CREATE_SCHEDULE')
 })
 

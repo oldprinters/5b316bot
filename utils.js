@@ -1,5 +1,30 @@
-import moment from 'moment-timezone'
+//import moment from 'moment-timezone'
 
+import UrDay from "./controllers/urDay.js"
+
+//-------------------------------------------
+const outShedule = (listForDay, nLessons) => {
+    let list = ''
+    for(let j = 0; j < nLessons; j++){
+        const el = listForDay.get(j)
+        if(el == undefined){
+            list += (j + 1) + ')\n'
+        } else {
+            list += (el.order_num + 1) + ') <i>' +el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + '</i>   <b>' + el.name + '</b>\n'
+        }
+    }
+    return list
+}
+//-------------------------------------------
+const getSheduleToday = async (ctx) => {
+    const urDay = new UrDay()
+    const arr = await urDay.getSheduleToday(ctx.session.classList[ctx.session.i].class_id)
+    const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
+    let list = 'Нет данных.'
+    if(nLessons != null)
+        list = outShedule(arr, nLessons)
+    return list
+}
 //-------------------------------------------
 const getDateBD = (str = undefined) => {
     let d
@@ -50,4 +75,4 @@ const sumTimes = (t1, dt) => {
     return outTime(tuMin(t1) + tuMin(dt))
 }
 
-export { compareTime, getDateBD, getPause, outTime, outTimeDate, sumTimes }
+export { compareTime, getDateBD, getPause, getSheduleToday, outShedule, outTime, outTimeDate, sumTimes }

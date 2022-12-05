@@ -13,7 +13,7 @@ setSheduleDay.hears('\w', async ctx => {
     ctx.reply('Выберите день недели в меню.')
 })
 //------------------
-setSheduleDay.start( ctx => { ctx.scene.leave()})
+setSheduleDay.start( ctx => { ctx.scene.enter('SELECT_ACTION') })
 
 //---------------------------------------
 setSheduleDay.action('sundayDay', ctx => {

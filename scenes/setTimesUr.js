@@ -118,6 +118,8 @@ setTimesUr.action('queryCancel', async ctx => {
 //-----------
 setTimesUr.on('text', ctx => ctx.reply('Время указывается в формате ЧЧ:ММ, для завершения ввода нажмите кнопку q.'))
 //-----------
-setTimesUr.start(async ctx => {ctx.scene.leave()})
+setTimesUr.start(async ctx => {
+    ctx.scene.enter('SELECT_ACTION')
+})
 
 export default setTimesUr

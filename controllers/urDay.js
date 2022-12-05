@@ -28,7 +28,8 @@ class UrDay extends BaseName {
             WHERE class_id = ${class_id}
             AND active = 1
         `
-        return (await call_q(sql))[0].n + 1
+        const res = (await call_q(sql))[0].n
+        return res == undefined? res: res + 1
     }
     //------------------------
     getNameDay(n){
@@ -54,6 +55,28 @@ class UrDay extends BaseName {
             case 6: return 'В субботу'
         }
     }
+    //------------------------------------ запрос конкретного урока
+    async getUrForDay(class_id, dayOfWeek, urNum){
+        const sql=`
+            SELECT ud.id, ud.dayOfWeek, dateStart, dateEnd, time_s, time_e, name
+            FROM ivanych_bot.urDay ud
+            LEFT JOIN urTime ut ON ut.id = ud.urTimeId
+            LEFT JOIN basename bn ON bn.id = ud.name_id
+            WHERE ud.class_id = ${class_id}
+            AND dayOfWeek = ${dayOfWeek}
+            AND ut.order_num = ${urNum}
+            AND ud.active = 1
+            AND ut.active = 1
+            ORDER BY ud.id DESC
+            ;
+        `
+        return await call_q(sql)
+    }
+    //------------------------------------ сегодняшнее расписание
+    async getSheduleToday(class_id){
+        const d = new Date()
+        return await this.listSheduleForDay(class_id, d.getDay())
+    }
     //------------------------
     async insertUrDayPermanent(class_id, dayOfWeek, urTimeId, name, dateStart, dateEnd){
         const name_id = await this.setName(name)
@@ -78,41 +101,8 @@ class UrDay extends BaseName {
             console.log("Error write BaseName. insertUrDay")
         }
     }
-    //------------------------------------ запрос конкретного урока
-    async getUrForDay(class_id, dayOfWeek, urNum){
-        const sql=`
-            SELECT ud.id, ud.dayOfWeek, dateStart, dateEnd, time_s, time_e, name
-            FROM ivanych_bot.urDay ud
-            LEFT JOIN urTime ut ON ut.id = ud.urTimeId
-            LEFT JOIN basename bn ON bn.id = ud.name_id
-            WHERE ud.class_id = ${class_id}
-            AND dayOfWeek = ${dayOfWeek}
-            AND ut.order_num = ${urNum}
-            AND ud.active = 1
-            AND ut.active = 1
-            ORDER BY ud.id DESC
-            ;
-        `
-        return await call_q(sql)
-    }
-    //------------------------------------
-    async getSheduleForDay(class_id, dayOfWeek){
-        const sql=`
-            SELECT ivanych_bot.urDay (class_id, dayOfWeek, urTimeId, name_id) VALUES (${class_id}, ${dayOfWeek}, ${urTimeId}, ${name_id});
-        `
-        return await call_q(sql)
-    }
-    //------------------------------------
-    searchLastChange(arr){
-        let myMap = new Map()
-        for ( let el of arr){
-            myMap.set(el.order_num, el)
-        }
-        //console.log("###@@ myMap =", myMap)
-        return myMap
-    }
     //------------------------------------ 
-    async ListSheduleForDay(class_id, dayOfWeek){
+    async listSheduleForDay(class_id, dayOfWeek){
         const sql=`
             SELECT ut.order_num, dateStart, dateEnd, time_s, time_e, name
             FROM ivanych_bot.urDay ud
@@ -129,7 +119,15 @@ class UrDay extends BaseName {
         `
         const arr = await call_q(sql)
         return this.searchLastChange(arr)
-        
+    }
+    //------------------------------------
+    searchLastChange(arr){
+        let myMap = new Map()
+        for ( let el of arr){
+            myMap.set(el.order_num, el)
+        }
+        //console.log("###@@ myMap =", myMap)
+        return myMap
     }
 }
 

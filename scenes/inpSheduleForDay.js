@@ -4,30 +4,24 @@ import UrTime from "../controllers/urTime.js"
 import Users from '../controllers/users.js'
 import MyClass from '../controllers/classes.js'
 import {queryDelCancelMenu, queryYesNoMenu} from '../keyboards/keyboards.js'
-import {getDateBD} from '../utils.js'
+import { getDateBD, outShedule } from '../utils.js'
 
 const inpSheduleForDay = new Scenes.BaseScene('INP_SHEDULE_FOR_DAY')
 //--------------------------------------
 const getList = async (ctx) => {
     const urDay = new UrDay()
-    const listForDay = await urDay.ListSheduleForDay(ctx.session.class_id, ctx.session.dayN)    //Map
+    const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, ctx.session.dayN)    //Map
     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
-    let list = ''
-    for(let j = 0; j < nLessons; j++){
-        const el = listForDay.get(j)
-        if(el == undefined){
-            list += (j + 1) + ')\n'
-        } else {
-            list += (el.order_num + 1) + ') ' +el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + ' ' + el.name + '\n'
-        }
-    }
+    let list = 'Нет данных.'
+    if(nLessons != null)
+        list = outShedule(listForDay, nLessons)
     return list
 }
 //--------------------------------------
 inpSheduleForDay.enter(async ctx => {
     ctx.scene.session.state.urNum = 0
     const list = await getList(ctx)
-    await ctx.reply(list)
+    await ctx.replyWithHTML(list)
     await ctx.reply('Удаление урока: N del')
     await ctx.reply('Постоянное изменение урока: N [новый урок]')
     await ctx.reply('Временное изменение урока (с ... по ...):\n dd.mm.yyyy dd.mm.yyyy N [новый урок]')
@@ -36,7 +30,9 @@ inpSheduleForDay.enter(async ctx => {
     await ctx.reply(`Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
 })
 //------------------
-inpSheduleForDay.start( ctx => { ctx.scene.leave()})
+inpSheduleForDay.start( ctx => { 
+    ctx.scene.enter('SELECT_ACTION')
+})
 //----------------------
 inpSheduleForDay.hears(/^[qQйЙ]$/, async ctx => {
     await ctx.reply('Завершение ввода')
@@ -78,7 +74,7 @@ inpSheduleForDay.hears(/^[0-9] [a-zA-Z. а-яА-ЯёЁйЙ-]+/, async ctx =>{
             const res = await urDay.insertUrDayPermanent(ctx.session.class_id, ctx.session.dayN, urTimeId.id, str )
             if(res.affectedRows > 0){
                 const list = await getList(ctx)
-                await ctx.reply(list)
+                await ctx.replyWithHTML(list)
                         ctx.scene.session.state.urNum += 1
                 await ctx.reply(`Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
             }
@@ -114,7 +110,7 @@ inpSheduleForDay.hears(/^\d{1,2}.\d{1,2}.\d{4} \d{1,2}.\d{1,2}.\d{4} [0-9] [a-zA
             const res = await urDay.insertUrDayPermanent(ctx.session.class_id, ctx.session.dayN, urTimeId.id, str, getDateBD(date_s), getDateBD(date_e) )
             if(res.affectedRows > 0){
                 const list = await getList(ctx)
-                await ctx.reply(list)
+                await ctx.replyWithHTML(list)
                 ctx.scene.session.state.urNum += 1
                 ctx.reply(`Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
             }
@@ -174,7 +170,7 @@ inpSheduleForDay.action('queryDel', async ctx => {
         console.log("Error urDay.delById", err)
     }
     const list = await getList(ctx)
-    await ctx.reply(list)
+    await ctx.replyWithHTML(list)
     await ctx.reply(`Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
 })
 //---------------------------------------
