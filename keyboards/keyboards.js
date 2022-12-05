@@ -63,6 +63,7 @@ const selectClassMenu = (listClass) => {
 //-------------------------------------------
 const selectShedActionMenu = () => {
     return Markup.inlineKeyboard([
+        [Markup.button.callback("Общая информация", "getClassInfo")],
         [Markup.button.callback("Установка времени начала уроков", "setTimesUr")],
         [Markup.button.callback("Ввод расписания уроков", "setSheduleDay")],
     ])

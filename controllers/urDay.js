@@ -12,7 +12,7 @@ class UrDay extends BaseName {
         const d = new Date()
         const m = d.getMonth()
         let y = d.getFullYear()
-        if(m > 8)y += 1
+        y += (m > 8)
         return `${y}${this.dateEnd}`
     }
     //------------------------
@@ -55,11 +55,13 @@ class UrDay extends BaseName {
         }
     }
     //------------------------
-    async insertUrDayPermanent(class_id, dayOfWeek, urTimeId, name, dateEnd){
+    async insertUrDayPermanent(class_id, dayOfWeek, urTimeId, name, dateStart, dateEnd){
         const name_id = await this.setName(name)
+        if(dateStart == undefined)dateStart = getDateBD()
+        if(dateEnd == undefined)dateEnd = this.getDateEnd()
         if(name_id){
             const sql=`INSERT INTO ivanych_bot.urDay (class_id, dayOfWeek, urTimeId, name_id, dateStart, dateEnd) ` +
-            `VALUES (${class_id}, ${dayOfWeek}, ${urTimeId}, ${name_id}, '${getDateBD()}', '${this.getDateEnd()}');`
+            `VALUES (${class_id}, ${dayOfWeek}, ${urTimeId}, ${name_id}, '${dateStart}', '${dateEnd}');`
             return await call_q(sql)
         } else {
             console.log("Error write BaseName. insertUrDay")
@@ -91,7 +93,6 @@ class UrDay extends BaseName {
             ORDER BY ud.id DESC
             ;
         `
-        console.log("!!! sql =", sql)
         return await call_q(sql)
     }
     //------------------------------------
@@ -123,7 +124,7 @@ class UrDay extends BaseName {
             AND ut.active = 1
             AND dateStart <= CURDATE()
             AND dateEnd >= CURDATE()
-            ORDER BY ut.order_num, ud.id DESC
+            ORDER BY ud.id ASC
             ;
         `
         const arr = await call_q(sql)

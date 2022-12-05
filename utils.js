@@ -1,9 +1,14 @@
 import moment from 'moment-timezone'
 
 //-------------------------------------------
-const getDateBD = () => {
-    const d = new Date()
-    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+const getDateBD = (str = undefined) => {
+    let d
+    if(str != undefined){ 
+        const dd = str.split('.')
+        console.log("dd =", dd)
+        d = new Date(parseInt(dd[2]), parseInt(dd[1]) - 1, parseInt(dd[0]))
+    } else d = new Date()
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
 }
 //-------------------------------------------
 const compareTime = (t1, t2, dt = 45) => {
