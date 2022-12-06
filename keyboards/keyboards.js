@@ -61,14 +61,18 @@ const selectClassMenu = (listClass) => {
     ])
 }
 //-------------------------------------------
-const selectShedActionMenu = () => {
-    return Markup.inlineKeyboard([
-        [Markup.button.callback("Общая информация", "getClassInfo")],
-        [Markup.button.callback("Добавить класс", "appendClass")],
+const selectShedActionMenu = (nLesson, nClass) => {
+    let arrAction = [
+        [Markup.button.callback("Общая информация", "getClassInfo")], 
         [Markup.button.callback("Установка времени начала уроков", "setTimesUr")],
-        [Markup.button.callback("Ввод расписания уроков", "setSheduleDay")],
-    ])
-
+    ]
+    if(nLesson){
+        arrAction.push([Markup.button.callback("Редактирование расписания уроков", "setSheduleDay")])
+        arrAction.push([Markup.button.callback("Добавить класс", "appendClass")])
+    }
+    if(nClass > 1)
+        arrAction.push([Markup.button.callback("Выбрать класс", "selectClass")])
+    return Markup.inlineKeyboard(arrAction)
 }
 
 export { createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, 

@@ -16,12 +16,21 @@ const outShedule = (listForDay, nLessons) => {
     return list
 }
 //-------------------------------------------
+const getRoleName = (code) => {
+    switch(code){
+        case 'parent': return 'Родитель'
+        case 'student': return 'Ученик'
+        case 'teacher': return 'Преподаватель'
+        case 'c_teacher': return 'Классный руководитель'
+    }
+}
+//-------------------------------------------
 const getSheduleToday = async (ctx) => {
     const urDay = new UrDay()
     const arr = await urDay.getSheduleToday(ctx.session.classList[ctx.session.i].class_id)
     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
-    let list = 'Нет данных.'
-    if(nLessons != null)
+    let list = ''
+    if(nLessons != null && arr.size > 0)
         list = outShedule(arr, nLessons)
     return list
 }
@@ -57,7 +66,7 @@ const outTime = (t) => {
         h = Math.trunc(t / 60)
         m = t % 60
     }
-    return `${h > 0? `${h >9? h: '0'+ h}:`:''}${m > 9? m: '0' + m}`
+    return `${h > 0? `${h >9? h: '0'+ h}:`:'00'}:${m > 9? m: '0' + m}`
 }
 //-------------------------------------------
 const outTimeDate = (d) => {
@@ -75,4 +84,4 @@ const sumTimes = (t1, dt) => {
     return outTime(tuMin(t1) + tuMin(dt))
 }
 
-export { compareTime, getDateBD, getPause, getSheduleToday, outShedule, outTime, outTimeDate, sumTimes }
+export { compareTime, getDateBD, getPause, getRoleName, getSheduleToday, outShedule, outTime, outTimeDate, sumTimes }

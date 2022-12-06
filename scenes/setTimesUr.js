@@ -28,6 +28,7 @@ setTimesUr.enter( async ctx => {
 })
 //-----------
 setTimesUr.action('queryDel', async ctx => {
+    ctx.answerCbQuery()
     const ut = new UrTime()
     const res = await ut.delTimesForClass(ctx.session.class_id)
     if(res.affectedRows > 0)
@@ -37,10 +38,12 @@ setTimesUr.action('queryDel', async ctx => {
 })
 //-----------
 setTimesUr.action('queryYes2', async ctx => {
+    ctx.answerCbQuery()
     ctx.scene.enter('SELECT_ACTION')
 })
 //-----------
 setTimesUr.action('queryNo2', async ctx => {
+    ctx.answerCbQuery()
     ctx.reply('Удалить текущие установки?', queryDelCancelMenu())
 })
 //-----------
@@ -108,6 +111,7 @@ setTimesUr.action('queryYes3', async ctx => {
 })
 //-----------
 setTimesUr.action('queryNo3', async ctx => {
+    ctx.answerCbQuery()
     ctx.scene.reenter()
 })
 //-----------

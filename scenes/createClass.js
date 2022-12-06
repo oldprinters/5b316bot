@@ -1,12 +1,12 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
 import Users from '../controllers/users.js'
 import MyClass from '../controllers/classes.js'
-import {createNewClassMenu, selectRoleMenu} from '../keyboards/keyboards.js'
-//import { outTime } from '../utils.js'
+import {createNewClassMenu, queryYesNoMenu, selectRoleMenu} from '../keyboards/keyboards.js'
+import { getRoleName } from '../utils.js'
 const createClass = new Scenes.BaseScene('CREATE_CLASS')
 createClass.enter(async ctx => {
     await ctx.setMyCommands([{command: 'start', description: 'Перезапустить'}])
-    await ctx.reply('Для работы с расписанием должен быть зарегистрирован хотя бы один класс.', createNewClassMenu())
+    await ctx.reply('Для регистрфции класса ответте на вопросы:', createNewClassMenu())
 
 //    const myClass = new MyClass(ctx)
 //    await myClass.init()
@@ -42,10 +42,20 @@ createClass.on('text', async ctx => {
             await ctx.reply(`Код класса "${ctx.session.className}" записан.`, selectRoleMenu())
         } else {
             const res = await myClass.getAdmin(tClass.id)
+            ctx.scene.session.state.admin = res[0]
             console.log("&&&& res =", res)
-            ctx.reply(`Класс с названием "${ctx.session.className}" существует.`)   //отправить запрос администратору
+            ctx.reply(`Класс с названием "${ctx.session.className}" существует.\n Отправить запрос администратору на допуск к группе?`, queryYesNoMenu())
         }
     }
+})
+//-----------------------------------------
+createClass.action('queryYes2', async ctx => {
+    await ctx.answerCbQuery()
+    await ctx.reply(`Пишем письмо. \nАдминистратор: ${getRoleName(ctx.scene.session.state.admin.role)} id: ${ctx.scene.session.state.admin.tlg_id}`)
+})
+//-----------------------------------------
+createClass.action('queryNo2', async ctx => {
+    await ctx.answerCbQuery()
 })
 //-----------------------------------------
 createClass.action('studentRole', async ctx => {

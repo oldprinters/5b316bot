@@ -22,16 +22,17 @@ class MyClass extends BaseName {
     //-------------------------------------------
     async getAdmin(class_id){
         const sql = `
-            SELECT * 
+            SELECT u.id user_id, tlg_id, uc.role 
             FROM ivanych_bot.user_class uc
             LEFT JOIN users u ON u.id = uc.user_id
             WHERE uc.class_id = 12
-            AND us.isAdmin = 1
+            AND uc.isAdmin = 1
             AND uc.active = 1
+            AND u.active = 1
             ;
-            `
-        return await call_q(sql)
-    }
+        `
+            return await call_q(sql)
+        }
     //-------------------------------------------
     async getClassById(class_id){
         const sql = `

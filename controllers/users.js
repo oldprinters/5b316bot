@@ -25,7 +25,7 @@ class Users {
         const user = await this.readUserTlg()
         if(user == undefined){
             const sql = `INSERT INTO ivanych_bot.users (tlg_id) VALUES ('${this.#tlg_user.id}');`
-            this.#id = (await query(sql)).insertId
+            this.#id = (await call_q(sql)).insertId
             this.#isAdmin = false
             this.#active = 1
         } else {
