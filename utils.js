@@ -16,16 +16,8 @@ const outShedule = (listForDay, nLessons) => {
             list = (el.order_num + 1) + ') <i>' +el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + '</i>   <b>' + el.name + '</b>\n' + list
         }
     }
-    /*
-    for(let j = 0; j < nLessons; j++){
-        const el = listForDay.get(j)
-        if(el == undefined){
-            list += (j + 1) + ')\n'
-        } else {
-            list += (el.order_num + 1) + ') <i>' +el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + '</i>   <b>' + el.name + '</b>\n'
-        }
-    }
-    */
+    if(list.length == 0)
+        list = 'Нет данных об уроках.'
     return list
 }
 //-------------------------------------------
@@ -78,7 +70,7 @@ const outTime = (t) => {
         h = Math.trunc(t / 60)
         m = t % 60
     }
-    return `${h > 0? `${h >9? h: '0'+ h}:`:'00'}:${m > 9? m: '0' + m}`
+    return `${h > 0? `${h >9? h: '0'+ h}`:'00'}:${m > 9? m: '0' + m}`
 }
 //-------------------------------------------
 const outTimeDate = (d) => {

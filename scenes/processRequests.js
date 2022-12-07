@@ -24,6 +24,10 @@ processRequests.enter( async ctx => {
     }
     ctx.reply(`Список запросов:\n`, Markup.inlineKeyboard(ar))
 })
+//-------------------------------------
+processRequests.help( ctx => {
+    ctx.reply('<b><u>HELP</u></b>\nВаше право решать давать доступ к боту или нет. Для родителей это удобноЁ но не более.')
+})
 //--------------------------------------
 processRequests.action(/^iRequest_[0-9]{1,2}$/, async ctx => {
     ctx.answerCbQuery()

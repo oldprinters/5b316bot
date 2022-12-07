@@ -8,6 +8,10 @@ const selectClass = new Scenes.BaseScene('SELECT_CLASS')
 selectClass.enter(async ctx => {
     ctx.reply('Выберите класс.', selectClassMenu(ctx.session.classList))
 })
+//--------------------------------------
+selectClass.help(async ctx => {
+    ctx.replyWithHTML(`<b><u>HELP</u></b>\nВы зарегистрированы в ${ctx.session.classList.length} классах. Выберите любой из них и Вы сможете смотреть его данные.`)
+})
 //----------------------------------------
 selectClass.action(/[0-9]*/, async ctx => {
     await ctx.answerCbQuery()

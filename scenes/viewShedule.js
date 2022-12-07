@@ -22,5 +22,10 @@ viewShedule.enter( async ctx => {
     list += outShedule(listForDay, nLessons)
     ctx.replyWithHTML(list)
 })
+//--------------------------------------
+viewShedule.help(async ctx => {
+    ctx.replyWithHTML(`<b><u>HELP</u></b>\nДополнительных функций нет, только просмотр.\nДля изменения расписания, обратитесь к администратору.`)
+})
+//----------------
 
 export default viewShedule

@@ -26,6 +26,12 @@ setTimesUr.enter( async ctx => {
     
     }
 })
+//-------------------------------
+setTimesUr.help( ctx => {
+    ctx.replyWithHTML('<b><u>HELP</u></b>\nОкончание уроков расчитывается автоматически суммируя время начала урока и его продолжительность.\n'+
+        'Если данные неверны, измените их повторив ввод.\n'+
+        `Продолжительность урока у этого класса ${ctx.session.classList[ctx.session.i].duration.slice(0,5)}.`)
+})
 //-----------
 setTimesUr.action('queryDel', async ctx => {
     ctx.answerCbQuery()

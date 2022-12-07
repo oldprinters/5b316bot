@@ -8,13 +8,19 @@ const createClass = new Scenes.BaseScene('CREATE_CLASS')
 createClass.enter(async ctx => {
     await ctx.reply('Для регистрации класса ответьте на вопросы:', createNewClassMenu())
 })
-
+//-----------------------------
+createClass.help( ctx => {
+    ctx.replyWithHTML('<b><u>HELP</u></b>\nУкажите продолжительность урока, она необходима для расчета времени окончания занятия.\n'+
+    'Название класса может быть любым. Я рекомендую составлять из номера и литеры класса и школы.\n'+
+    'К примеру "5б 316" однозначно определяет класс в рамках СПб.')
+})
+//-----------------------------
 createClass.action('createNewClass', async ctx => {
     await ctx.answerCbQuery()
     ctx.reply('Укажите продолжительность занятия в минутах:')
 })
 //---------------------------------------------
-createClass.start( ctx => {ctx.scene.leave()})
+createClass.start( ctx => {ctx.scene.enter('SELECT_ACTION')})
 //---------------------------------------------
 createClass.on('text', async ctx => {
     if(ctx.session.duration == undefined){

@@ -12,6 +12,10 @@ setSheduleDay.enter(async ctx => {
 setSheduleDay.hears('\w', async ctx => {
     ctx.reply('Выберите день недели в меню.')
 })
+//-------------------------------
+setSheduleDay.help( ctx => {
+    ctx.replyWithHTML('<b><u>HELP</u></b>\nРасписание устанавливается отдельно на каждый день.\n')
+})
 //------------------
 setSheduleDay.start( ctx => { ctx.scene.enter('SELECT_ACTION') })
 

@@ -5,13 +5,23 @@ import Users from '../controllers/users.js'
 import MyClass from '../controllers/classes.js'
 import {queryDelCancelMenu, queryYesNoMenu} from '../keyboards/keyboards.js'
 import { getDateBD, outShedule } from '../utils.js'
-
+//inpSheduleForDay.js
 const inpSheduleForDay = new Scenes.BaseScene('INP_SHEDULE_FOR_DAY')
 //--------------------------------------
 const getList = async (ctx) => {
     const urDay = new UrDay()
-    const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, ctx.session.dayN)    //Map
-    const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
+    let listForDay
+    let nLessons
+    try {
+        listForDay = await urDay.listSheduleForDay(ctx.session.class_id, ctx.session.dayN)    //Map
+    }catch(err){
+        console.log("Catch. inpSheduleForDay.js listForDay err =", err)
+    }
+    try {
+        nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
+    }catch(err){
+        console.log("Catch. inpSheduleForDay.js nLessons err =", err)
+    }
     let list = 'Нет данных.'
     if(nLessons != null)
         list = outShedule(listForDay, nLessons)
@@ -22,12 +32,16 @@ inpSheduleForDay.enter(async ctx => {
     ctx.scene.session.state.urNum = 0
     const list = await getList(ctx)
     await ctx.replyWithHTML(list)
-    await ctx.reply('Удаление урока: N del')
-    await ctx.reply('Постоянное изменение урока: N [новый урок]')
-    await ctx.reply('Временное изменение урока (с ... по ...):\n dd.mm.yyyy dd.mm.yyyy N [новый урок]')
-    await ctx.reply('Где "N" - номер урока')
-
-    await ctx.reply(`Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+    const urDay = new UrDay()
+    await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+})
+//--------------------
+inpSheduleForDay.help( async ctx => {
+    await ctx.replyWithHTML('<b><u>Работа с расписанием</u></b>\n'+
+        '<i>Удаление урока:</i> N del\n'+
+        '<i>Постоянное изменение урока:</i> N [новый урок]\n'+
+        '<i>Временное изменение урока (с ... по ...)</i>:\n dd.mm.yyyy dd.mm.yyyy N [новый урок]\n'+
+        '<i>Где "N" - номер урока</i>.')
 })
 //------------------
 inpSheduleForDay.start( ctx => { 
@@ -40,8 +54,9 @@ inpSheduleForDay.hears(/^[qQйЙ]$/, async ctx => {
 })
 //----------------------
 inpSheduleForDay.hears(/^[0-9]$/, async ctx => {
+    const urDay = new UrDay()
     ctx.scene.session.state.urNum = parseInt(ctx.message.text[0]) - 1
-    await ctx.reply(`Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+    await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
 })
 //------------------------
 inpSheduleForDay.hears(/^[0-9] del+$/, async ctx =>{
@@ -75,8 +90,8 @@ inpSheduleForDay.hears(/^[0-9] [a-zA-Z. а-яА-ЯёЁйЙ-]+/, async ctx =>{
             if(res.affectedRows > 0){
                 const list = await getList(ctx)
                 await ctx.replyWithHTML(list)
-                        ctx.scene.session.state.urNum += 1
-                await ctx.reply(`Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+                ctx.scene.session.state.urNum += 1
+                await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
             }
         } catch(err){
             console.log("Catch inpSheduleForDay", err)
@@ -110,7 +125,7 @@ inpSheduleForDay.hears(/^\d{1,2}.\d{1,2}.\d{4} \d{1,2}.\d{1,2}.\d{4} [0-9] [a-zA
                 const list = await getList(ctx)
                 await ctx.replyWithHTML(list)
                 ctx.scene.session.state.urNum += 1
-                ctx.reply(`Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+                ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
             }
         } catch(err){
             console.log("Catch inpSheduleForDay", err)
@@ -134,7 +149,7 @@ inpSheduleForDay.hears(/^[a-zA-Zа-яё. А-ЯЁйЙ-]+$/, async ctx => {
             const res = await urDay.insertUrDayPermanent(ctx.session.class_id, ctx.session.dayN, urTimeId.id, ctx.message.text )
             if(res.affectedRows > 0){
                 ctx.scene.session.state.urNum += 1
-                ctx.reply(`Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+                ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
             }
         } catch(err){
             console.log("Catch inpSheduleForDay", err)
@@ -166,7 +181,7 @@ inpSheduleForDay.action('queryDel', async ctx => {
     }
     const list = await getList(ctx)
     await ctx.replyWithHTML(list)
-    await ctx.reply(`Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+    await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
 })
 //---------------------------------------
 inpSheduleForDay.action('queryCancel', async ctx => {
@@ -197,7 +212,7 @@ try {
         const res = await urDay.insertUrDayPermanent(ctx.session.class_id, ctx.session.dayN, urTimeId.id, ctx.scene.session.state.change)
         if(res.affectedRows > 0){
             ctx.scene.session.state.urNum += 1
-            await ctx.reply(`Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+            await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
         }
     } catch (err){
         console.log("Error urDay.insertUrDay", err)

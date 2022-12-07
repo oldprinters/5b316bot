@@ -22,13 +22,23 @@ selectAction.enter(async ctx => {
     if(nLessons){
         const list = await getSheduleToday(ctx)
         if(list.length > 0){
-            await ctx.replyWithHTML(`<b>Расписание на сегодня:</b>`)
+            const d = new Date()
+            
+            await ctx.replyWithHTML(`<b>Расписание на сегодня</b> <i>(${urDay.getNameDay(d.getDay())})</i>:`)
             await ctx.replyWithHTML(list)
         } else {
-            await ctx.reply('Для продолжения необходимо внести время начала уроков:')
+            await ctx.reply('Для продолжения необходимо ввести расписание.')
         }
+    } else {
+        await ctx.reply('Для продолжения необходимо внести время начала уроков.')
     }
     await ctx.reply('Выберите действие:', selectShedActionMenu(nLessons, ctx.session.classList.length, ctx.session.classList[ctx.session.i].isAdmin, nRequest))
+})
+//-------------
+selectAction.help(ctx => {
+    ctx.replyWithHTML('<b><u>Основное меню</u></b>\n' +
+        'Выберите нужный пункт меню. Далее следуйте указаниям.'
+    )
 })
 //-------------
 selectAction.action('viewSheduleDay', async ctx => {

@@ -20,6 +20,7 @@ bot.use(session())
 bot.use(stage.middleware())
 
 bot.start(async ctx => {
+    await ctx.setMyCommands([{'command': 'start', 'description': 'Перезапуск'}, {'command': 'help', 'description': 'Вызов справки'}])
     const myClass = new MyClass(ctx)
     await myClass.init()
     const classList = await myClass.searchClasses()
