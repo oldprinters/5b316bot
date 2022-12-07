@@ -34,6 +34,17 @@ class MyClass extends BaseName {
             return await call_q(sql)
         }
     //-------------------------------------------
+    async getClassName(class_id){
+        const sql = `
+            SELECT name
+            FROM ivanych_bot.classes c
+            LEFT JOIN basename bn ON bn.id = c.name_id
+            WHERE c.id = ${class_id}
+            ;
+        `
+        return (await call_q(sql))[0]
+    }
+    //-----------------------------------------
     async getClassById(class_id){
         const sql = `
             SELECT * 
@@ -45,7 +56,7 @@ class MyClass extends BaseName {
     //-------------------------------------------
     async searchClasses(){
         const sql = `
-            SELECT c.id class_id, uc.role, uc.active, bn.name, c.duration
+            SELECT c.id class_id, uc.role, uc.active, bn.name, c.duration, uc.isAdmin
             FROM ivanych_bot.user_class uc
             LEFT JOIN classes c ON c.id = uc.class_id
             LEFT JOIN basename bn ON c.name_id = bn.id
@@ -82,6 +93,14 @@ class MyClass extends BaseName {
     async saveClassUserRole(class_id, role, isAdmin = 0){
         const sql = `
             INSERT INTO ivanych_bot.user_class (user_id, class_id, role, isAdmin) VALUES (${this.user.getUserId()}, ${class_id}, '${role}', ${isAdmin});
+        `
+        this.cu_id = (await call_q(sql)).insertId
+        return this.cu_id
+    }
+    //----------------------------------------------
+    async saveClassUserRoleExt(user_id, class_id, role, isAdmin = 0){
+        const sql = `
+            INSERT INTO ivanych_bot.user_class (user_id, class_id, role, isAdmin) VALUES (${user_id}, ${class_id}, '${role}', ${isAdmin});
         `
         this.cu_id = (await call_q(sql)).insertId
         return this.cu_id

@@ -5,6 +5,18 @@ import UrDay from "./controllers/urDay.js"
 //-------------------------------------------
 const outShedule = (listForDay, nLessons) => {
     let list = ''
+    let lN = false
+    for(let j = nLessons - 1; j >= 0; j--){
+        const el = listForDay.get(j)
+        if(el == undefined){
+            if(lN)
+                list = (j + 1) + ')\n' + list
+        } else {
+            lN = true
+            list = (el.order_num + 1) + ') <i>' +el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + '</i>   <b>' + el.name + '</b>\n' + list
+        }
+    }
+    /*
     for(let j = 0; j < nLessons; j++){
         const el = listForDay.get(j)
         if(el == undefined){
@@ -13,6 +25,7 @@ const outShedule = (listForDay, nLessons) => {
             list += (el.order_num + 1) + ') <i>' +el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + '</i>   <b>' + el.name + '</b>\n'
         }
     }
+    */
     return list
 }
 //-------------------------------------------
@@ -39,7 +52,6 @@ const getDateBD = (str = undefined) => {
     let d
     if(str != undefined){ 
         const dd = str.split('.')
-        console.log("dd =", dd)
         d = new Date(parseInt(dd[2]), parseInt(dd[1]) - 1, parseInt(dd[0]))
     } else d = new Date()
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`

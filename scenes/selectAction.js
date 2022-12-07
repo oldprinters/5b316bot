@@ -1,4 +1,5 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
+import QueryAdmin from "../controllers/queryAdmin.js"
 //import Users from '../controllers/users.js'
 //import MyClass from '../controllers/classes.js'
 import UrDay from '../controllers/urDay.js'
@@ -10,15 +11,34 @@ const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 selectAction.enter(async ctx => {
     const urDay = new UrDay()
     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
-    console.log("#### nLessons =", nLessons)
+    const isAdmin = ctx.session.classList[ctx.session.i].isAdmin
+    let nRequest = false
+    if(isAdmin){
+        const queryAdmin = new QueryAdmin()
+        const arrRequest = await queryAdmin.getRequests(ctx.from.id, ctx.session.class_id)
+//        console.log("@@@ arrRequest =", arrRequest)
+        nRequest = arrRequest.length > 0
+    }
     if(nLessons){
         const list = await getSheduleToday(ctx)
         if(list.length > 0){
             await ctx.replyWithHTML(`<b>Расписание на сегодня:</b>`)
             await ctx.replyWithHTML(list)
+        } else {
+            await ctx.reply('Для продолжения необходимо внести время начала уроков:')
         }
     }
-    await ctx.reply('Для продолжения необходимо внести время начала уроков:', selectShedActionMenu(nLessons, ctx.session.classList.length))
+    await ctx.reply('Выберите действие:', selectShedActionMenu(nLessons, ctx.session.classList.length, ctx.session.classList[ctx.session.i].isAdmin, nRequest))
+})
+//-------------
+selectAction.action('viewSheduleDay', async ctx => {
+    await ctx.answerCbQuery()
+    await ctx.scene.enter('VIEW_SHEDULE')
+})
+//-------------
+selectAction.action('viewRequests', async ctx => {
+    await ctx.answerCbQuery()
+    await ctx.scene.enter('PROCESS_REQUESTS')
 })
 //-------------
 selectAction.action('selectClass', async ctx => {

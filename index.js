@@ -7,9 +7,13 @@ import selectClass from './scenes/selectClass.js'
 import selectAction from './scenes/selectAction.js'
 import setTimesUr from './scenes/setTimesUr.js'
 import setSheduleDay from './scenes/setSheduleDay.js'
-import inpSheduleForDay from "./scenes/inpSheduleForDay.js"
+import inpSheduleForDay from './scenes/inpSheduleForDay.js'
+import sendQueryAdmin from './scenes/queryMessage.js'
+import processRequests from './scenes/processRequests.js'
+import viewShedule from './scenes/viewShedule.js'
 
-const stage = new Scenes.Stage([createClass, createSchedule, inpSheduleForDay, selectClass, selectAction, setTimesUr, setSheduleDay])
+const stage = new Scenes.Stage([createClass, createSchedule, inpSheduleForDay, processRequests, 
+    selectClass, selectAction, sendQueryAdmin, setTimesUr, setSheduleDay, viewShedule])
 
 const bot = new Telegraf("5489794456:AAF89kL1SsQVK2-axyWO8VdARI8rlfAVxdM");
 bot.use(session())

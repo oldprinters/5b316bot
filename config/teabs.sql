@@ -63,3 +63,14 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email_UNIQUE` (`tlg_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `queryAdmin` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `whoTlgId` int(10) unsigned NOT NULL,
+  `toTlgId` int(10) unsigned DEFAULT NULL,
+  `result` tinyint(4) DEFAULT 0,
+  `type` int(11) DEFAULT NULL,
+  `textQuery` varchar(255) DEFAULT NULL,
+  `active` tinyint(4) DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

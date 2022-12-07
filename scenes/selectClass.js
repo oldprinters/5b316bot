@@ -15,4 +15,7 @@ selectClass.action(/[0-9]*/, async ctx => {
     ctx.session.class_id = ctx.session.classList[ctx.session.i].class_id
     ctx.scene.enter('SELECT_ACTION')
 })
+//------------------------------------------
+selectClass.start( ctx => ctx.scene.enter('SELECT_ACTION'))
+
 export default selectClass

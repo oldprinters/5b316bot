@@ -93,8 +93,6 @@ inpSheduleForDay.hears(/^\d{1,2}.\d{1,2}.\d{4} \d{1,2}.\d{1,2}.\d{4} [0-9] [a-zA
     const date_s = text.slice(0, firstSpace)
     const date_e = text.slice(firstSpace, secondSpace)
     const n = parseInt(ctx.message.text[secondSpace+1]) - 1
-    console.log("date_s =", date_s)
-    console.log("date_e =", date_e)
     if(!isNaN(n) && n >= 0){
         const str = ctx.message.text.slice(secondSpace + 3).trim()
         ctx.reply(`Замена урока ${n+1} => ${str}`)
@@ -123,7 +121,6 @@ inpSheduleForDay.hears(/^\d{1,2}.\d{1,2}.\d{4} \d{1,2}.\d{1,2}.\d{4} [0-9] [a-zA
 })
 //------------------ ввод нового урока
 inpSheduleForDay.hears(/^[a-zA-Zа-яё. А-ЯЁйЙ-]+$/, async ctx => {
-    console.log("hears =", ctx.session)
     const urDay = new UrDay()
     const ur = await urDay.getUrForDay(ctx.session.class_id, ctx.session.dayN, ctx.scene.session.state.urNum)
     if(ur[0] == undefined){
@@ -133,7 +130,6 @@ inpSheduleForDay.hears(/^[a-zA-Zа-яё. А-ЯЁйЙ-]+$/, async ctx => {
             await ctx.reply('Отсутствует время начала и окончания урока.')
             return await ctx.scene.enter('SET_TIMES_UR')
         }
-        console.log("@@@#@ ", urTimeId)
         try {
             const res = await urDay.insertUrDayPermanent(ctx.session.class_id, ctx.session.dayN, urTimeId.id, ctx.message.text )
             if(res.affectedRows > 0){
@@ -158,7 +154,6 @@ inpSheduleForDay.on('text', async ctx => {
 //    } else {
 
 //    }
-    console.log("@@@ ctx =", ctx.message.text)
 })
 //---------------------------------------
 inpSheduleForDay.action('queryDel', async ctx => {

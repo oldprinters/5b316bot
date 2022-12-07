@@ -1,6 +1,6 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
-import Users from '../controllers/users.js'
-import MyClass from '../controllers/classes.js'
+//import Users from '../controllers/users.js'
+//import MyClass from '../controllers/classes.js'
 import {selectDay} from '../keyboards/keyboards.js'
 
 const setSheduleDay = new Scenes.BaseScene('SET_SHEDULE_DAY')
@@ -15,7 +15,12 @@ setSheduleDay.hears('\w', async ctx => {
 //------------------
 setSheduleDay.start( ctx => { ctx.scene.enter('SELECT_ACTION') })
 
-//---------------------------------------
+//--------------------------------------- 
+setSheduleDay.action(/^['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa'][a-z]+$/, ctx => {
+    ctx.answerCbQuery()
+    console.log("!@##@! ctx =", ctx)
+})
+//----------------------------------------
 setSheduleDay.action('sundayDay', ctx => {
     ctx.answerCbQuery()
     ctx.session.dayN = 0

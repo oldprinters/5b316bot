@@ -88,6 +88,7 @@ class UrDay extends BaseName {
             return await call_q(sql)
         } else {
             console.log("Error write BaseName. insertUrDay")
+            throw 'Error write BaseName. insertUrDay'
         }
     }
     //------------------------
@@ -98,7 +99,8 @@ class UrDay extends BaseName {
             `VALUES (${class_id}, ${dayOfWeek}, ${urTimeId}, ${name_id}, ');`
             return await call_q(sql)
         } else {
-            console.log("Error write BaseName. insertUrDay")
+            console.log("Error write BaseName. insertUrDayTemporary")
+            throw 'Error write BaseName. insertUrDayTemporary'
         }
     }
     //------------------------------------ 

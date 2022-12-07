@@ -2,16 +2,11 @@ import {Telegraf, Markup, Scenes, session} from "telegraf"
 import Users from '../controllers/users.js'
 import MyClass from '../controllers/classes.js'
 import {createNewClassMenu, queryYesNoMenu, selectRoleMenu} from '../keyboards/keyboards.js'
-import { getRoleName } from '../utils.js'
-const createClass = new Scenes.BaseScene('CREATE_CLASS')
-createClass.enter(async ctx => {
-    await ctx.setMyCommands([{command: 'start', description: 'Перезапустить'}])
-    await ctx.reply('Для регистрфции класса ответте на вопросы:', createNewClassMenu())
 
-//    const myClass = new MyClass(ctx)
-//    await myClass.init()
-//    const classList = await myClass.searchClasses()
-//    console.log("@@# classList =", classList)
+const createClass = new Scenes.BaseScene('CREATE_CLASS')
+//-----------------------------
+createClass.enter(async ctx => {
+    await ctx.reply('Для регистрации класса ответьте на вопросы:', createNewClassMenu())
 })
 
 createClass.action('createNewClass', async ctx => {
@@ -30,7 +25,7 @@ createClass.on('text', async ctx => {
             ctx.reply('Укажите продолжительность занятия в минутах цифрами (45, 90 и т.д.):')
         }
     } else {
-        ctx.session.className = await ctx.message.text.match(/[а-яА-ЯёЁa-zA-Z0-9-_ ]*/)[0]
+        ctx.session.className = ctx.message.text.match(/[а-яА-ЯёЁa-zA-Z0-9-_ ]*/)[0]
         const myClass = new MyClass(ctx)
         await myClass.init()
         const tClass = await myClass.searchClassesByName(ctx.session.className)
@@ -42,20 +37,21 @@ createClass.on('text', async ctx => {
             await ctx.reply(`Код класса "${ctx.session.className}" записан.`, selectRoleMenu())
         } else {
             const res = await myClass.getAdmin(tClass.id)
-            ctx.scene.session.state.admin = res[0]
-            console.log("&&&& res =", res)
-            ctx.reply(`Класс с названием "${ctx.session.className}" существует.\n Отправить запрос администратору на допуск к группе?`, queryYesNoMenu())
+            ctx.session.admin = res[0]
+            ctx.session.admin.class_id = tClass.id
+            ctx.reply(`Класс с названием "${ctx.session.className}" существует.\n Отправить администратору запрос на допуск к группе?`, queryYesNoMenu())
         }
     }
 })
 //-----------------------------------------
 createClass.action('queryYes2', async ctx => {
     await ctx.answerCbQuery()
-    await ctx.reply(`Пишем письмо. \nАдминистратор: ${getRoleName(ctx.scene.session.state.admin.role)} id: ${ctx.scene.session.state.admin.tlg_id}`)
+    await ctx.scene.enter('SEND_QUERY_ADMIN')
 })
 //-----------------------------------------
 createClass.action('queryNo2', async ctx => {
     await ctx.answerCbQuery()
+    await ctx.scene.reenter()
 })
 //-----------------------------------------
 createClass.action('studentRole', async ctx => {

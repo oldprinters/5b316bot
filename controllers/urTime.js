@@ -23,7 +23,6 @@ class UrTime {
             AND active = 1
             ;
         `
-        console.log("getByOrder sql =", sql)
         return (await call_q(sql))[0]
     }
     //---------------------------

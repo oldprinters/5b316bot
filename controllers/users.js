@@ -36,6 +36,17 @@ class Users {
         return this.#id
     }
     //---------------------------------------
+    async getUserByTlgId (tlg_id) {
+        const sql = `
+            SELECT * 
+            FROM ivanych_bot.users
+            WHERE tlg_id = ${tlg_id}
+            AND active = 1
+            ;
+        `
+        return (await call_q(sql))[0]
+    }
+    //---------------------------------------
     isAdmin(){return this.#isAdmin}
     //---------------------------------------
     getUserId(){return this.#id}
