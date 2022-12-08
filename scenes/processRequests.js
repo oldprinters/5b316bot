@@ -46,7 +46,6 @@ processRequests.action('queryYes2', async ctx => {
 processRequests.action(/['studentRole', 'parentRole', 'teacherRole', 'c_teacherRole']/, async ctx => {
     await ctx.answerCbQuery()
     const role = ctx.callbackQuery.data.slice(0, -4)
-    console.log("#@2334@! =", ctx.scene.session.state)
     const qA = new QueryAdmin()
     const users = new Users(ctx)
     const myClass = new MyClass(ctx)

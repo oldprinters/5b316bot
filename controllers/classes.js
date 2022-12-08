@@ -20,6 +20,16 @@ class MyClass extends BaseName {
         await this.user.init()
     }
     //-------------------------------------------
+    async deleteUserClass (user_id, class_id){
+        const sql = `
+        UPDATE ivanych_bot.user_class 
+        SET active = 0 
+        WHERE user_id = ${user_id}
+        AND class_id = ${class_id};
+        `
+        return await call_q(sql)
+    }
+    //-------------------------------------------
     async getAdmin(class_id){
         const sql = `
             SELECT u.id user_id, tlg_id, uc.role 
@@ -54,13 +64,16 @@ class MyClass extends BaseName {
         return (await call_q(sql))[0]
     }
     //-------------------------------------------
-    async searchClasses(){
+    async searchClasses(user_id = 0){
+        if(!user_id)
+            user_id = this.user.getUserId()
         const sql = `
             SELECT c.id class_id, uc.role, uc.active, bn.name, c.duration, uc.isAdmin
             FROM ivanych_bot.user_class uc
             LEFT JOIN classes c ON c.id = uc.class_id
             LEFT JOIN basename bn ON c.name_id = bn.id
-            WHERE user_id = ${this.user.getUserId()};
+            WHERE user_id = ${user_id}
+            AND uc.active = 1;
         `
         return await call_q(sql)
     }

@@ -23,7 +23,6 @@ selectAction.enter(async ctx => {
         const list = await getSheduleToday(ctx)
         if(list.length > 0){
             const d = new Date()
-            
             await ctx.replyWithHTML(`<b>Расписание на сегодня</b> <i>(${urDay.getNameDay(d.getDay())})</i>:`)
             await ctx.replyWithHTML(list)
         } else {
