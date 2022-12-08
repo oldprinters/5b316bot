@@ -20,8 +20,10 @@ sendQueryAdmin.on('text', async ctx => {
             await ctx.reply('Ваш запрос рассматривается. Ждем ответа администратора. Отправка повторной заявки запрещена.')
         else if(qRes.result == -1)
             await ctx.reply('Администратор отказал Вам в регистрации.')
-        else
+        else {
             await ctx.reply('Вы зарегистрированы.')
+            await ctx.scene.enter('SELECT_ACTION')
+        }
     }
 })
 //sendQueryAdmin.
