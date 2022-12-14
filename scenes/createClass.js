@@ -30,7 +30,7 @@ createClass.on('text', async ctx => {
         } else {
             ctx.reply('Укажите продолжительность занятия в минутах цифрами (45, 90 и т.д.):')
         }
-    } else {
+    } else if(ctx.session.className == undefined){
         ctx.session.className = ctx.message.text.match(/[а-яА-ЯёЁa-zA-Z0-9-_ ]*/)[0]
         const myClass = new MyClass(ctx)
         await myClass.init()
@@ -47,6 +47,8 @@ createClass.on('text', async ctx => {
             ctx.session.admin.class_id = tClass.id
             ctx.reply(`Класс с названием "${ctx.session.className}" существует.\n Отправить администратору запрос на допуск к группе?`, queryYesNoMenu())
         }
+    } else {
+        ctx.reply('Выберите роль в меню:', selectRoleMenu())
     }
 })
 //-----------------------------------------

@@ -16,7 +16,7 @@ selectAction.enter(async ctx => {
     if(isAdmin){
         const queryAdmin = new QueryAdmin()
         const arrRequest = await queryAdmin.getRequests(ctx.from.id, ctx.session.class_id)
-//        console.log("@@@ arrRequest =", arrRequest)
+    //        console.log("@@@ arrRequest =", arrRequest)
         nRequest = arrRequest.length > 0
     }
     if(nLessons){
@@ -77,8 +77,10 @@ selectAction.action('appendClass', async ctx => {
     await ctx.scene.enter('CREATE_CLASS')
 })
 
+selectAction.start( async ctx => {
+    await ctx.scene.enter('FIRST_STEP')
+})
+// selectAction.command('start', async ctx => { return await ctx.scene.enter(FIRST_STEP)})
 selectAction.on('text', async ctx => {ctx.scene.reenter()})
-selectAction.start( async ctx => {return await ctx.scene.leave()})
-selectAction.command('start', async ctx => { return await ctx.scene.leave()})
 
 export default selectAction

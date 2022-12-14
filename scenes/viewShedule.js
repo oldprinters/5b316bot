@@ -15,11 +15,11 @@ viewShedule.enter( async ctx => {
     for(let i = 1; i < 7; i++){
         list += '\n<u>' + urDay.getNameDay(i) + '</u>\n'
         const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, i)
-        list += outShedule(listForDay, nLessons)
+        list += await outShedule(listForDay, nLessons)
     }
     list += '\n<u>' + urDay.getNameDay(0) + '</u>\n'
     const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, 0)
-    list += outShedule(listForDay, nLessons)
+    list += await outShedule(listForDay, nLessons)
     ctx.replyWithHTML(list)
 })
 //--------------------------------------

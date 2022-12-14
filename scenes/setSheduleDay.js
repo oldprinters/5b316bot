@@ -22,7 +22,7 @@ setSheduleDay.start( ctx => { ctx.scene.enter('SELECT_ACTION') })
 //--------------------------------------- 
 setSheduleDay.action(/^['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa'][a-z]+$/, ctx => {
     ctx.answerCbQuery()
-    console.log("!@##@! ctx =", ctx)
+    // console.log("!@##@! ctx =", ctx)
 })
 //----------------------------------------
 setSheduleDay.action('sundayDay', ctx => {

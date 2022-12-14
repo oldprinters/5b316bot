@@ -3,17 +3,19 @@
 import UrDay from "./controllers/urDay.js"
 
 //-------------------------------------------
-const outShedule = (listForDay, nLessons) => {
+//-------------------------------------------
+const outShedule = async (listForDay, nLessons, today = false) => {
     let list = ''
     let lN = false
     for(let j = nLessons - 1; j >= 0; j--){
-        const el = listForDay.get(j)
+        const el = await listForDay.get(j)
+        const star = (el != undefined) && today && inLesson(el.time_s, el.time_e)
         if(el == undefined){
             if(lN)
                 list = (j + 1) + ')\n' + list
         } else {
             lN = true
-            list = (el.order_num + 1) + ') <i>' +el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + '</i>   <b>' + el.name + '</b>\n' + list
+            list = (el.order_num + 1) + ') <i>' + el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + '</i>   <b>' + el.name + `</b>${star? ' *': ''}\n` + list
         }
     }
     if(list.length == 0)
@@ -36,7 +38,7 @@ const getSheduleToday = async (ctx) => {
     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
     let list = ''
     if(nLessons != null && arr.size > 0)
-        list = outShedule(arr, nLessons)
+        list = outShedule(arr, nLessons, true)
     return list
 }
 //-------------------------------------------
@@ -87,5 +89,18 @@ const tuMin = (t) => {
 const sumTimes = (t1, dt) => {
     return outTime(tuMin(t1) + tuMin(dt))
 }
+//-------------------------------------------
+const setTime = (t) => {
+    const tt = new Date()
+    tt.setHours(0)
+    tt.setMinutes(tuMin(t))
+}
+//-------------------------------------------
+const inLesson = (ts, te) => {
+    const dt = new Date()
+    const ds = setTime(ts)
+    const de = setTime(te)
+    return (ds <= dt && dt < de) 
+}
 
-export { compareTime, getDateBD, getPause, getRoleName, getSheduleToday, outShedule, outTime, outTimeDate, sumTimes }
+export { compareTime, getDateBD, getPause, getRoleName, getSheduleToday, inLesson, outShedule, outTime, outTimeDate, sumTimes }

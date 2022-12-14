@@ -9,6 +9,8 @@ selectClass.enter(async ctx => {
     ctx.reply('Выберите класс.', selectClassMenu(ctx.session.classList))
 })
 //--------------------------------------
+selectClass.start( ctx => ctx.scene.enter('FIRST_STEP'))
+//--------------------------------------
 selectClass.help(async ctx => {
     ctx.replyWithHTML(`<b><u>HELP</u></b>\nВы зарегистрированы в ${ctx.session.classList.length} классах. Выберите любой из них и Вы сможете смотреть его данные.\n`+
     'Для удаления класса наберите: delete [Имя класса]')
@@ -29,7 +31,7 @@ selectClass.hears(/^delete [a-zA-Z. а-яА-ЯёЁйЙ-]*/, async ctx =>{
         ctx.reply(`Класс с именем ${name} не найден.`)
     }
     ctx.session.classList = await myClass.searchClasses(user.id)
-    ctx.scene.reenter()
+    ctx.scene.enter('FIRST_STEP')
 })
 //----------------------------------------
 selectClass.action(/^iClass_[0-9]*/, async ctx => {
@@ -39,6 +41,5 @@ selectClass.action(/^iClass_[0-9]*/, async ctx => {
     ctx.scene.enter('SELECT_ACTION')
 })
 //------------------------------------------
-selectClass.start( ctx => ctx.scene.enter('SELECT_ACTION'))
 
 export default selectClass

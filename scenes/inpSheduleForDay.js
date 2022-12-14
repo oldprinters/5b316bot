@@ -24,7 +24,7 @@ const getList = async (ctx) => {
     }
     let list = 'Нет данных.'
     if(nLessons != null)
-        list = outShedule(listForDay, nLessons)
+        list = await outShedule(listForDay, nLessons)
     return list
 }
 //--------------------------------------

@@ -11,8 +11,9 @@ import inpSheduleForDay from './scenes/inpSheduleForDay.js'
 import sendQueryAdmin from './scenes/queryMessage.js'
 import processRequests from './scenes/processRequests.js'
 import viewShedule from './scenes/viewShedule.js'
+import firstStep from './scenes/firstStep.js'
 
-const stage = new Scenes.Stage([createClass, createSchedule, inpSheduleForDay, processRequests, 
+const stage = new Scenes.Stage([createClass, createSchedule, firstStep, inpSheduleForDay, processRequests, 
     selectClass, selectAction, sendQueryAdmin, setTimesUr, setSheduleDay, viewShedule])
 
 const bot = new Telegraf("5489794456:AAF89kL1SsQVK2-axyWO8VdARI8rlfAVxdM");
@@ -20,29 +21,24 @@ bot.use(session())
 bot.use(stage.middleware())
 
 bot.start(async ctx => {
-    await ctx.setMyCommands([{'command': 'start', 'description': 'Перезапуск'}, {'command': 'help', 'description': 'Вызов справки'}])
-    const myClass = new MyClass(ctx)
-    await myClass.init()
-    const classList = await myClass.searchClasses()
-    if(classList.length == 0){
-        ctx.scene.enter('CREATE_CLASS')
-    } else {
-        ctx.session.classList = classList
-        if(classList.length > 1){
-            ctx.scene.enter('SELECT_CLASS')
-        } else {
-            ctx.session.i = 0   //index текущего класса в массиве
-            ctx.session.class_id = classList[0].class_id
-            ctx.scene.enter('SELECT_ACTION')
-        }
-    }
+    await ctx.scene.enter('FIRST_STEP')
+    // await ctx.setMyCommands([{'command': 'start', 'description': 'Перезапуск'}, {'command': 'help', 'description': 'Вызов справки'}])
+    // const myClass = new MyClass(ctx)
+    // await myClass.init()
+    // const classList = await myClass.searchClasses()
+    // if(classList.length == 0){
+    //     ctx.scene.enter('CREATE_CLASS')
+    // } else {
+    //     ctx.session.classList = classList
+    //     if(classList.length > 1){
+    //         ctx.scene.enter('SELECT_CLASS')
+    //     } else {
+    //         ctx.session.i = 0   //index текущего класса в массиве
+    //         ctx.session.class_id = classList[0].class_id
+    //         ctx.scene.enter('SELECT_ACTION')
+    //     }
+    // }
 });
-
-bot.command('stop', ctx => ctx.reply("stop command."))
-bot.command('d', ctx => ctx.reply("day command."))
-
-bot.hears('dd', ctx => ctx.reply("dd command."))
-
 //getMainMenu()
 
 bot.launch()
