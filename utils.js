@@ -15,7 +15,7 @@ const outShedule = async (listForDay, nLessons, today = false) => {
                 list = (j + 1) + ')\n' + list
         } else {
             lN = true
-            list = (el.order_num + 1) + ') <i>' + el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + '</i>   <b>' + el.name + `</b>${star? ' *': ''}\n` + list
+            list = (el.order_num + 1) + ') <i>' + el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + '</i>   <b>' + el.name + `${star? ' ***': ''} </b>\n` + list
         }
     }
     if(list.length == 0)
@@ -94,13 +94,28 @@ const setTime = (t) => {
     const tt = new Date()
     tt.setHours(0)
     tt.setMinutes(tuMin(t))
+    return tt
 }
 //-------------------------------------------
 const inLesson = (ts, te) => {
     const dt = new Date()
     const ds = setTime(ts)
     const de = setTime(te)
-    return (ds <= dt && dt < de) 
+return (ds <= dt && dt < de) 
+}
+//-------------------------------------------
+const setCommands = async (ctx) => {
+    if(ctx.session.isAdmin == '1'){
+        await ctx.setMyCommands([
+            {command: 'start', description: 'Перезапуск'}, 
+            {command: 'help', description: 'Вызов справки'}, 
+            {command: 'settings', description: 'Настройки'},
+        ])
+    } else 
+        await ctx.setMyCommands([
+            {command: 'start', description: 'Перезапуск'}, 
+            {command: 'help', description: 'Вызов справки'}, 
+    ])
 }
 
-export { compareTime, getDateBD, getPause, getRoleName, getSheduleToday, inLesson, outShedule, outTime, outTimeDate, sumTimes }
+export { compareTime, getDateBD, getPause, getRoleName, getSheduleToday, inLesson, outShedule, outTime, outTimeDate, setCommands, sumTimes }

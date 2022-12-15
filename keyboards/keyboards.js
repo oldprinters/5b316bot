@@ -66,10 +66,10 @@ const selectShedActionMenu = (nLesson, nClass, isAdmin, isRequest = false) => {
         [Markup.button.callback("Просмотр расписания уроков", "viewSheduleDay")], 
         [Markup.button.callback("Добавить класс", "appendClass")]
     ]
-    if(isAdmin)
+    if(isAdmin && false)
         arrAction.push([Markup.button.callback("Установка времени начала уроков", "setTimesUr")])
     if(nLesson){
-        if(isAdmin)
+        if(isAdmin && false)
             arrAction.push([Markup.button.callback("Редактирование расписания уроков", "setSheduleDay")])
     }
     if(nClass > 1){
@@ -81,6 +81,14 @@ const selectShedActionMenu = (nLesson, nClass, isAdmin, isRequest = false) => {
 
     return Markup.inlineKeyboard(arrAction)
 }
+//------------------------------------------------
+const selectActionAdminMenu = () => {
+    let arrAction = [
+        [Markup.button.callback("Установка времени начала уроков", "setTimesUr")],
+        [Markup.button.callback("Редактирование расписания уроков", "setSheduleDay")],
+    ]
+    return Markup.inlineKeyboard(arrAction)
+}
 
-export { createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, 
+export { createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, selectActionAdminMenu,
     selectRoleMenu, selectClassMenu, selectDay, selectShedActionMenu }

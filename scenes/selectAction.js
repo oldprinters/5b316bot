@@ -3,7 +3,7 @@ import QueryAdmin from "../controllers/queryAdmin.js"
 //import Users from '../controllers/users.js'
 //import MyClass from '../controllers/classes.js'
 import UrDay from '../controllers/urDay.js'
-import {selectShedActionMenu} from '../keyboards/keyboards.js'
+import { selectShedActionMenu, selectActionAdminMenu } from '../keyboards/keyboards.js'
 import { getRoleName, getSheduleToday } from '../utils.js'
 
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
@@ -16,7 +16,6 @@ selectAction.enter(async ctx => {
     if(isAdmin){
         const queryAdmin = new QueryAdmin()
         const arrRequest = await queryAdmin.getRequests(ctx.from.id, ctx.session.class_id)
-    //        console.log("@@@ arrRequest =", arrRequest)
         nRequest = arrRequest.length > 0
     }
     if(nLessons){
@@ -80,7 +79,15 @@ selectAction.action('appendClass', async ctx => {
 selectAction.start( async ctx => {
     await ctx.scene.enter('FIRST_STEP')
 })
-// selectAction.command('start', async ctx => { return await ctx.scene.enter(FIRST_STEP)})
+//-------------------------------------------------
+selectAction.command('settings', async ctx => { 
+    if(ctx.session.isAdmin == '1')
+        await ctx.reply('Административное меню:', selectActionAdminMenu())
+    else {
+        await ctx.reply('Настройки доступны только администратору класса.')
+        await ctx.scene.enter('FIRST_STEP')
+    }
+})
 selectAction.on('text', async ctx => {ctx.scene.reenter()})
 
 export default selectAction
