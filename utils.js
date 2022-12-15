@@ -15,7 +15,7 @@ const outShedule = async (listForDay, nLessons, today = false) => {
                 list = (j + 1) + ')\n' + list
         } else {
             lN = true
-            list = (el.order_num + 1) + ') <i>' + el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + '</i>   <b>' + el.name + `${star? ' ***': ''} </b>\n` + list
+            list = (el.order_num + 1) + `) ${star?'<b>':'<i>'}` + el.time_s.slice(0,5) + '-' + el.time_e.slice(0,5) + `  ${star?'':'</i>'}` + el.name + `${star? ' ***</b>': ''}\n` + list
         }
     }
     if(list.length == 0)
