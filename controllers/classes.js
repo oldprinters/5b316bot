@@ -18,6 +18,7 @@ class MyClass extends BaseName {
     //-------------------------------------------
     async init(){
         await this.user.init()
+        console.log("@@# MyClass this", this)
     }
     //-------------------------------------------
     async deleteUserClass (user_id, class_id){
@@ -120,9 +121,34 @@ class MyClass extends BaseName {
     }
     //-----------------------------------------------
     async searchLessonByName(ctx){
-        console.log("@@@@ searchLessonByName", ctx)
-        const sql = ``
-//        return await call_q(sql, 'searchLessonByName')
+        const str = ctx.message.text.trim().replaceAll('\'', '"')
+        const sql = `
+            SELECT COUNT(ud.id), bn.name, ud.name_id
+            FROM ivanych_bot.urDay ud
+            LEFT JOIN basename bn ON bn.id = ud.name_id
+            WHERE class_id = ${ctx.session.class_id}
+            AND bn.name LIKE '%${str}%'
+            AND ud.active = 1
+            GROUP by ud.name_id
+            ;
+        `
+        return await call_q(sql, 'searchLessonByName')
+    }
+    //------------------------------------------------
+    async getUrByNameId(name_id, class_id){
+        const sql = `
+        SELECT ud.id, bn.name, ut.time_s, ut.time_e, ud.dayOfWeek, ud.dateStart, ud.dateEnd
+        FROM ivanych_bot.urDay ud
+        LEFT JOIN basename bn ON bn.id = ud.name_id
+        LEFT JOIN urTime ut ON ut.id = ud.urTimeId
+        WHERE ud.class_id = ${class_id}
+        AND ud.name_id = ${name_id}
+        AND ud.dateStart < CURRENT_DATE()
+        AND ud.dateEnd > CURRENT_DATE()
+        AND ud.active = 1
+        AND ut.active = 1
+        ;`
+        return await call_q(sql, 'getUrById')
     }
 }
 

@@ -39,7 +39,7 @@ selectClass.action(/^iClass_[0-9]*/, async ctx => {
     await ctx.answerCbQuery()
     ctx.session.i = ctx.callbackQuery.data.match(/[0-9]$/)[0]
     ctx.session.class_id = ctx.session.classList[ctx.session.i].class_id
-    ctx.session.isAdmin = classList[ctx.session.i].isAdmin
+    ctx.session.isAdmin = ctx.session.classList[ctx.session.i].isAdmin
     setCommands(ctx)
     ctx.scene.enter('SELECT_ACTION')
 })

@@ -25,7 +25,7 @@ selectAction.enter(async ctx => {
             await ctx.replyWithHTML(`<b>Расписание на сегодня</b> <i>(${urDay.getNameDay(d.getDay())})</i>:`)
             await ctx.replyWithHTML(list)
         } else {
-            await ctx.reply('Для продолжения необходимо ввести расписание.')
+            await ctx.reply('На сегодня расписание отсутствует.')
         }
     } else {
         await ctx.reply('Для продолжения необходимо внести время начала уроков.')
@@ -35,7 +35,8 @@ selectAction.enter(async ctx => {
 //-------------
 selectAction.help(ctx => {
     ctx.replyWithHTML('<b><u>Основное меню</u></b>\n' +
-        'Выберите нужный пункт меню. Далее следуйте указаниям.'
+        'Выберите нужный пункт меню. Далее следуйте указаниям.\n' +
+        'Введите название урока (можно частично) и программа покажет когда на неделе проходят занятия.'
     )
 })
 //-------------
@@ -88,11 +89,31 @@ selectAction.command('settings', async ctx => {
         await ctx.scene.enter('FIRST_STEP')
     }
 })
+//------------------------------------------
 selectAction.on('text', async ctx => {
     const myClass = new MyClass(ctx)
+    const urDay = new UrDay(ctx)
     await myClass.init()
-    myClass.searchLessonByName(ctx)
-    ctx.scene.reenter()
+    const resNames = await myClass.searchLessonByName(ctx)
+    const class_id = ctx.session.class_id
+    if(resNames.length == 0){
+        ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
+    } else if(resNames.length == 1){
+        const res = await myClass.getUrByNameId(resNames[0].name_id, class_id)
+        await ctx.replyWithHTML(`<b><u>${res[0].name}</u></b>`)
+        for(let item of res){
+            await ctx.reply(`${rDay.getNameDay(item.dayOfWeek)}, c ${item.time_s}, по ${item.time_e}`)
+        }
+    } else {
+        for(let el of resNames){
+            const res = await myClass.getUrByNameId(el.name_id, class_id)
+            await ctx.replyWithHTML(`<b><u>${el.name}</u></b>`)
+            for(let item of res){
+                await ctx.reply(`${urDay.getNameDay(item.dayOfWeek)}, c ${item.time_s}, по ${item.time_e}`)
+            }    
+        }
+    }
+//    ctx.scene.reenter()
 })
 
 export default selectAction

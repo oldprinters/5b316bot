@@ -2,15 +2,16 @@ import { call_q } from '../config/query.js'
 
 class Users {
     #id         //DB
-    #tlg_user   //{}
+    #tlg_user = {}
     #chat_id
     #active
     #isAdmin    //администратор бота
     #classes = []
     //---------------------------------------
     constructor(ctx) {
- //       console.log("ctx =", ctx.from)
-        if(typeof ctx === 'object' && !Array.isArray(ctx) !== null){
+//        if(typeof ctx === 'object' && !Array.isArray(ctx) !== null){
+        if(typeof ctx.from === 'object' && !Array.isArray(ctx.from) !== null){
+          //  console.log("users constructor ctx =", ctx.message)
             this.#tlg_user = ctx.from
             if(ctx.message?.chat.id != undefined)
                 this.#tlg_user.chat_id = ctx.message.chat.id
@@ -19,6 +20,7 @@ class Users {
         } else {
             throw 'id пользователя telegram не определен.'
         }
+        //console.log(" not OBJECT this =", this.#tlg_user)
     }
     //---------------------------------------
     async init() {
