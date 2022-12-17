@@ -26,6 +26,10 @@ viewShedule.enter( async ctx => {
 viewShedule.help(async ctx => {
     ctx.replyWithHTML(`<b><u>HELP</u></b>\nДополнительных функций нет, только просмотр.\nДля изменения расписания, обратитесь к администратору.`)
 })
+//-------------------------------------
+selectAction.start( async ctx => {
+    await ctx.scene.enter('SELECT_ACTION')
+})
 //------------------------------------------
 viewShedule.on('text', async ctx => {
     const myClass = new MyClass(ctx)
@@ -51,10 +55,6 @@ viewShedule.on('text', async ctx => {
         }
     }
 //    ctx.scene.reenter()
-})
-//-------------------------------------
-selectAction.start( async ctx => {
-    await ctx.scene.enter('SELECT_ACTION')
 })
 //----------------
 
