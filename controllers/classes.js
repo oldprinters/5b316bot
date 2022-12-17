@@ -18,7 +18,7 @@ class MyClass extends BaseName {
     //-------------------------------------------
     async init(){
         await this.user.init()
-        console.log("@@# MyClass this", this)
+//        console.log("@@# MyClass this", this)
     }
     //-------------------------------------------
     async deleteUserClass (user_id, class_id){
