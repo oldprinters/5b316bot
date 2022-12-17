@@ -3,7 +3,7 @@ import {Scenes, session} from "telegraf"
 import MyClass from '../controllers/classes.js'
 //import UrTime from "../controllers/urTime.js"
 import UrDay from "../controllers/urDay.js"
-//import { queryYesNoCancelMenu, queryYesNoMenu, queryDelCancelMenu } from '../keyboards/keyboards.js'
+import { selectActionAdminMenu } from '../keyboards/keyboards.js'
 import { outShedule } from '../utils.js'
 
 const viewShedule = new Scenes.BaseScene('VIEW_SHEDULE')
@@ -29,6 +29,15 @@ viewShedule.help(async ctx => {
 //-------------------------------------
 selectAction.start( async ctx => {
     await ctx.scene.enter('SELECT_ACTION')
+})
+//-------------------------------------------------
+selectAction.command('settings', async ctx => { 
+    if(ctx.session.isAdmin == '1')
+        await ctx.reply('Административное меню:', selectActionAdminMenu())
+    else {
+        await ctx.reply('Настройки доступны только администратору класса.')
+        await ctx.scene.enter('FIRST_STEP')
+    }
 })
 //------------------------------------------
 viewShedule.on('text', async ctx => {
