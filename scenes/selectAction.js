@@ -102,7 +102,7 @@ selectAction.on('text', async ctx => {
         const res = await myClass.getUrByNameId(resNames[0].name_id, class_id)
         await ctx.replyWithHTML(`<b><u>${res[0].name}</u></b>`)
         for(let item of res){
-            await ctx.reply(`${rDay.getNameDay(item.dayOfWeek)}, c ${item.time_s}, по ${item.time_e}`)
+            await ctx.reply(`${urDay.getNameDay(item.dayOfWeek)}, c ${item.time_s}, по ${item.time_e}`)
         }
     } else {
         for(let el of resNames){
