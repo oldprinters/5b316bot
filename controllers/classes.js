@@ -118,6 +118,12 @@ class MyClass extends BaseName {
         this.cu_id = (await call_q(sql)).insertId
         return this.cu_id
     }
+    //-----------------------------------------------
+    async searchLessonByName(ctx){
+        console.log("@@@@ searchLessonByName", ctx)
+        const sql = ``
+//        return await call_q(sql, 'searchLessonByName')
+    }
 }
 
 export default MyClass

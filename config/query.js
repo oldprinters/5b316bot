@@ -14,13 +14,13 @@ const query = async (sql) => {
     }
 }
 //++++++++++++++++++++++++++++++++
-const call_q = async (sql) => {
+const call_q = async (sql, message = '') => {
     try {
         let res = await query(sql)
         return res
     }
     catch (err) {
-        console.error("call_q():", sql)
+        console.error(`call_q() ${message}: `, sql)
         throw err
     }
 }

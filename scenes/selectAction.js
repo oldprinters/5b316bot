@@ -1,7 +1,7 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
 import QueryAdmin from "../controllers/queryAdmin.js"
 //import Users from '../controllers/users.js'
-//import MyClass from '../controllers/classes.js'
+import MyClass from '../controllers/classes.js'
 import UrDay from '../controllers/urDay.js'
 import { selectShedActionMenu, selectActionAdminMenu } from '../keyboards/keyboards.js'
 import { getRoleName, getSheduleToday } from '../utils.js'
@@ -88,6 +88,11 @@ selectAction.command('settings', async ctx => {
         await ctx.scene.enter('FIRST_STEP')
     }
 })
-selectAction.on('text', async ctx => {ctx.scene.reenter()})
+selectAction.on('text', async ctx => {
+    const myClass = new MyClass(ctx)
+    await myClass.init()
+    myClass.searchLessonByName(ctx)
+    ctx.scene.reenter()
+})
 
 export default selectAction
