@@ -52,6 +52,10 @@ viewShedule.on('text', async ctx => {
     }
 //    ctx.scene.reenter()
 })
+//-------------------------------------
+selectAction.start( async ctx => {
+    await ctx.scene.enter('SELECT_ACTION')
+})
 //----------------
 
 export default viewShedule
