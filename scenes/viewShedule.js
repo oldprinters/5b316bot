@@ -1,7 +1,7 @@
 import {Scenes, session} from "telegraf"
 //import Users from '../controllers/users.js'
-import MyClass from '../controllers/classes.js'
-//import UrTime from "../controllers/urTime.js"
+//import MyClass from '../controllers/classes.js'
+import { searchByLessonName } from '../utils.js'
 import UrDay from "../controllers/urDay.js"
 import { selectActionAdminMenu } from '../keyboards/keyboards.js'
 import { outShedule } from '../utils.js'
@@ -27,11 +27,11 @@ viewShedule.help(async ctx => {
     ctx.replyWithHTML(`<b><u>HELP</u></b>\nДополнительных функций нет, только просмотр.\nДля изменения расписания, обратитесь к администратору.`)
 })
 //-------------------------------------
-selectAction.start( async ctx => {
+viewShedule.start( async ctx => {
     await ctx.scene.enter('SELECT_ACTION')
 })
 //-------------------------------------------------
-selectAction.command('settings', async ctx => { 
+viewShedule.command('settings', async ctx => { 
     if(ctx.session.isAdmin == '1')
         await ctx.reply('Административное меню:', selectActionAdminMenu())
     else {
@@ -41,29 +41,7 @@ selectAction.command('settings', async ctx => {
 })
 //------------------------------------------
 viewShedule.on('text', async ctx => {
-    const myClass = new MyClass(ctx)
-    const urDay = new UrDay(ctx)
-    await myClass.init()
-    const resNames = await myClass.searchLessonByName(ctx)
-    const class_id = ctx.session.class_id
-    if(resNames.length == 0){
-        ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
-    } else if(resNames.length == 1){
-        const res = await myClass.getUrByNameId(resNames[0].name_id, class_id)
-        await ctx.replyWithHTML(`<b><u>${res[0].name}</u></b>`)
-        for(let item of res){
-            await ctx.reply(`${urDay.getNameDay(item.dayOfWeek)}, c ${item.time_s}, по ${item.time_e}`)
-        }
-    } else {
-        for(let el of resNames){
-            const res = await myClass.getUrByNameId(el.name_id, class_id)
-            await ctx.replyWithHTML(`<b><u>${el.name}</u></b>`)
-            for(let item of res){
-                await ctx.reply(`${urDay.getNameDay(item.dayOfWeek)}, c ${item.time_s}, по ${item.time_e}`)
-            }    
-        }
-    }
-//    ctx.scene.reenter()
+    await searchByLessonName(ctx)
 })
 //----------------
 

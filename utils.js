@@ -1,8 +1,35 @@
-//import moment from 'moment-timezone'
-
+import MyClass from './controllers/classes.js'
 import UrDay from "./controllers/urDay.js"
 
 //-------------------------------------------
+const outSearchResult = async (ctx, el, class_id) => {
+    const myClass = new MyClass(ctx)
+    const urDay = new UrDay(ctx)
+    const res = await myClass.getUrByNameId(el.name_id, class_id)
+    let strOut = `   <b><u>${res[0].name}</u></b>\n\n`
+
+    for(let item of res){
+        strOut += `${urDay.getNameDay(item.dayOfWeek)}, ${item.order_num} ур. <i>(${item.time_s.slice(0,5)} - ${item.time_e.slice(0,5)})</i>\n`
+    }
+    await ctx.replyWithHTML(strOut)
+}
+//-------------------------------------------
+const searchByLessonName = async (ctx) => {
+    const myClass = new MyClass(ctx)
+    const urDay = new UrDay(ctx)
+    await myClass.init()
+    const resNames = await myClass.searchLessonByName(ctx)
+    const class_id = ctx.session.class_id
+    if(resNames.length == 0){
+        ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
+    } else if(resNames.length == 1){
+        await outSearchResult(ctx, resNames[0], class_id)
+    } else {
+        for(let el of resNames){
+            await outSearchResult(ctx, el, class_id)
+        }
+    }
+}
 //-------------------------------------------
 const outShedule = async (listForDay, nLessons, today = false) => {
     let list = ''
@@ -118,4 +145,5 @@ const setCommands = async (ctx) => {
     ])
 }
 
-export { compareTime, getDateBD, getPause, getRoleName, getSheduleToday, inLesson, outShedule, outTime, outTimeDate, setCommands, sumTimes }
+export { compareTime, getDateBD, getPause, getRoleName, getSheduleToday, inLesson, 
+    outShedule, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }

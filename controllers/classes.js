@@ -137,7 +137,7 @@ class MyClass extends BaseName {
     //------------------------------------------------
     async getUrByNameId(name_id, class_id){
         const sql = `
-        SELECT ud.id, bn.name, ut.time_s, ut.time_e, ud.dayOfWeek, ud.dateStart, ud.dateEnd
+        SELECT ud.id, bn.name, ut.time_s, ut.time_e, ud.dayOfWeek, ud.dateStart, ud.dateEnd, ut.order_num
         FROM ivanych_bot.urDay ud
         LEFT JOIN basename bn ON bn.id = ud.name_id
         LEFT JOIN urTime ut ON ut.id = ud.urTimeId
