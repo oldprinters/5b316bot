@@ -18,15 +18,20 @@ const searchByLessonName = async (ctx) => {
     const myClass = new MyClass(ctx)
     const urDay = new UrDay(ctx)
     await myClass.init()
-    const resNames = await myClass.searchLessonByName(ctx)
-    const class_id = ctx.session.class_id
-    if(resNames.length == 0){
-        ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
-    } else if(resNames.length == 1){
-        await outSearchResult(ctx, resNames[0], class_id)
+    const seachDn = /^В ['пон', 'втор', 'сред', 'черв', 'пятн', 'суб', 'воскр']+/
+    if(ctx.message.text.trim().test(seachDn)){
+        console.log("!!! dn", ctx.message.text)
     } else {
-        for(let el of resNames){
-            await outSearchResult(ctx, el, class_id)
+        const resNames = await myClass.searchLessonByName(ctx)
+        const class_id = ctx.session.class_id
+        if(resNames.length == 0){
+            ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
+        } else if(resNames.length == 1){
+            await outSearchResult(ctx, resNames[0], class_id)
+        } else {
+            for(let el of resNames){
+                await outSearchResult(ctx, el, class_id)
+            }
         }
     }
 }
