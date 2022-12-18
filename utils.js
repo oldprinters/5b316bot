@@ -14,13 +14,42 @@ const outSearchResult = async (ctx, el, class_id) => {
     await ctx.replyWithHTML(strOut)
 }
 //-------------------------------------------
+const selectDay = (str) => {
+    console.log("!!! dn", str)
+    let nDay = -1
+    if(/^пон\S*/.test(str)){
+        nDay = 1
+    } else if(/^втор\S*/.test(str)){
+        nDay = 2
+    } else if(/^сред\S*/.test(str)){
+        nDay = 3
+    } else if(/^четв\S*/.test(str)){
+        nDay = 4
+    } else if(/^пятн\S*/.test(str)){
+        nDay = 5
+    } else if(/^суб\S*/.test(str)){
+        nDay = 6
+    } else if(/^вос\S*/.test(str)){
+        nDay = 0
+    } 
+    return nDay
+//    const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, i)
+}
+//-------------------------------------------
 const searchByLessonName = async (ctx) => {
     const myClass = new MyClass(ctx)
     const urDay = new UrDay(ctx)
     await myClass.init()
-    const seachDn = /^В ['пон', 'втор', 'сред', 'черв', 'пятн', 'суб', 'воскр']+/
-    if(ctx.message.text.trim().test(seachDn)){
-        console.log("!!! dn", ctx.message.text)
+    const seachDn = /\s['понедельник', 'вторник', 'среду', 'четверг', 'пятницу', 'субботу', 'воскресение']+/
+    if(seachDn.test(ctx.message.text.trim())){
+        const sdv = ctx.message.text.indexOf(' ')
+        const nDay = selectDay(ctx.message.text.slice(sdv + 1))
+        const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, nDay)    
+        const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
+        console.log("@nDay =", nDay)
+        await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
+        const list = await outShedule(listForDay, nLessons)
+        await ctx.replyWithHTML(list)
     } else {
         const resNames = await myClass.searchLessonByName(ctx)
         const class_id = ctx.session.class_id
