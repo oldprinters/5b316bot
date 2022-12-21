@@ -3,8 +3,8 @@ import {Scenes, session} from "telegraf"
 //import MyClass from '../controllers/classes.js'
 import { searchByLessonName } from '../utils.js'
 import UrDay from "../controllers/urDay.js"
-import { selectActionAdminMenu } from '../keyboards/keyboards.js'
-import { outShedule } from '../utils.js'
+import { selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
+import { helpForSearch, outShedule } from '../utils.js'
 
 const viewShedule = new Scenes.BaseScene('VIEW_SHEDULE')
 //------------
@@ -24,7 +24,10 @@ viewShedule.enter( async ctx => {
 })
 //--------------------------------------
 viewShedule.help(async ctx => {
-    ctx.replyWithHTML(`<b><u>HELP</u></b>\nДополнительных функций нет, только просмотр.\nДля изменения расписания, обратитесь к администратору.`)
+    let text = 'Для изменения расписания, обратитесь к администратору.\n\n'
+    if(ctx.session.isAdmin == '1')
+        text = ''
+    ctx.replyWithHTML(`<b><u>HELP</u></b>\n${text} ${helpForSearch()}`)
 })
 //-------------------------------------
 viewShedule.start( async ctx => {
@@ -35,8 +38,8 @@ viewShedule.command('settings', async ctx => {
     if(ctx.session.isAdmin == '1')
         await ctx.reply('Административное меню:', selectActionAdminMenu())
     else {
-        await ctx.reply('Настройки доступны только администратору класса.')
-        await ctx.scene.enter('FIRST_STEP')
+        await ctx.reply('Вы можете:', selectActionUserMenu())
+//        await ctx.scene.enter('FIRST_STEP')
     }
 })
 //------------------------------------------

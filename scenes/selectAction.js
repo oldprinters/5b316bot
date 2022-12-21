@@ -3,8 +3,8 @@ import QueryAdmin from "../controllers/queryAdmin.js"
 //import Users from '../controllers/users.js'
 import MyClass from '../controllers/classes.js'
 import UrDay from '../controllers/urDay.js'
-import { selectShedActionMenu, selectActionAdminMenu } from '../keyboards/keyboards.js'
-import { getRoleName, getSheduleToday, searchByLessonName } from '../utils.js'
+import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
+import { getRoleName, getSheduleToday, helpForSearch, outSelectedDay, searchByLessonName } from '../utils.js'
 
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
@@ -27,6 +27,11 @@ selectAction.enter(async ctx => {
         } else {
             await ctx.reply('На сегодня расписание отсутствует.')
         }
+        const d = new Date()
+        if(d.getHours() > 15){
+            const nDay = d.getDay()
+            await outSelectedDay(ctx, nDay + 1)
+        }
     } else {
         await ctx.reply('Для продолжения необходимо внести время начала уроков.')
     }
@@ -36,7 +41,7 @@ selectAction.enter(async ctx => {
 selectAction.help(ctx => {
     ctx.replyWithHTML('<b><u>Основное меню</u></b>\n' +
         'Выберите нужный пункт меню. Далее следуйте указаниям.\n' +
-        'Введите название урока (можно частично) и программа покажет когда на неделе проходят занятия.'
+        helpForSearch()
     )
 })
 //-------------
@@ -85,8 +90,7 @@ selectAction.command('settings', async ctx => {
     if(ctx.session.isAdmin == '1')
         await ctx.reply('Административное меню:', selectActionAdminMenu())
     else {
-        await ctx.reply('Настройки доступны только администратору класса.')
-        await ctx.scene.enter('FIRST_STEP')
+        await ctx.reply('Вы можете:', selectActionUserMenu())
     }
 })
 //------------------------------------------

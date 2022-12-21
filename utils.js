@@ -2,6 +2,12 @@ import MyClass from './controllers/classes.js'
 import UrDay from "./controllers/urDay.js"
 
 //-------------------------------------------
+const helpForSearch = () => {
+    return 'Введите название урока (можно частично) и программа покажет когда на неделе проходят занятия.\n\n'+
+    'Для просмотра расписания конкретного дня наберите: «в понедельник», «во вторник» и т.д.\n\n'+
+    'Можно запросить расписаие «завтра» или «послезавтра».'
+}
+//-------------------------------------------
 const outSearchResult = async (ctx, el, class_id) => {
     const myClass = new MyClass(ctx)
     const urDay = new UrDay(ctx)
@@ -9,7 +15,7 @@ const outSearchResult = async (ctx, el, class_id) => {
     let strOut = `   <b><u>${res[0].name}</u></b>\n\n`
 
     for(let item of res){
-        strOut += `${urDay.getNameDay(item.dayOfWeek)}, ${item.order_num} ур. <i>(${item.time_s.slice(0,5)} - ${item.time_e.slice(0,5)})</i>\n`
+        strOut += `${urDay.getNameDay(item.dayOfWeek)}, ${item.order_num + 1} ур. <i>(${item.time_s.slice(0,5)} - ${item.time_e.slice(0,5)})</i>\n`
     }
     await ctx.replyWithHTML(strOut)
 }
@@ -36,20 +42,50 @@ const selectDay = (str) => {
 //    const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, i)
 }
 //-------------------------------------------
+const getNDayByWord = (str) => {
+    const d = new Date()
+    let tDay = d.getDay()
+    
+    if(str.indexOf('после') >= 0){
+        tDay += 2
+    } else {
+        tDay += 1
+    }
+    if(tDay > 6)
+        tDay -= 7
+    return tDay
+}
+//-------------------------------------------
+const outSelectedDay = async (ctx, nDay) => {
+    if(nDay > 6)
+        nDay -= 7
+    const urDay = new UrDay(ctx)
+    const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, nDay)    
+    const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
+    console.log("@nDay =", nDay)
+    await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
+    const list = await outShedule(listForDay, nLessons)
+    await ctx.replyWithHTML(list)
+}
+//-------------------------------------------
 const searchByLessonName = async (ctx) => {
     const myClass = new MyClass(ctx)
     const urDay = new UrDay(ctx)
     await myClass.init()
-    const seachDn = /\s['понедельник', 'вторник', 'среду', 'четверг', 'пятницу', 'субботу', 'воскресение']+/
+    const seachDn = /^(Во|во|В|в)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)$/
+    const seachSdv = /^(завтра|послезавтра|Завтра|Послезавтра)$/
     if(seachDn.test(ctx.message.text.trim())){
         const sdv = ctx.message.text.indexOf(' ')
-        const nDay = selectDay(ctx.message.text.slice(sdv + 1))
+        const nDay = selectDay(ctx.message.text.slice(sdv + 1).trim())
         const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, nDay)    
         const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
         console.log("@nDay =", nDay)
         await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
         const list = await outShedule(listForDay, nLessons)
         await ctx.replyWithHTML(list)
+    } else if(seachSdv.test(ctx.message.text.trim())){
+        const nDay = getNDayByWord(ctx.message.text)
+        await outSelectedDay(ctx, nDay)
     } else {
         const resNames = await myClass.searchLessonByName(ctx)
         const class_id = ctx.session.class_id
@@ -179,5 +215,5 @@ const setCommands = async (ctx) => {
     ])
 }
 
-export { compareTime, getDateBD, getPause, getRoleName, getSheduleToday, inLesson, 
-    outShedule, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }
+export { compareTime, getDateBD, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
+    outSelectedDay, outShedule, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }
