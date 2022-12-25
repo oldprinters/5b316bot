@@ -21,7 +21,7 @@ const outSearchResult = async (ctx, el, class_id) => {
 }
 //-------------------------------------------
 const selectDay = (str) => {
-    console.log("!!! dn", str)
+    str = str.trim()
     let nDay = -1
     if(/^пон\S*/.test(str)){
         nDay = 1
@@ -66,6 +66,29 @@ const outSelectedDay = async (ctx, nDay) => {
     await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
     const list = await outShedule(listForDay, nLessons)
     await ctx.replyWithHTML(list)
+}
+//-------------------------------------------
+const getDnTime = (str) => {
+    str = str.trim()
+    const seachDn = /^(понед|вторн|сред|четв|пятн|суб|воскр)/
+    let obj = undefined //{dn: undefined, time_s: undefined, time_e: undefined}
+    if(seachDn.test(str)){
+        const arTime = str.match(/\d{1,2}:\d{2}/g)
+        if(arTime != null){
+            const dayName = str.slice(0, str.indexOf(' '))
+            obj = {
+                dn: selectDay(dayName), 
+                name: dayName,
+                time_s: arTime[0], 
+                time_e: arTime[1]
+            }
+        } else {
+            throw 'Проверьте значение времени. Формат: чч:мм чч:мм.'
+        }
+    } else {
+        throw 'Не разобрал день недели, проверьте, пожалуйста.'
+    }
+    return obj
 }
 //-------------------------------------------
 const searchByLessonName = async (ctx) => {
@@ -215,5 +238,5 @@ const setCommands = async (ctx) => {
     ])
 }
 
-export { compareTime, getDateBD, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
+export { compareTime, getDateBD, getDnTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
     outSelectedDay, outShedule, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }

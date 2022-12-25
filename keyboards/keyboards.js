@@ -32,6 +32,12 @@ const createNewClassMenu = () => {
     ])
 }
 //------------------------------------------
+const createAdditionalMenu = () => {
+    return Markup.inlineKeyboard([
+        Markup.button.callback("Добавить кружок", "createAdditional")
+    ])
+}
+//------------------------------------------
 const selectRoleMenu = () => {
     return Markup.inlineKeyboard([
         [Markup.button.callback("Ученик", "studentRole"),
@@ -86,17 +92,19 @@ const selectActionAdminMenu = () => {
     let arrAction = [
         [Markup.button.callback("Установка времени начала уроков", "setTimesUr")],
         [Markup.button.callback("Редактирование расписания уроков", "setSheduleDay")],
-        [Markup.button.callback("Добавить класс", "appendClass")]
+        [Markup.button.callback("Добавить класс", "appendClass")],
+        [Markup.button.callback("Дополнительные занятия", "additionalLessons")],
     ]
     return Markup.inlineKeyboard(arrAction)
 }
 //------------------------------------------------
 const selectActionUserMenu = () => {
     let arrAction = [
-        [Markup.button.callback("Добавить класс", "appendClass")]
+        [Markup.button.callback("Добавить класс", "appendClass")],
+        [Markup.button.callback("Дополнительные занятия", "additionalLessons")],
     ]
     return Markup.inlineKeyboard(arrAction)
 }
 
-export { createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, selectActionAdminMenu, selectActionUserMenu,
+export { createAdditionalMenu, createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, selectActionAdminMenu, selectActionUserMenu,
     selectRoleMenu, selectClassMenu, selectDay, selectShedActionMenu }

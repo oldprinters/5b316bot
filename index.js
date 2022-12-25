@@ -1,6 +1,8 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
+import dotenv from 'dotenv'
 import Users from './controllers/users.js'
 import MyClass from './controllers/classes.js'
+import additionalLesson from './scenes/additionalLessons.js'
 import createClass from './scenes/createClass.js'
 import createSchedule from './scenes/createSchedule.js'
 import selectClass from './scenes/selectClass.js'
@@ -13,10 +15,12 @@ import processRequests from './scenes/processRequests.js'
 import viewShedule from './scenes/viewShedule.js'
 import firstStep from './scenes/firstStep.js'
 
-const stage = new Scenes.Stage([createClass, createSchedule, firstStep, inpSheduleForDay, processRequests, 
+dotenv.config()
+
+const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, firstStep, inpSheduleForDay, processRequests, 
     selectClass, selectAction, sendQueryAdmin, setTimesUr, setSheduleDay, viewShedule])
 
-const bot = new Telegraf("5489794456:AAF89kL1SsQVK2-axyWO8VdARI8rlfAVxdM");
+const bot = new Telegraf(process.env.KEY);//"5489794456:AAF89kL1SsQVK2-axyWO8VdARI8rlfAVxdM"
 bot.use(session())
 bot.use(stage.middleware())
 

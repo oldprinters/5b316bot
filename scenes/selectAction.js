@@ -86,6 +86,11 @@ selectAction.start( async ctx => {
     await ctx.scene.enter('FIRST_STEP')
 })
 //-------------------------------------------------
+selectAction.action('additionalLessons', async ctx => {
+    await ctx.answerCbQuery()
+    await ctx.scene.enter('ADDITIONAL_LESSONS')
+})
+//-------------------------------------------------
 selectAction.command('settings', async ctx => { 
     if(ctx.session.isAdmin == '1')
         await ctx.reply('Административное меню:', selectActionAdminMenu())
