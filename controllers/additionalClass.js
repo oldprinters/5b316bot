@@ -28,7 +28,7 @@ class AdditionalClass extends BaseName {
         const name_id = await this.setName(item.name)
 
         const sql = `
-            INSERT INTO ivanych_bot.additionalLessons (tlgUserId, oi_id, name_id, note) 
+            INSERT INTO ivanych_bot.additionalLessons (tlgUserId, name_id, oi_id, note) 
             VALUES (${this.tlg_user_id}, ${name_id}, ${item.oi_id}, '${item.note}');
         `
         return await call_q(sql, 'addLesson')
@@ -36,9 +36,10 @@ class AdditionalClass extends BaseName {
     //------------------------------------
     async getListLessons(){
         const sql = `
-            SELECT a.id, bn.name bn_name, a.note
+            SELECT a.id, bn.name bn_name, a.note, oi.name oi_name
             FROM ivanych_bot.additionalLessons a
             LEFT JOIN basename bn ON bn.id = a.name_id
+            LEFT JOIN oper_interval oi ON a.oi_id = oi.id
             WHERE tlgUserId = ${this.tlg_user_id}
             AND a.active = 1
             ORDER BY bn.name
