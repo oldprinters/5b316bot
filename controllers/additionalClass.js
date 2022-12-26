@@ -44,7 +44,6 @@ class AdditionalClass extends BaseName {
             AND a.active = 1
             ORDER BY bn.name
         `
-        console.log(sql)
         return await call_q(sql, 'getListLessons')
     }
     //-------------------------------
