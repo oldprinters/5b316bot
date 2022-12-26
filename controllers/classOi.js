@@ -22,7 +22,6 @@ class ClassOi {
     //-------------------------------
     async saerchByName(name){
         const sql = `SELECT * FROM ivanych_bot.oper_interval WHERE name LIKE '${name}';`
-        console.log("WWQQ sql =", sql)
         return await call_q(sql, 'saerchByName')
     }
     //-------------------------------

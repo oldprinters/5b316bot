@@ -49,7 +49,6 @@ additionalLessons.on('text', async ctx => {
             return ctx.replyWithHTML(`<b>Ошибка</b>: ${err}`)
         }
         const res = await classOi.getOiName(str)
-        console.log("#@#@! res =", res)
         if(res != undefined){
             ctx.scene.session.state.oi_id = res.id
             ctx.scene.session.state.oi_name = res.name
@@ -61,7 +60,6 @@ additionalLessons.on('text', async ctx => {
         const st = ctx.scene.session.state
         st.note = ctx.message.text.trim().replaceAll("'", '"')
         let list = `<b><u>${st.name}</u></b>\n`
-        console.log("@@!", st)
         st.arALT.forEach(el => {list +=`${el.name} ${el.time_s} - ${el.time_e}\n`})
         list +=`\nВажно: <i>${st.note}</i>`
         ctx.replyWithHTML(`Всё правильно?\n${list}\nЗаписываем?`, queryYesNoMenu())
@@ -72,7 +70,6 @@ additionalLessons.on('text', async ctx => {
 additionalLessons.action('queryYes2', async ctx => {
     ctx.answerCbQuery()
     const st = ctx.scene.session.state
-    console.log("st =", st)
     const aC = new AdditionalClass(ctx)
     const res = await aC.addLesson(st)
     if(res.affecedRows > 0){
