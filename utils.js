@@ -223,16 +223,10 @@ return (ds <= dt && dt < de)
 }
 //-------------------------------------------
 const setCommands = async (ctx) => {
-    if(ctx.session.isAdmin == '1'){
-        await ctx.setMyCommands([
-            {command: 'start', description: 'Перезапуск'}, 
-            {command: 'help', description: 'Вызов справки'}, 
-            {command: 'settings', description: 'Настройки'},
-        ])
-    } else 
-        await ctx.setMyCommands([
-            {command: 'start', description: 'Перезапуск'}, 
-            {command: 'help', description: 'Вызов справки'}, 
+    await ctx.setMyCommands([
+        {command: 'start', description: 'Перезапуск'}, 
+        {command: 'help', description: 'Вызов справки'}, 
+        {command: 'settings', description: 'Настройки'},
     ])
 }
 
