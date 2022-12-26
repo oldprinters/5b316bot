@@ -48,10 +48,9 @@ class BaseName {
 //***************************************************** */
   async search(str){
     try {
-      const searchRegExp = /'/g
       const sql = ` SELECT id, name 
                     FROM basename 
-                    WHERE name = '${str.replace(searchRegExp ,'"')}' 
+                    WHERE name = '${str.replaceAll("'" ,'"')}' 
                      AND class_name = '${this.class_name}';`
       let rows = await call_q(sql)
       // console.log("search rows =", rows)

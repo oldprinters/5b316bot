@@ -14,11 +14,11 @@ additionalLessons.enter(async ctx => {
     } else {
         let list = ''
         for(let el of aLlist){
-            list += `${el.bn_name} ${el.oi_name}\n`
+            list += `<b><u>${el.bn_name}</u></b>\n${el.oi_name}\n`
             if(el.note.length > 0)
-                list += ` ${el.note}\n`
+                list += `<i>${el.note}</i>\n`
         }
-        await ctx.reply(`Зарегистрированные дополнительные занятия:\n${list}`)
+        await ctx.replyWithHTML(`Зарегистрированные дополнительные занятия:\n${list}`)
     }
     await ctx.reply('Для добавления нового занятия ответьте на вопросы:', createAdditionalMenu())
 })
@@ -75,6 +75,16 @@ additionalLessons.action('queryYes2', async ctx => {
     console.log("st =", st)
     const aC = new AdditionalClass(ctx)
     const res = await aC.addLesson(st)
+    if(res.affecedRows > 0){
+        const alt = new AddLessTime()
+        try {
+            await alt.addListLess(res.insertId, st.arALT)
+            ctx.reply('Данные сохранены.')
+        } catch(err){
+            ctx.reply(`ERROR ${err}`)
+        }
+    }
+        
     await ctx.scene.enter('SELECT_ACTION')
 })
 //-----------------------------------------
