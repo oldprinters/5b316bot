@@ -1,5 +1,6 @@
 import MyClass from './controllers/classes.js'
 import UrDay from "./controllers/urDay.js"
+import AdditionalClass from './controllers/additionalClass.js'
 
 //-------------------------------------------
 const helpForSearch = () => {
@@ -63,7 +64,13 @@ const outSelectedDay = async (ctx, nDay) => {
     const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, nDay)    
     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
     await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
-    const list = await outShedule(listForDay, nLessons)
+    let list = await outShedule(listForDay, nLessons)
+    const aC = new AdditionalClass(ctx)
+    const arrDop = await aC.getListLessonsTDay(nDay)
+    if(arrDop[0] != undefined)
+        arrDop.forEach(el => {
+            list += `<b>${el.bn_name}</b> ${el.time_s.slice(0, 5)} - ${el.time_e.slice(0, 5)}\n`
+        })
     await ctx.replyWithHTML(list)
 }
 //-------------------------------------------
@@ -152,11 +159,18 @@ const getRoleName = (code) => {
 //-------------------------------------------
 const getSheduleToday = async (ctx) => {
     const urDay = new UrDay()
+    const d = new Date()
+    const aC = new AdditionalClass(ctx)
     const arr = await urDay.getSheduleToday(ctx.session.classList[ctx.session.i].class_id)
+    const arrDop = await aC.getListLessonsTDay(d.getDay())
     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
     let list = ''
     if(nLessons != null && arr.size > 0)
         list = outShedule(arr, nLessons, true)
+    if(arrDop[0] != undefined)
+        arrDop.forEach(el => {
+            list += `<b>${el.bn_name}</b> ${time_s.slice(0, 5)} - ${time_s.slice(0, 5)}\n`
+        })
     return list
 }
 //-------------------------------------------

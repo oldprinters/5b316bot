@@ -1,5 +1,6 @@
 import { call_q } from '../config/query.js'
 import BaseName from './basename.js'
+import ClassOi from './classOi.js'
 //AdditionalClass.js класс работает с дополнительными занятиями
 /*
 CREATE TABLE `ivanych_bot`.`additionalLessons` (
@@ -32,6 +33,21 @@ class AdditionalClass extends BaseName {
             VALUES (${this.tlg_user_id}, ${name_id}, ${item.oi_id}, '${item.note}');
         `
         return await call_q(sql, 'addLesson')
+    }
+    //------------------------------------
+    async getListLessonsTDay(nDay){
+        const sql = `
+            SELECT a.id, bn.name bn_name, a.note, oi.name oi_name, atl.time_s, atl.time_e
+            FROM ivanych_bot.additionalLessons a
+            LEFT JOIN basename bn ON bn.id = a.name_id
+            LEFT JOIN oper_interval oi ON a.oi_id = oi.id
+            LEFT JOIN addLessTime atl ON atl.atl_id = a.id
+            WHERE tlgUserId = ${this.tlg_user_id}
+            AND atl.nDay = ${nDay}
+            AND a.active = 1
+            ORDER BY bn.name
+        `
+        return await call_q(sql, 'getListLessons')
     }
     //------------------------------------
     async getListLessons(){

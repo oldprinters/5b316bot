@@ -66,7 +66,7 @@ class ClassOi {
         return await call_q(sql, 'getOiById')
     }
     //-------------------------------
-    async getOiByDn(nDay){
+    getBdNameDay(nDay){
         let w = ''
         switch (nDay){
             case 0: w = 'vsk';break
@@ -77,6 +77,11 @@ class ClassOi {
             case 5: w = 'pt';break
             case 6: w = 'sb';break
         }
+        return w
+    }
+    //-------------------------------
+    async getOiByDn(nDay){
+        let w = getBdNameDay(nDay)
         const sql = `SELECT id FROM ivanych_bot.oper_interval WHERE ${w} = 1;`
         return await call_q(sql, 'getOiByDn')
     }

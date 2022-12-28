@@ -72,7 +72,8 @@ additionalLessons.action('queryYes2', async ctx => {
     const st = ctx.scene.session.state
     const aC = new AdditionalClass(ctx)
     const res = await aC.addLesson(st)
-    if(res.affecedRows > 0){
+    console.log("res)", res)
+    if(res.affectedRows > 0){
         const alt = new AddLessTime()
         try {
             await alt.addListLess(res.insertId, st.arALT)

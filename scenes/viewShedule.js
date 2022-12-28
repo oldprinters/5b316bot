@@ -1,6 +1,7 @@
 import {Scenes, session} from "telegraf"
 //import Users from '../controllers/users.js'
 //import MyClass from '../controllers/classes.js'
+import AdditionalClass from '../controllers/additionalClass.js'
 import { searchByLessonName } from '../utils.js'
 import UrDay from "../controllers/urDay.js"
 import { selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
@@ -9,6 +10,7 @@ import { helpForSearch, outShedule } from '../utils.js'
 const viewShedule = new Scenes.BaseScene('VIEW_SHEDULE')
 //------------
 viewShedule.enter( async ctx => {
+    const aC = new AdditionalClass(ctx)
     const urDay = new UrDay()
     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
     let list = ''
@@ -16,6 +18,11 @@ viewShedule.enter( async ctx => {
         list += '\n<u>' + urDay.getNameDay(i) + '</u>\n'
         const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, i)
         list += await outShedule(listForDay, nLessons)
+        const arrDop = await aC.getListLessonsTDay(i)
+        if(arrDop[0] != undefined)
+            arrDop.forEach(el => {
+                list += `<b>${el.bn_name}</b> ${el.time_s.slice(0, 5)} - ${el.time_e.slice(0, 5)}\n`
+            })
     }
     list += '\n<u>' + urDay.getNameDay(0) + '</u>\n'
     const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, 0)
