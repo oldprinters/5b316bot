@@ -39,7 +39,7 @@ additionalLessons.on('text', async ctx => {
         ctx.scene.session.state.name = ctx.message.text.trim().replaceAll("'", '"')
         ctx.reply('Введите, через запятую, дни недели, время начала и окончания занятий\n Пример: вторник 19:10 20:30, четверг 20:10 21:30 и т.д.')
     } else if(ctx.scene.session.state.arALT == undefined){
-        const str = ctx.message.text.trim().replaceAll("'", '"')
+        const str = ctx.message.text.trim().replaceAll("'", '"').toLowerCase()
         const classOi = new ClassOi()
         const alt = new AddLessTime()
         try {
