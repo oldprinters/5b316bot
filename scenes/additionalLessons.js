@@ -39,7 +39,7 @@ additionalLessons.action(/^idDelLess_\d{1,1000000}$/, async ctx => {
     const aC = new AdditionalClass(ctx)
     const res = await aC.delLessonById(id)
 
-        ctx.reply(`res = ${res}`)
+        ctx.reply('Кружок удален из списка.')
 })
 //------------------------------------------------------
 additionalLessons.action('createAdditional', ctx => {

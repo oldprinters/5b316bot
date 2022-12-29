@@ -40,10 +40,10 @@ const createAdditionalMenu = () => {
 }
 //-------------------------------------------
 const selectAddLessonMenu = (listLess) => {
-        const ar = listLess.map((el, i) => Markup.button.callback(el.name, `idDelLess_${el.id}`))
-        return Markup.inlineKeyboard([
+        const ar = listLess.map((el, i) => [Markup.button.callback(el.name, `idDelLess_${el.id}`)])
+        return Markup.inlineKeyboard(
             ar
-        ])
+        )
     }
 //------------------------------------------
 const selectRoleMenu = () => {
