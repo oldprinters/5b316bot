@@ -55,13 +55,14 @@ additionalLessons.on('text', async ctx => {
         } else {
             return ctx.reply('Ошибка сохранения данных.')
         }
-        ctx.reply('Введите примечание, адрес и т.д.')
+        ctx.reply('Введите примечание, адрес и т.д., либо дефис для пропуска.')
     } else if(ctx.scene.session.state.note == undefined){
         const st = ctx.scene.session.state
         st.note = ctx.message.text.trim().replaceAll("'", '"')
+        if(st.note == '-')st.note = ''
         let list = `<b><u>${st.name}</u></b>\n`
         st.arALT.forEach(el => {list +=`${el.name} ${el.time_s} - ${el.time_e}\n`})
-        list +=`\nВажно: <i>${st.note}</i>`
+        if(st.note != '')list +=`\nВажно: <i>${st.note}</i>`
         ctx.replyWithHTML(`Всё правильно?\n${list}\nЗаписываем?`, queryYesNoMenu())
     }
     
@@ -93,11 +94,7 @@ additionalLessons.action('queryNo2', async ctx => {
 })
 //-------------------------------------------------
 additionalLessons.command('settings', async ctx => { 
-    if(ctx.session.isAdmin == '1')
-        await ctx.reply('Административное меню:', selectActionAdminMenu())
-    else {
-        await ctx.reply('Вы можете:', selectActionUserMenu())
-    }
+    await ctx.scene.enter('SELECT_ACTION')
 })
 
 export default additionalLessons

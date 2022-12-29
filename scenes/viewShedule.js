@@ -38,12 +38,7 @@ viewShedule.start( async ctx => {
 })
 //-------------------------------------------------
 viewShedule.command('settings', async ctx => { 
-    if(ctx.session.isAdmin == '1')
-        await ctx.reply('Административное меню:', selectActionAdminMenu())
-    else {
-        await ctx.reply('Вы можете:', selectActionUserMenu())
-//        await ctx.scene.enter('FIRST_STEP')
-    }
+    await ctx.scene.enter('SELECT_ACTION')
 })
 //------------------------------------------
 viewShedule.on('text', async ctx => {
