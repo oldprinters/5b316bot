@@ -2,7 +2,7 @@ import {Telegraf, Markup, Scenes, session} from "telegraf"
 import AdditionalClass from '../controllers/additionalClass.js'
 import AddLessTime from '../controllers/addLessTime.js'
 import ClassOi from '../controllers/classOi.js'
-import {selectActionAdminMenu, selectActionUserMenu, createAdditionalMenu, queryYesNoMenu} from '../keyboards/keyboards.js'
+import {selectAddLessonMenu, createAdditionalMenu, queryYesNoMenu} from '../keyboards/keyboards.js'
 
 const additionalLessons = new Scenes.BaseScene('ADDITIONAL_LESSONS')
 //-----------------------------
@@ -28,10 +28,35 @@ additionalLessons.help( ctx => {
 })
 //------------------------------------------------------
 additionalLessons.start( ctx => {ctx.scene.enter('SELECT_ACTION')})
+//-------------------------------------------------
+additionalLessons.command('settings', async ctx => { 
+    await ctx.scene.enter('SELECT_ACTION')
+})
+//------------------------------------------------------
+additionalLessons.action(/^idDelLess_\d{1,1000000}$/, async ctx => {
+    ctx.answerCbQuery()
+    const id = parseInt(ctx.match[0].slice(10))
+    const aC = new AdditionalClass(ctx)
+    const res = await aC.delLessonById(id)
+
+        ctx.reply(`res = ${res}`)
+})
 //------------------------------------------------------
 additionalLessons.action('createAdditional', ctx => {
     ctx.answerCbQuery()
         ctx.reply('Введите название занятия:')
+})
+//------------------------------------------------------
+additionalLessons.action('deleteAdditional', async ctx => {
+    ctx.answerCbQuery()
+    const aC = new AdditionalClass(ctx)
+    const res = await aC.getListLessonsName()
+    if(res[0] != undefined)
+        ctx.replyWithHTML('<b>Удаление дополнительного занятия</b>\nДанное действие нельзя будет отменить.', selectAddLessonMenu(res))
+    else {
+        await ctx.replyWithHTML('Зарегистрированных кружков пока нет.')
+        return await ctx.scene.enter('SELECT_ACTION')
+    }
 })
 //-------------------------------------------------------
 additionalLessons.on('text', async ctx => {
@@ -90,10 +115,6 @@ additionalLessons.action('queryYes2', async ctx => {
 additionalLessons.action('queryNo2', async ctx => {
     await ctx.answerCbQuery()
     await ctx.reply('Не сохраняем.')
-    await ctx.scene.enter('SELECT_ACTION')
-})
-//-------------------------------------------------
-additionalLessons.command('settings', async ctx => { 
     await ctx.scene.enter('SELECT_ACTION')
 })
 

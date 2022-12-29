@@ -73,6 +73,23 @@ class AdditionalClass extends BaseName {
         `
         return await call_q(sql, 'getListLessons')
     }
+    //------------------------------------
+    async delLessonById(id){
+        const sql = `UPDATE ivanych_bot.additionalLessons SET active = 0 WHERE (id = ${id});`
+        return await call_q(sql, 'delLessonById')
+    }
+    //------------------------------------
+    async getListLessonsName(){
+        const sql = `
+            SELECT a.id, bn.name
+            FROM ivanych_bot.additionalLessons a
+            LEFT JOIN basename bn ON bn.id = a.name_id
+            WHERE tlgUserId = ${this.tlg_user_id}
+            AND a.active = 1
+            ORDER BY bn.name
+        `
+        return await call_q(sql, 'getListLessonsName')
+    }
     //-------------------------------
     async saerchByName(name){
         const sql = `SELECT * FROM ivanych_bot.additionalLessons WHERE name LIKE '${name}';`
