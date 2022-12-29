@@ -18,11 +18,7 @@ viewShedule.enter( async ctx => {
         list += '\n<u>' + urDay.getNameDay(i) + '</u>\n'
         const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, i)
         list += await outShedule(listForDay, nLessons)
-        const arrDop = await aC.getListLessonsTDay(i)
-        if(arrDop[0] != undefined)
-            arrDop.forEach(el => {
-                list += `<b>${el.bn_name}</b> ${el.time_s.slice(0, 5)} - ${el.time_e.slice(0, 5)}\n`
-            })
+        list += await aC.getListForDay(i)
     }
     list += '\n<u>' + urDay.getNameDay(0) + '</u>\n'
     const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, 0)

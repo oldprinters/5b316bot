@@ -58,6 +58,7 @@ const getNDayByWord = (str) => {
 }
 //-------------------------------------------
 const outSelectedDay = async (ctx, nDay) => {
+    const aC = new AdditionalClass(ctx)
     if(nDay > 6)
         nDay -= 7
     const urDay = new UrDay(ctx)
@@ -65,12 +66,7 @@ const outSelectedDay = async (ctx, nDay) => {
     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
     await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
     let list = await outShedule(listForDay, nLessons)
-    const aC = new AdditionalClass(ctx)
-    const arrDop = await aC.getListLessonsTDay(nDay)
-    if(arrDop[0] != undefined)
-        arrDop.forEach(el => {
-            list += `<b>${el.bn_name}</b> ${el.time_s.slice(0, 5)} - ${el.time_e.slice(0, 5)}\n`
-        })
+    list += await aC.getListForDay(d.getDay())
     await ctx.replyWithHTML(list)
 }
 //-------------------------------------------
@@ -162,15 +158,11 @@ const getSheduleToday = async (ctx) => {
     const d = new Date()
     const aC = new AdditionalClass(ctx)
     const arr = await urDay.getSheduleToday(ctx.session.classList[ctx.session.i].class_id)
-    const arrDop = await aC.getListLessonsTDay(d.getDay())
     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
     let list = ''
     if(nLessons != null && arr.size > 0)
-        list = outShedule(arr, nLessons, true)
-    if(arrDop[0] != undefined)
-        arrDop.forEach(el => {
-            list += `<b>${el.bn_name}</b> ${time_s.slice(0, 5)} - ${time_s.slice(0, 5)}\n`
-        })
+        list = await outShedule(arr, nLessons, true)
+    list += await aC.getListForDay(d.getDay())
     return list
 }
 //-------------------------------------------

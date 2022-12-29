@@ -35,6 +35,17 @@ class AdditionalClass extends BaseName {
         return await call_q(sql, 'addLesson')
     }
     //------------------------------------
+    async getListForDay(nDay){
+        let list = ''
+        const res = await this.getListLessonsTDay(nDay)
+        if(res[0] != undefined)
+            res.forEach(el => {
+                list += `<b>${el.bn_name}</b> ${el.time_s.slice(0, 5)} - ${el.time_e.slice(0, 5)}\n`
+                if(el.note != '')list += `    <i>${el.note}</i>\n`
+            })
+        return list
+    }
+    //------------------------------------
     async getListLessonsTDay(nDay){
         const sql = `
             SELECT a.id, bn.name bn_name, a.note, oi.name oi_name, atl.time_s, atl.time_e
@@ -47,7 +58,7 @@ class AdditionalClass extends BaseName {
             AND a.active = 1
             ORDER BY bn.name
         `
-        return await call_q(sql, 'getListLessons')
+        return await call_q(sql, 'getListLessonsTDay')
     }
     //------------------------------------
     async getListLessons(){
