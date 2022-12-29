@@ -38,8 +38,8 @@ additionalLessons.action(/^idDelLess_\d{1,1000000}$/, async ctx => {
     const id = parseInt(ctx.match[0].slice(10))
     const aC = new AdditionalClass(ctx)
     const res = await aC.delLessonById(id)
-
-        ctx.reply('Кружок удален из списка.')
+    await ctx.reply('Кружок удален из списка.')
+    await ctx.scene.enter('SELECT_ACTION')
 })
 //------------------------------------------------------
 additionalLessons.action('createAdditional', ctx => {
