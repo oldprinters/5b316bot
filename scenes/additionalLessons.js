@@ -2,7 +2,7 @@ import {Telegraf, Markup, Scenes, session} from "telegraf"
 import AdditionalClass from '../controllers/additionalClass.js'
 import AddLessTime from '../controllers/addLessTime.js'
 import ClassOi from '../controllers/classOi.js'
-import {createNewClassMenu, createAdditionalMenu, queryYesNoMenu, selectRoleMenu} from '../keyboards/keyboards.js'
+import {selectActionAdminMenu, selectActionUserMenu, createAdditionalMenu, queryYesNoMenu} from '../keyboards/keyboards.js'
 
 const additionalLessons = new Scenes.BaseScene('ADDITIONAL_LESSONS')
 //-----------------------------
@@ -90,6 +90,14 @@ additionalLessons.action('queryNo2', async ctx => {
     await ctx.answerCbQuery()
     await ctx.reply('Не сохраняем.')
     await ctx.scene.enter('SELECT_ACTION')
+})
+//-------------------------------------------------
+additionalLessons.command('settings', async ctx => { 
+    if(ctx.session.isAdmin == '1')
+        await ctx.reply('Административное меню:', selectActionAdminMenu())
+    else {
+        await ctx.reply('Вы можете:', selectActionUserMenu())
+    }
 })
 
 export default additionalLessons
