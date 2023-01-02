@@ -5,6 +5,19 @@ import BaseName from './basename.js'
 //событие может быть привязано к чему-либо, как-то название урока, доб занятие, времени
 //уроки и занятия подразумеваются ближайшие, иначе дата
 //напоминалки для класса
+/*
+CREATE TABLE `events_class` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `class_id` int(10) unsigned NOT NULL,
+  `client_id` int(10) unsigned NOT NULL,
+  `roleList` varchar(15) NOT NULL DEFAULT '0,1' COMMENT '0',
+  `cronTab` varchar(45) NOT NULL DEFAULT '* * * * *',
+  `userORclass` enum('user','class') DEFAULT NULL,
+  `cycle` tinyint(4) DEFAULT 0,
+  `active` tinyint(4) DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+*/
 
 class EventsClass extends BaseName {
     class
