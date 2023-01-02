@@ -15,6 +15,12 @@ import processRequests from './scenes/processRequests.js'
 import viewShedule from './scenes/viewShedule.js'
 import firstStep from './scenes/firstStep.js'
 
+import * as cron from 'node-cron'
+
+cron.schedule('* */10 * * * *', () => {
+    console.log(Date());
+  });
+
 dotenv.config()
 
 const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, firstStep, inpSheduleForDay, processRequests, 
