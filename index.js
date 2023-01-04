@@ -12,18 +12,19 @@ import setSheduleDay from './scenes/setSheduleDay.js'
 import inpSheduleForDay from './scenes/inpSheduleForDay.js'
 import sendQueryAdmin from './scenes/queryMessage.js'
 import processRequests from './scenes/processRequests.js'
+import remember from './scenes/remember.js'
 import viewShedule from './scenes/viewShedule.js'
 import firstStep from './scenes/firstStep.js'
 
 import * as cron from 'node-cron'
 
-cron.schedule('* */10 * * * *', () => {
-    console.log(Date());
-  });
+//cron.schedule('* */10 * * * *', () => {
+//    console.log(Date());
+//  });
 
 dotenv.config()
 
-const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, firstStep, inpSheduleForDay, processRequests, 
+const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, firstStep, inpSheduleForDay, processRequests, remember,
     selectClass, selectAction, sendQueryAdmin, setTimesUr, setSheduleDay, viewShedule])
 
 const bot = new Telegraf(process.env.KEY);//"5489794456:AAF89kL1SsQVK2-axyWO8VdARI8rlfAVxdM"

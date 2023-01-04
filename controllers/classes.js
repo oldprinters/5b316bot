@@ -64,6 +64,18 @@ class MyClass extends BaseName {
         `
         return (await call_q(sql))[0]
     }
+    //------------------------------------------- перечень уроков класса
+    async getLessonsList(class_id){
+        const sql = `
+            SELECT u.name_id, bn.name
+            FROM ivanych_bot.urDay u
+            LEFT JOIN basename bn ON bn.id = u.name_id
+            WHERE class_id = ${class_id}
+            GROUP BY name_id
+            ORDER BY bn.name
+        `
+        return await call_q(sql)
+    }
     //-------------------------------------------
     async searchClasses(user_id = 0){
         if(!user_id)

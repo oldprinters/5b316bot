@@ -98,6 +98,10 @@ selectAction.command('settings', async ctx => {
         await ctx.reply('Вы можете:', selectActionUserMenu())
     }
 })
+//-------------------------------------------------
+selectAction.command('remember', ctx => { 
+    ctx.scene.enter('REMEMBER')
+})
 //------------------------------------------
 selectAction.on('text', async ctx => {
     await searchByLessonName(ctx)

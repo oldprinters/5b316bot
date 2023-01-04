@@ -40,11 +40,11 @@ const createAdditionalMenu = () => {
 }
 //-------------------------------------------
 const selectAddLessonMenu = (listLess) => {
-        const ar = listLess.map((el, i) => [Markup.button.callback(el.name, `idDelLess_${el.id}`)])
-        return Markup.inlineKeyboard(
-            ar
-        )
-    }
+    const ar = listLess.map((el, i) => [Markup.button.callback(el.name, `idDelLess_${el.id}`)])
+    return Markup.inlineKeyboard(
+        ar
+    )
+}
 //------------------------------------------
 const selectRoleMenu = () => {
     return Markup.inlineKeyboard([
@@ -113,6 +113,22 @@ const selectActionUserMenu = () => {
     ]
     return Markup.inlineKeyboard(arrAction)
 }
+//------------------------------------------------
+const selectLesson = (listLess) => {
+    const ar = listLess.map(el => [Markup.button.callback(el.name, `iSelectedLess_${el.name_id}`)])
+    return Markup.inlineKeyboard(
+        ar
+    )
+}
+//------------------------------------------------
+const selectRemember = () => {
+    let arrAction = [
+        [Markup.button.callback("К следующему уроку", "nextLesson")],
+        [Markup.button.callback("Словами", "menyWords")],
+        [Markup.button.callback("На дату", "setDate")],
+    ]
+    return Markup.inlineKeyboard(arrAction)
+}
 
 export { createAdditionalMenu, createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, selectActionAdminMenu, selectActionUserMenu,
-    selectAddLessonMenu, selectRoleMenu, selectClassMenu, selectDay, selectShedActionMenu }
+    selectAddLessonMenu, selectLesson, selectRemember, selectRoleMenu, selectClassMenu, selectDay, selectShedActionMenu }

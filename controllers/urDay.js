@@ -44,6 +44,18 @@ class UrDay extends BaseName {
         }
     }
     //------------------------
+    getNameDayWhenEmpty(n){
+        switch(n){
+            case 0: return 'воскресенье'
+            case 1: return 'понедельник'
+            case 2: return 'вторник'
+            case 3: return 'среду'
+            case 4: return 'четверг'
+            case 5: return 'пятницу'
+            case 6: return 'субботу'
+        }
+    }
+    //------------------------
     getNameDayWhen(n){
         switch(n){
             case 0: return 'В воскресенье'
@@ -54,6 +66,18 @@ class UrDay extends BaseName {
             case 5: return 'В пятницу'
             case 6: return 'В субботу'
         }
+    }
+    //------------------------------------ время начала первого урока в заданный д/н
+    async getTimeFirstUr(class_id, dayOfWeek) {
+        const sql = `
+            SELECT time_s
+            FROM ivanych_bot.urDay ud
+            LEFT JOIN urTime ut ON ut.id = ud.urTimeId
+            WHERE ud.class_id = ${class_id}
+            AND ud.dayOfWeek = ${dayOfWeek}
+            ORDER BY time_s
+        `
+        return (await call_q(sql))[0]
     }
     //------------------------------------ запрос конкретного урока
     async getUrForDay(class_id, dayOfWeek, urNum){

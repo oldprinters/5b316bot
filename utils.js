@@ -66,7 +66,7 @@ const outSelectedDay = async (ctx, nDay) => {
     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
     await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
     let list = await outShedule(listForDay, nLessons)
-    list += await aC.getListForDay(d.getDay())
+    list += await aC.getListForDay(nDay)//d.getDay())
     await ctx.replyWithHTML(list)
 }
 //-------------------------------------------
@@ -175,6 +175,13 @@ const getDateBD = (str = undefined) => {
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
 }
 //-------------------------------------------
+const getDateTimeBD = (d = undefined) => {
+    if(d == undefined){ 
+        d = new Date()
+    }
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:00`
+}
+//-------------------------------------------
 const compareTime = (t1, t2, dt = 45) => {
     const tt1 = new Date(`2011-05-20 ${t1}`)
     const tt2 = new Date(`2011-05-20 ${t2}`)
@@ -205,6 +212,12 @@ const outTimeDate = (d) => {
 	return (tt > 9?'':'0') + tt + ':' + (mm > 9?'':'0') + mm
 }
 //-------------------------------------------
+const outDate = (dd, r = '.') => {
+    let m = dd.getMonth() + 1
+	let d = dd.getDate()
+	return (d > 9?'':'0') + d + r + (m > 9?'':'0') + m + r + dd.getFullYear()
+}
+//-------------------------------------------
 const tuMin = (t) => {
     const arT = t.split(':')
     return arT[0]*60 + parseInt(arT[1])
@@ -233,8 +246,9 @@ const setCommands = async (ctx) => {
         {command: 'start', description: 'Перезапуск'}, 
         {command: 'help', description: 'Вызов справки'}, 
         {command: 'settings', description: 'Настройки'},
+        {command: 'remember', description: 'Напоминалки'},
     ])
 }
 
-export { compareTime, getDateBD, getDnTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
-    outSelectedDay, outShedule, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }
+export { compareTime, getDateBD, getDateTimeBD, getDnTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
+    outDate, outSelectedDay, outShedule, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }
