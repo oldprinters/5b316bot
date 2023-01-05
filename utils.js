@@ -1,6 +1,7 @@
-import MyClass from './controllers/classes.js'
-import UrDay from "./controllers/urDay.js"
 import AdditionalClass from './controllers/additionalClass.js'
+import MyClass from './controllers/classes.js'
+import EventsClass from './controllers/eventsClass.js'
+import UrDay from "./controllers/urDay.js"
 
 //-------------------------------------------
 const helpForSearch = () => {
@@ -64,10 +65,9 @@ const outSelectedDay = async (ctx, nDay) => {
     const urDay = new UrDay(ctx)
     const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, nDay)    
     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
-    await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
     let list = await outShedule(listForDay, nLessons)
     list += await aC.getListForDay(nDay)//d.getDay())
-    await ctx.replyWithHTML(list)
+    await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>\n\n${list}`)
 }
 //-------------------------------------------
 const getDnTime = (str) => {
@@ -249,6 +249,11 @@ const setCommands = async (ctx) => {
         {command: 'remember', description: 'Напоминалки'},
     ])
 }
+//--------------------------------------------
+const getNotesTime = async () => {
+    const eC = new EventsClass()
+    await eC.getNotes()
+}
 
-export { compareTime, getDateBD, getDateTimeBD, getDnTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
+export { compareTime, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
     outDate, outSelectedDay, outShedule, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }

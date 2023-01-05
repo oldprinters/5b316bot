@@ -32,6 +32,10 @@ viewShedule.help(async ctx => {
         text = ''
     ctx.replyWithHTML(`<b><u>HELP</u></b>\n${text} ${helpForSearch()}`)
 })
+//-------------------------------------------------
+viewShedule.command('remember', ctx => { 
+    ctx.scene.enter('REMEMBER')
+})
 //-------------------------------------
 viewShedule.start( async ctx => {
     await ctx.scene.enter('SELECT_ACTION')

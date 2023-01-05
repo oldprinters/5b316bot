@@ -9,7 +9,7 @@ import { outDate } from '../utils.js'
 const remember = new Scenes.BaseScene('REMEMBER')
 //--------------------------------------
 remember.enter(async ctx => {
-        await ctx.reply('Что хотим запомнить?', selectRemember())
+        await ctx.reply('Что хотим запомнить?', selectRemember(ctx.session.class_id))
 })
 //--------------------------------------
 remember.start( ctx => ctx.scene.enter('FIRST_STEP'))
@@ -27,14 +27,9 @@ remember.action('nextLesson', async ctx => {
     }
 })
 //--------------------------------------
-remember.action('menyWords', async ctx => {
+remember.action('freeWords', async ctx => {
     ctx.answerCbQuery()
-    ctx.reply('Внемлю:')
-})
-//--------------------------------------
-remember.action('setDate', async ctx => {
-    ctx.answerCbQuery()
-    ctx.reply('Внемлю:')
+    ctx.scene.enter('FREE_WORDS')
 })
 //---------------------------------------
 remember.action(/^iSelectedLess_\d+$/, async ctx => {
@@ -63,27 +58,32 @@ remember.action(/^iSelectedLess_\d+$/, async ctx => {
     const urDay = new UrDay(ctx)
     const fTime = await urDay.getTimeFirstUr(ctx.session.class_id, d.getDay())
     const arrTime = fTime.time_s.split(':')
-    console.log('fTime =', fTime.time_s)
-    d.setMinutes(arrTime[1])
-    d.setHours(arrTime[0])
-    console.log("####", d)
+    d.setHours(arrTime[0], arrTime[1] - 90)
+    console.log("дата и время события", d)
     const urName = await myClass.getUrByNameId(name_id, ctx.session.class_id)
     ctx.reply(`${urName[0].name}. Введите текст напоминания:`)
     ctx.scene.session.state.rmDay = d
+    ctx.scene.session.state.urName = urName[0].name
 })
 //-------------------------------------------------------------------------------------
 remember.on('text', async ctx => {
     ctx.scene.session.state.msgText = ctx.message.text.replaceAll("'", '"').replaceAll("`", '"').trim()
     const d = ctx.scene.session.state.rmDay
-    const urDay = new UrDay(ctx)
-    const nameDay = urDay.getNameDayWhenEmpty(d.getDay())
-    ctx.reply(`Напоминание запланировано на ${nameDay} ${outDate(d)}: ${ctx.scene.session.state.msgText}`, queryYesNoMenu())
+    if(d == undefined){
+        await ctx.reply('Нужен ответ на вопрос!')
+        await ctx.scene.reenter()
+    } else {
+        const urDay = new UrDay(ctx)
+        const nameDay = urDay.getNameDayWhenEmpty(d.getDay())
+        ctx.reply(`Напоминание запланировано на ${nameDay} ${outDate(d)}: ${ctx.scene.session.state.msgText}`, queryYesNoMenu())
+    }
 })
 //-------------------------------------------------------------
 remember.action('queryYes2', async ctx => {
     ctx.answerCbQuery()
     const eC = new EventsClass(ctx)
-    eC.addEvent(ctx.scene.session.state.rmDay, ctx.scene.session.state.msgText)
+    eC.addEvent(ctx.scene.session.state.rmDay, ctx.scene.session.state.urName + '. ' + ctx.scene.session.state.msgText)
+    ctx.scene.enter('SELECT_ACTION')
 })
 //-------------------------------------------------------------
 remember.action('queryNo2', async ctx => {

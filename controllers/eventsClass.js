@@ -1,6 +1,7 @@
 import { call_q } from '../config/query.js'
-import BaseName from './basename.js'
+import axios from 'axios'
 import { getDateTimeBD } from '../utils.js'
+import {Telegraf} from "telegraf"
 //eventsClass.js класс работает с событиями (каникулы, экскурсии и т.п.)
 //каждое событие имеет дату и время начала и окончания. Дата окончания включена в событие.
 //событие может быть привязано к чему-либо, как-то название урока, доб занятие, времени
@@ -9,24 +10,88 @@ import { getDateTimeBD } from '../utils.js'
 /*
 */
 
-class EventsClass extends BaseName {
+class EventsClass {
     class
     user_id
+    arrEvents = []
+    sending = false
     constructor(ctx) {
-        super('events_class')
-        this.user_id = ctx.from.id
-        this.class_id = ctx.session.class_id
+        if(ctx){
+            this.user_id = ctx.from.id
+            this.class_id = ctx.session.class_id
+        }
     }
     //------------------------------------
-    async searchEvents( class_id){}
+    async searchEvents(class_id){}
     //------------------------------------
     async addEvent(dateTime, str){
-        console.log("Добавить addEvent str =",str)
         const sql = `
-            INSERT INTO ivanych_bot.events_class (class_id, client_id, cronTab, dataTime, cycle) 
-            VALUES (${this.class_id}, '${this.user_id}', '', '${getDateTimeBD(dateTime)}', 0);
+            INSERT INTO ivanych_bot.events_class (class_id, client_id, cronTab, dataTime, text, cycle) 
+            VALUES (${this.class_id}, '${this.user_id}', '', '${getDateTimeBD(dateTime)}', '${str}',0);
         `
         return await call_q(sql, 'addEvent')
+    }
+    //--------------------------------------
+    async getNotesByTime(){
+        const sql = `
+            SELECT * FROM ivanych_bot.events_class
+            WHERE dataTime < NOW()
+            AND active > 0
+            ;
+        `
+        return await call_q(sql, 'getNotesByTime')
+    }
+    //----------------------------------------
+    async sendTlgMessage(msg){
+        const url = `https://api.telegram.org/bot${process.env.KEY}/sendMessage`
+        return await axios.get(url, { params: {
+            'chat_id': msg.client_id, 
+            'text': msg.text,
+            parse_mode : 'markdown',
+            reply_markup : JSON.stringify({
+                inline_keyboard : [
+                    [
+                        {
+                            text: 'Принято',
+                            callback_data: `answerAccepted${msg.id}`
+                        }
+                    ]
+                ]
+            })}
+        })
+//        console.log("@@@@ sendTlgMessage url =", url)
+//        return await axios.get(url)
+    }
+    //---------------------------------------
+    async updateActive(id, active){
+        const sql = `
+            UPDATE ivanych_bot.events_class SET active = ${active} WHERE (id = ${id});
+        `
+        return await call_q(sql, 'updateActive')
+    }
+    //---------------------------------------
+    async sendMsg() {
+        this.sending = true
+        while(this.arrEvents.length > 0){
+            const msg = this.arrEvents.pop()
+            if(msg.userORclass == 'user'){
+                if(msg.active > 0){
+                    this.updateActive(msg.id, msg.active - 1)
+                    console.log("sendMsg user msg =", msg)
+                    if(msg.active%5 == 0)
+                        await this.sendTlgMessage(msg)
+                }
+            } else {
+                console.log("sendMsg class msg =", msg)
+            }
+        }
+        this.sending = false
+    }
+    //---------------------------------------
+    async getNotes(){
+        this.arrEvents = this.arrEvents.concat(await this.getNotesByTime())
+        if(!this.sending)
+            this.sendMsg()
     }
 }
 

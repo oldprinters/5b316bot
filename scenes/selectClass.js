@@ -12,8 +12,7 @@ selectClass.enter(async ctx => {
 selectClass.start( ctx => ctx.scene.enter('FIRST_STEP'))
 //-------------------------------------------------
 selectClass.command('remember', async ctx => { 
-    await ctx.reply('Для привязки к урокам нужно выбрать класс.')
-    ctx.scene.enter('FIRST_STEP')
+    ctx.scene.enter('REMEMBER')
 })
 //--------------------------------------
 selectClass.help(async ctx => {

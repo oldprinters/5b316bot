@@ -1,10 +1,10 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
 import dotenv from 'dotenv'
-import Users from './controllers/users.js'
-import MyClass from './controllers/classes.js'
 import additionalLesson from './scenes/additionalLessons.js'
 import createClass from './scenes/createClass.js'
 import createSchedule from './scenes/createSchedule.js'
+import EventsClass from './controllers/eventsClass.js'
+import freeWords from './scenes/rememberWords.js'
 import selectClass from './scenes/selectClass.js'
 import selectAction from './scenes/selectAction.js'
 import setTimesUr from './scenes/setTimesUr.js'
@@ -17,14 +17,11 @@ import viewShedule from './scenes/viewShedule.js'
 import firstStep from './scenes/firstStep.js'
 
 import * as cron from 'node-cron'
-
-//cron.schedule('* */10 * * * *', () => {
-//    console.log(Date());
-//  });
+import { getNotesTime } from './utils.js'
 
 dotenv.config()
 
-const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, firstStep, inpSheduleForDay, processRequests, remember,
+const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, firstStep, freeWords, inpSheduleForDay, processRequests, remember,
     selectClass, selectAction, sendQueryAdmin, setTimesUr, setSheduleDay, viewShedule])
 
 const bot = new Telegraf(process.env.KEY);//"5489794456:AAF89kL1SsQVK2-axyWO8VdARI8rlfAVxdM"
@@ -33,24 +30,16 @@ bot.use(stage.middleware())
 
 bot.start(async ctx => {
     await ctx.scene.enter('FIRST_STEP')
-    // await ctx.setMyCommands([{'command': 'start', 'description': 'Перезапуск'}, {'command': 'help', 'description': 'Вызов справки'}])
-    // const myClass = new MyClass(ctx)
-    // await myClass.init()
-    // const classList = await myClass.searchClasses()
-    // if(classList.length == 0){
-    //     ctx.scene.enter('CREATE_CLASS')
-    // } else {
-    //     ctx.session.classList = classList
-    //     if(classList.length > 1){
-    //         ctx.scene.enter('SELECT_CLASS')
-    //     } else {
-    //         ctx.session.i = 0   //index текущего класса в массиве
-    //         ctx.session.class_id = classList[0].class_id
-    //         ctx.scene.enter('SELECT_ACTION')
-    //     }
-    // }
 });
-//getMainMenu()
+
+bot.action(/^answerAccepted\d{1,12}/, ctx => {
+    ctx.answerCbQuery()
+    const eC = new EventsClass(ctx)
+    const ec_id = ctx.match[0].slice(14)
+    eC.updateActive(ec_id, 0)
+})
+
+cron.schedule('* * * * *', () => {getNotesTime()});
 
 bot.launch()
     .then(res => {
