@@ -37,6 +37,7 @@ bot.action(/^answerAccepted\d{1,12}/, ctx => {
     const eC = new EventsClass(ctx)
     const ec_id = ctx.match[0].slice(14)
     eC.updateActive(ec_id, 0)
+    ctx.replyWithHTML('<i>Готов к выполнению новых заданий! Обращайтесь.</i>')
 })
 
 cron.schedule('* * * * *', () => {getNotesTime()});

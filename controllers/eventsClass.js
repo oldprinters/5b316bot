@@ -18,13 +18,14 @@ class EventsClass {
     constructor(ctx) {
         if(ctx){
             this.user_id = ctx.from.id
-            this.class_id = ctx.session.class_id
+            this.class_id = ctx.session.class_id | 0
         }
     }
     //------------------------------------
     async searchEvents(class_id){}
     //------------------------------------
     async addEvent(dateTime, str){
+        str = str.replaceAll("'", '"').trim()
         const sql = `
             INSERT INTO ivanych_bot.events_class (class_id, client_id, cronTab, dataTime, text, cycle) 
             VALUES (${this.class_id}, '${this.user_id}', '', '${getDateTimeBD(dateTime)}', '${str}',0);
@@ -46,8 +47,8 @@ class EventsClass {
         const url = `https://api.telegram.org/bot${process.env.KEY}/sendMessage`
         return await axios.get(url, { params: {
             'chat_id': msg.client_id, 
-            'text': msg.text,
-            parse_mode : 'markdown',
+            'text': '<b><u>Внимание!</u></b>\n' + msg.text,
+            parse_mode : 'HTML',
             reply_markup : JSON.stringify({
                 inline_keyboard : [
                     [
@@ -77,7 +78,6 @@ class EventsClass {
             if(msg.userORclass == 'user'){
                 if(msg.active > 0){
                     this.updateActive(msg.id, msg.active - 1)
-                    console.log("sendMsg user msg =", msg)
                     if(msg.active%5 == 0)
                         await this.sendTlgMessage(msg)
                 }

@@ -59,7 +59,6 @@ remember.action(/^iSelectedLess_\d+$/, async ctx => {
     const fTime = await urDay.getTimeFirstUr(ctx.session.class_id, d.getDay())
     const arrTime = fTime.time_s.split(':')
     d.setHours(arrTime[0], arrTime[1] - 90)
-    console.log("дата и время события", d)
     const urName = await myClass.getUrByNameId(name_id, ctx.session.class_id)
     ctx.reply(`${urName[0].name}. Введите текст напоминания:`)
     ctx.scene.session.state.rmDay = d
@@ -82,7 +81,7 @@ remember.on('text', async ctx => {
 remember.action('queryYes2', async ctx => {
     ctx.answerCbQuery()
     const eC = new EventsClass(ctx)
-    eC.addEvent(ctx.scene.session.state.rmDay, ctx.scene.session.state.urName + '. ' + ctx.scene.session.state.msgText)
+    eC.addEvent(ctx.scene.session.state.rmDay, 'Доброе утро! :-) ' + ctx.scene.session.state.urName + '. ' + ctx.scene.session.state.msgText)
     ctx.scene.enter('SELECT_ACTION')
 })
 //-------------------------------------------------------------
