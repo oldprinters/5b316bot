@@ -16,10 +16,9 @@ remember.start( ctx => ctx.scene.enter('FIRST_STEP'))
 //--------------------------------------
 remember.action('nextLesson', async ctx => {
     ctx.answerCbQuery()
-    if(ctx.session.class_id > 0){
+    if(ctx.session.class_id > 0){ 
         const myClass = new MyClass(ctx)
         const listLessons = await myClass.getLessonsList(ctx.session.class_id)
-        console.log("@@@", listLessons)
         ctx.reply('Выбирайте урок:', selectLesson(listLessons))
     } else {
         await ctx.reply('Для привязки к урокам нужно выбрать класс.')
