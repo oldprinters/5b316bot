@@ -219,7 +219,6 @@ const outDate = (dd, r = '.') => {
 }
 //-------------------------------------------
 const outDateTime = (dd) => {
-    console.log("dd=", dd)
     return outDate(dd) + ' ' + outTimeDate(dd)
 }
 //-------------------------------------------
