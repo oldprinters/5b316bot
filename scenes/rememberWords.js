@@ -29,7 +29,6 @@ freeWords.hears(/^(Список|список|list|List)$/, async ctx => {
         }
         ctx.replyWithHTML(`Список напоминалок:\n${arOut}`)
     }
-    console.log("list", list)
 })
 //--------------------------------------
 freeWords.start( ctx => ctx.scene.enter('FIRST_STEP'))

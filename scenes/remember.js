@@ -30,7 +30,6 @@ remember.hears(/^(Список|список|list|List)$/, async ctx => {
         }
         ctx.replyWithHTML(`Список напоминалок:\n${arOut}`)
     }
-    console.log("list", list)
 })
 //--------------------------------------
 remember.action('nextLesson', async ctx => {

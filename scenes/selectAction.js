@@ -1,10 +1,11 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
 import QueryAdmin from "../controllers/queryAdmin.js"
+import EventsClass from '../controllers/eventsClass.js'
 //import Users from '../controllers/users.js'
-import MyClass from '../controllers/classes.js'
+//import MyClass from '../controllers/classes.js'
 import UrDay from '../controllers/urDay.js'
 import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
-import { getRoleName, getSheduleToday, helpForSearch, outSelectedDay, searchByLessonName } from '../utils.js'
+import { getRoleName, getSheduleToday, helpForSearch, outSelectedDay, outDateTime, searchByLessonName } from '../utils.js'
 
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
@@ -36,6 +37,20 @@ selectAction.enter(async ctx => {
         await ctx.reply('Для продолжения необходимо внести время начала уроков.')
     }
     await ctx.reply('Выберите действие:', selectShedActionMenu(nLessons, ctx.session.classList.length, ctx.session.classList[ctx.session.i].isAdmin, nRequest))
+})
+//--------------------------------------
+selectAction.hears(/^(Список|список|list|List)$/, async ctx => {
+    const eC = new EventsClass(ctx)
+    const list = await eC.listForUser()
+    if(list.length == 0){
+        ctx.reply('Нет запланированных напоминалок.')
+    } else {
+        let arOut = ''
+        for(let el of list){
+            arOut += `${outDateTime(el.dateTime)} ${el.text}\n`
+        }
+        ctx.replyWithHTML(`Список напоминалок:\n${arOut}`)
+    }
 })
 //-------------
 selectAction.help(ctx => {
