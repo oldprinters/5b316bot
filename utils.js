@@ -218,6 +218,11 @@ const outDate = (dd, r = '.') => {
 	return (d > 9?'':'0') + d + r + (m > 9?'':'0') + m + r + dd.getFullYear()
 }
 //-------------------------------------------
+const outDateTime = (dd) => {
+    console.log("dd=", dd)
+    return outDate(dd) + ' ' + outTimeDate(dd)
+}
+//-------------------------------------------
 const tuMin = (t) => {
     const arT = t.split(':')
     return arT[0]*60 + parseInt(arT[1])
@@ -256,4 +261,4 @@ const getNotesTime = async () => {
 }
 
 export { compareTime, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
-    outDate, outSelectedDay, outShedule, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }
+    outDate, outDateTime, outSelectedDay, outShedule, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }

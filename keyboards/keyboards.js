@@ -123,11 +123,11 @@ const selectLesson = (listLess) => {
 //------------------------------------------------
 const selectRemember = (class_id) => {
     let arrAction = [
-        [Markup.button.callback("Словами", "freeWords")],
+        [Markup.button.callback("Привязка к дате и времени", "freeWords")],
 //        [Markup.button.callback("На дату", "setDate")],
     ]
     if(class_id){
-        arrAction.push([Markup.button.callback("К следующему уроку", "nextLesson")])
+        arrAction.push([Markup.button.callback("Привязка к уроку", "nextLesson")])
     }
     return Markup.inlineKeyboard(arrAction)
 }

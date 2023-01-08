@@ -4,15 +4,34 @@ import EventsClass from '../controllers/eventsClass.js'
 import MyClass from '../controllers/classes.js'
 import { queryYesNoMenu, selectRemember, selectLesson } from '../keyboards/keyboards.js'
 import UrDay from "../controllers/urDay.js"
-import { outDate } from '../utils.js'
+import { outDate, outDateTime } from '../utils.js'
 
 const remember = new Scenes.BaseScene('REMEMBER')
 //--------------------------------------
 remember.enter(async ctx => {
-        await ctx.reply('Что хотим запомнить?', selectRemember(ctx.session.class_id))
+    if(ctx.session.class_id > 0)
+        await ctx.reply('Выберите то, что хотим запомнить?', selectRemember(ctx.session.class_id))
+    else {
+        ctx.scene.enter('FREE_WORDS')
+    }
 })
 //--------------------------------------
 remember.start( ctx => ctx.scene.enter('FIRST_STEP'))
+//--------------------------------------
+remember.hears(/^(Список|список|list|List)$/, async ctx => {
+    const eC = new EventsClass(ctx)
+    const list = await eC.listForUser()
+    if(list.length == 0){
+        ctx.reply('Нет запланированных напоминалок.')
+    } else {
+        let arOut = ''
+        for(let el of list){
+            arOut += `${outDateTime(el.dateTime)} ${el.text}\n`
+        }
+        ctx.replyWithHTML(`Список напоминалок:\n${arOut}`)
+    }
+    console.log("list", list)
+})
 //--------------------------------------
 remember.action('nextLesson', async ctx => {
     ctx.answerCbQuery()

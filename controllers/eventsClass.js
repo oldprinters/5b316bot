@@ -44,6 +44,17 @@ class EventsClass {
         return await call_q(sql, 'getNotesByTime')
     }
     //----------------------------------------
+    async listForUser(){
+        const sql = `
+            SELECT id, dataTime dateTime, ec.text
+            FROM ivanych_bot.events_class ec
+            WHERE ec.active > 0
+            AND client_id = ${this.user_id}
+            ORDER BY dataTime ASC;
+        `
+        return await call_q(sql, 'listForUser')
+    }
+    //----------------------------------------
     async sendTlgMessage(msg){
         const url = `https://api.telegram.org/bot${process.env.KEY}/sendMessage`
         return await axios.get(url, { params: {

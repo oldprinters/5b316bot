@@ -1,10 +1,10 @@
 import {Scenes, session} from "telegraf"
 import EventsClass from '../controllers/eventsClass.js'
 //import Users from '../controllers/users.js'
-import MyClass from '../controllers/classes.js'
-import { queryYesNoMenu, selectRemember, selectLesson } from '../keyboards/keyboards.js'
-import UrDay from "../controllers/urDay.js"
-import { outDate, outTimeDate } from '../utils.js'
+//import MyClass from '../controllers/classes.js'
+//import { queryYesNoMenu, selectRemember, selectLesson } from '../keyboards/keyboards.js'
+//import UrDay from "../controllers/urDay.js"
+import { outDate, outTimeDate, outDateTime } from '../utils.js'
 
 const freeWords  = new Scenes.BaseScene('FREE_WORDS')
 //--------------------------------------
@@ -13,8 +13,23 @@ freeWords.enter(async ctx => {
 })
 //--------------------------------------
 freeWords.help(ctx => {
-    ctx.reply('Дата и время: дд-мм-уууу чч:мм  [сообщение]\nМожно задать используя:\nMM мин [сообщение] - отложенное сообщение\n' +
-    'чч:мм [сообщение] - заданное время текущего дня\n и т.д.')
+    ctx.reply('Формат ввода: дд-мм-уууу чч:мм  [сообщение]\nМожно задать используя:\nMM мин [сообщение] - отложенное сообщение\n' +
+    'чч:мм [сообщение] - заданное время текущего дня\nЧЧ час [сообщение] - отложить на несколько часов\nсписок  - вывод списка активных напоминалок. (list тоже работает) ')
+})
+//--------------------------------------
+freeWords.hears(/^(Список|список|list|List)$/, async ctx => {
+    const eC = new EventsClass(ctx)
+    const list = await eC.listForUser()
+    if(list.length == 0){
+        ctx.reply('Нет запланированных напоминалок.')
+    } else {
+        let arOut = ''
+        for(let el of list){
+            arOut += `${outDateTime(el.dateTime)} ${el.text}\n`
+        }
+        ctx.replyWithHTML(`Список напоминалок:\n${arOut}`)
+    }
+    console.log("list", list)
 })
 //--------------------------------------
 freeWords.start( ctx => ctx.scene.enter('FIRST_STEP'))
