@@ -48,7 +48,7 @@ const getNDayByWord = (str) => {
     const d = new Date()
     let tDay = d.getDay()
     
-    if(str.indexOf('после') >= 0){
+    if(str.indexOf('осле') >= 0){
         tDay += 2
     } else {
         tDay += 1
@@ -98,7 +98,7 @@ const searchByLessonName = async (ctx) => {
     const urDay = new UrDay(ctx)
     await myClass.init()
     const seachDn = /^(Во|во|В|в)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)$/
-    const seachSdv = /^(завтра|послезавтра|Завтра|Послезавтра)$/
+    const seachSdv = /^(завтра|послезавтра|Завтра|Послезавтра)\s?$/
     if(seachDn.test(ctx.message.text.trim())){
         const sdv = ctx.message.text.indexOf(' ')
         const nDay = selectDay(ctx.message.text.slice(sdv + 1).trim())
