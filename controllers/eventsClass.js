@@ -26,6 +26,7 @@ class EventsClass {
     //------------------------------------
     async addEvent(dateTime, str){
         str = str.replaceAll("'", '"').trim()
+        if(str == '')str = 'Вы просили Вам напомнить, так вот - уже пора.'
         const sql = `
             INSERT INTO ivanych_bot.events_class (class_id, client_id, cronTab, dataTime, text, cycle) 
             VALUES (${this.class_id}, '${this.user_id}', '', '${getDateTimeBD(dateTime)}', '${str}',0);

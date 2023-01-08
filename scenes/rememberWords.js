@@ -82,7 +82,7 @@ freeWords.command('remember', async ctx => {
 })
 //--------------------------------------
 freeWords.on('text', ctx => {
-    ctx.reply('text не распознан')
+    ctx.reply('Текст не распознан. После указания времени не забыли написать сообщение?')
 })
 
 export default freeWords
