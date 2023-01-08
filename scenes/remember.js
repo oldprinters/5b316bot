@@ -10,7 +10,7 @@ const remember = new Scenes.BaseScene('REMEMBER')
 //--------------------------------------
 remember.enter(async ctx => {
     if(ctx.session.class_id > 0)
-        await ctx.reply('Выберите то, что хотим запомнить?', selectRemember(ctx.session.class_id))
+        await ctx.reply('Событие привязано к времени или уроку?', selectRemember(ctx.session.class_id))
     else {
         ctx.scene.enter('FREE_WORDS')
     }

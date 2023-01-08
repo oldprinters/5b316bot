@@ -9,7 +9,7 @@ import { outDate, outTimeDate, outDateTime } from '../utils.js'
 const freeWords  = new Scenes.BaseScene('FREE_WORDS')
 //--------------------------------------
 freeWords.enter(async ctx => {
-        await ctx.reply('Когда и что?')
+        await ctx.reply('Когда и что? ( дд-мм-гггг чч:мм текст )')
 })
 //--------------------------------------
 freeWords.help(ctx => {
