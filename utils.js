@@ -218,6 +218,14 @@ const outDate = (dd, r = '.') => {
 	return (d > 9?'':'0') + d + r + (m > 9?'':'0') + m + r + dd.getFullYear()
 }
 //-------------------------------------------
+const outTextRem = (ctx, date, textE) => {
+    const eC = new EventsClass(ctx)
+    if(eC.addEvent(date, textE))
+        ctx.reply(`Напоминание "${textE}" запланировано на ${outDate(date)} ${outTimeDate(date)}.`)
+    else
+        ctx.reply("Ошибка сохранения.")
+}
+//-------------------------------------------
 const outDateTime = (dd) => {
     return outDate(dd) + ' ' + outTimeDate(dd)
 }
@@ -260,4 +268,4 @@ const getNotesTime = async () => {
 }
 
 export { compareTime, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
-    outDate, outDateTime, outSelectedDay, outShedule, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }
+    outDate, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }

@@ -4,7 +4,7 @@ import EventsClass from '../controllers/eventsClass.js'
 //import MyClass from '../controllers/classes.js'
 //import { queryYesNoMenu, selectRemember, selectLesson } from '../keyboards/keyboards.js'
 //import UrDay from "../controllers/urDay.js"
-import { outDate, outTimeDate, outDateTime } from '../utils.js'
+import { getDnTime, outDateTime, outTextRem } from '../utils.js'
 
 const freeWords  = new Scenes.BaseScene('FREE_WORDS')
 //--------------------------------------
@@ -13,8 +13,10 @@ freeWords.enter(async ctx => {
 })
 //--------------------------------------
 freeWords.help(ctx => {
-    ctx.reply('Формат ввода: дд.мм.уууу чч:мм  [сообщение]\nМожно задать используя:\nMM мин [сообщение] - отложенное сообщение\n' +
-    'чч:мм [сообщение] - заданное время текущего дня\nЧЧ час [сообщение] - отложить на несколько часов\nсписок  - вывод списка активных напоминалок. (list тоже работает) ')
+    ctx.replyWithHTML('<u>Планирование:</u>\n дд.мм.уууу чч:мм [сообщение]\nдд.мм чч:мм [сообщение]\nчч:мм [сообщение] - на текущий день\nзавтра в чч:мм [сообщение]\n'+
+    '[день недели] чч:мм [сообщение]\n'+
+    '<u>Отложенное сообщение:</u>\nMM мин [сообщение] - <i>сообщение через несколько минут</i>\n' +
+    'ЧЧ час [сообщение] - <i>отложить на несколько часов</i>\n\nсписок  - вывод списка активных напоминалок. (list тоже работает) ')
 })
 //--------------------------------------
 freeWords.hears(/^(Список|список|list|List)$/, async ctx => {
@@ -41,11 +43,26 @@ freeWords.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa
     const textE = ctx.match[0].slice(p2)
     const arD = dateE.split('.')
     const date = new Date(`${arD[2]}-${arD[1]}-${arD[0]} ${timeE}`)
-    const eC = new EventsClass(ctx)
-    if(eC.addEvent(date, textE))
-        ctx.reply("Напоминание запланировано.")
-    else
-        ctx.reply("Ошибка сохранения.")
+    outTextRem(ctx, date, textE)
+})
+//--------------------------------------
+freeWords.hears(/^\d{1,2}\.\d{1,2} \d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const dateE = ctx.match[0].slice(0, p1)
+    const timeE = ctx.match[0].slice(p1, p2)
+    const textE = ctx.match[0].slice(p2)
+    const arD = dateE.split('.')
+    const arT = timeE.split(':')
+    const date = new Date()
+    date.setDate(arD[0])
+    date.setMonth(arD[1] - 1)
+    date.setHours(arT[0])
+    date.setMinutes(arT[1])
+    const now = new Date()
+    if(now > date)
+        date.setFullYear(date.getFullYear() + 1)
+    outTextRem(ctx, date, textE)
 })
 //--------------------------------------
 freeWords.hears(/^\d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
@@ -56,11 +73,20 @@ freeWords.hears(/^\d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx =>
     const date = new Date()
     date.setHours(arT[0])
     date.setMinutes(arT[1])
-    const eC = new EventsClass(ctx)
-    if(eC.addEvent(date, textE))
-        ctx.reply(`Напоминание запланировано на ${outDate(date)} ${outTimeDate(date)}.`)
-    else
-        ctx.reply("Ошибка сохранения.")
+    outTextRem(ctx, date, textE)
+})
+//--------------------------------------
+freeWords.hears(/^(завтра|Завтра) (в )?\d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+    const d1 = ctx.match[0].search(/\d{1,2}:\d{1,2}/)
+    const p1 = ctx.match[0].indexOf(' ', d1 + 3)
+    const timeE = (ctx.match[0].match(/\d{1,2}:\d{1,2}/))[0]
+    const textE = ctx.match[0].slice(p1)
+    const arT = timeE.split(':')
+    const date = new Date()
+    date.setDate(date.getDate() + 1)
+    date.setHours(arT[0])
+    date.setMinutes(arT[1])
+    outTextRem(ctx, date, textE)
 })
 //--------------------------------------
 freeWords.hears(/^\d{1,2} (мин)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
@@ -70,11 +96,7 @@ freeWords.hears(/^\d{1,2} (мин)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx =
     const textE = ctx.match[0].slice(p2)
     const date = new Date()
     date.setMinutes(date.getMinutes() + parseInt(dt))
-    const eC = new EventsClass(ctx)
-    if(eC.addEvent(date, textE))
-        ctx.reply(`Напоминание "${textE}" запланировано на ${outDate(date)} ${outTimeDate(date)}.`)
-    else
-        ctx.reply("Ошибка сохранения.")
+    outTextRem(ctx, date, textE)
 })
 //--------------------------------------
 freeWords.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
@@ -84,11 +106,7 @@ freeWords.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx =
     const textE = ctx.match[0].slice(p2)
     const date = new Date()
     date.setHours(date.getHours() + parseInt(dt))
-    const eC = new EventsClass(ctx)
-    if(eC.addEvent(date, textE))
-        ctx.reply(`Напоминание "${textE}" запланировано на ${outDate(date)} ${outTimeDate(date)}.`)
-    else
-        ctx.reply("Ошибка сохранения.")
+    outTextRem(ctx, date, textE)
 })
 //-------------------------------------------------
 freeWords.command('remember', async ctx => { 
@@ -96,7 +114,26 @@ freeWords.command('remember', async ctx => {
 })
 //--------------------------------------
 freeWords.on('text', ctx => {
-    ctx.reply('Текст не распознан. После указания времени не забыли написать сообщение?')
+    const str = ctx.message.text.trim().toLowerCase()
+    const res = getDnTime(str)
+    if(res != undefined){
+        const d1 = ctx.message.text.search(/\d{1,2}:\d{1,2}/)
+        const p1 = ctx.message.text.indexOf(' ', d1 + 3)
+        const textE = ctx.message.text.slice(p1)
+        const d = new Date()
+        const nd = d.getDay()
+        console.log("nd =", nd, res.dn)
+        if(res.dn > nd){
+            d.setDate(d.getDate() + res.dn - nd)
+        } else {
+            d.setDate(d.getDate() + (res.dn - nd + 7))
+        }
+        const arT = res.time_s.split(':')
+        d.setHours(arT[0])
+        d.setMinutes(arT[1])
+        outTextRem(ctx, d, textE)
+    } else 
+        ctx.reply('Текст не распознан. После указания времени не забыли написать сообщение?')
 })
 
 export default freeWords
