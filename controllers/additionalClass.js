@@ -2,18 +2,7 @@ import { call_q } from '../config/query.js'
 import BaseName from './basename.js'
 import ClassOi from './classOi.js'
 //AdditionalClass.js класс работает с дополнительными занятиями
-/*
-CREATE TABLE `ivanych_bot`.`additionalLessons` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `tlgUserId` INT UNSIGNED NOT NULL,
-  `name_id` VARCHAR(45) NULL,
-  `oi_id` INT UNSIGNED NOT NULL,
-  `time_s` TIME NOT NULL,
-  `time_e` TIME NOT NULL,
-  `note` TINYTEXT NULL,
-  `active` INT UNSIGNED NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`));
-*/
+
 class AdditionalClass extends BaseName {
     id
     tlg_user_id

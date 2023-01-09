@@ -135,7 +135,7 @@ inpSheduleForDay.hears(/^\d{1,2}.\d{1,2}.\d{4} \d{1,2}.\d{1,2}.\d{4} [0-9] [a-zA
     }
 })
 //------------------ ввод нового урока
-inpSheduleForDay.hears(/^[a-zA-Zа-яё. А-ЯЁйЙ-]+$/, async ctx => {
+inpSheduleForDay.hears(/^[\(\)a-zA-Zа-яё. А-ЯЁйЙ-]+$/, async ctx => {
     const urDay = new UrDay()
     const ur = await urDay.getUrForDay(ctx.session.class_id, ctx.session.dayN, ctx.scene.session.state.urNum)
     if(ur[0] == undefined){
