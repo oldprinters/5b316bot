@@ -20,6 +20,6 @@ createSchedule.start( ctx => { ctx.scene.enter('SELECT_ACTION')})
 //-------------------------------------------------
 createSchedule.action('setTimesUrMenu', async ctx => {
     ctx.scene.enter('SET_TIMES_UR')
-})
+}) 
 
 export default createSchedule
