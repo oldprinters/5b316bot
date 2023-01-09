@@ -33,6 +33,10 @@ viewShedule.help(async ctx => {
     ctx.replyWithHTML(`<b><u>HELP</u></b>\n${text} ${helpForSearch()}`)
 })
 //-------------------------------------------------
+viewShedule.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
+    return ctx.scene.enter('FREE_WORDS')
+})
+//-------------------------------------------------
 viewShedule.command('remember', ctx => { 
     ctx.scene.enter('REMEMBER')
 })

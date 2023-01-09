@@ -53,6 +53,10 @@ selectAction.hears(/^(Список|список|list|List)$/, async ctx => {
     }
 })
 //-------------
+selectAction.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
+    return ctx.scene.enter('FREE_WORDS')
+})
+//-------------------------------------------------
 selectAction.help(ctx => {
     ctx.replyWithHTML('<b><u>Основное меню</u></b>\n' +
         'Выберите нужный пункт меню. Далее следуйте указаниям.\n' +

@@ -32,6 +32,10 @@ bot.start(async ctx => {
     await ctx.scene.enter('FIRST_STEP')
 });
 
+bot.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
+    return ctx.scene.enter('FREE_WORDS')
+})
+//---------------------------------------------
 bot.action(/^answerAccepted\d{1,12}/, ctx => {
     ctx.answerCbQuery()
     const eC = new EventsClass(ctx)

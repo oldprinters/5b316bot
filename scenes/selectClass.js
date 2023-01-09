@@ -15,6 +15,10 @@ selectClass.command('remember', async ctx => {
     ctx.scene.enter('REMEMBER')
 })
 //--------------------------------------
+selectClass.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
+    return ctx.scene.enter('FREE_WORDS')
+})
+//-------------------------------------------------
 selectClass.help(async ctx => {
     ctx.replyWithHTML(`<b><u>HELP</u></b>\nВы зарегистрированы в ${ctx.session.classList.length} классах. Выберите любой из них и Вы сможете смотреть его данные.\n`+
     'Для удаления класса наберите: delete [Имя класса]')
