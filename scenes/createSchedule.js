@@ -12,7 +12,8 @@ createSchedule.enter(async ctx => {
         ctx.session.classList = await myClass.searchClasses()
     }
     ctx.reply('Давайте введем настройки расписания занятий.', selectShedActionMenu())
-//    console.log("ctx.session.classList = ", ctx.session.classList)
+    //    console.log("ctx.session.classList = ", ctx.session.classList)
+    ctx.scene.enter('SET_SHEDULE_DAY')
 })
 //-----------------------------------------------
 createSchedule.start( ctx => { ctx.scene.enter('SELECT_ACTION')})
