@@ -37,7 +37,12 @@ remember.action('nextLesson', async ctx => {
     if(ctx.session.class_id > 0){ 
         const myClass = new MyClass(ctx)
         const listLessons = await myClass.getLessonsList(ctx.session.class_id)
-        ctx.reply('Выбирайте урок:', selectLesson(listLessons))
+        if(listLessons.length == 0){
+            ctx.reply('Не введены расписания уроков. Прошу ввести.')
+            ctx.scene.enter('SET_SHEDULE_DAY')
+        } else {
+            ctx.reply('Выбирайте урок:', selectLesson(listLessons))
+        }
     } else {
         await ctx.reply('Для привязки к урокам нужно выбрать класс.')
         ctx.scene.enter('FIRST_STEP')

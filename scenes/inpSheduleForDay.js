@@ -33,7 +33,7 @@ inpSheduleForDay.enter(async ctx => {
     const list = await getList(ctx)
     await ctx.replyWithHTML(list)
     const urDay = new UrDay()
-    await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+    await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или "q" для окончания ввода:`)
 })
 //--------------------
 inpSheduleForDay.help( async ctx => {
@@ -91,7 +91,7 @@ inpSheduleForDay.hears(/^[0-9] [a-zA-Z. а-яА-ЯёЁйЙ-]+/, async ctx =>{
                 const list = await getList(ctx)
                 await ctx.replyWithHTML(list)
                 ctx.scene.session.state.urNum += 1
-                await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+                await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или "q" для окончания ввода:`)
             }
         } catch(err){
             console.log("Catch inpSheduleForDay", err)
@@ -149,7 +149,7 @@ inpSheduleForDay.hears(/^[a-zA-Zа-яё. А-ЯЁйЙ-]+$/, async ctx => {
             const res = await urDay.insertUrDayPermanent(ctx.session.class_id, ctx.session.dayN, urTimeId.id, ctx.message.text )
             if(res.affectedRows > 0){
                 ctx.scene.session.state.urNum += 1
-                ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+                ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или "q" для окончания ввода:`)
             }
         } catch(err){
             console.log("Catch inpSheduleForDay", err)
@@ -212,7 +212,7 @@ try {
         const res = await urDay.insertUrDayPermanent(ctx.session.class_id, ctx.session.dayN, urTimeId.id, ctx.scene.session.state.change)
         if(res.affectedRows > 0){
             ctx.scene.session.state.urNum += 1
-            await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+            await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или "q" для окончания ввода:`)
         }
     } catch (err){
         console.log("Error urDay.insertUrDay", err)

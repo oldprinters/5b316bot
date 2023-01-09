@@ -111,7 +111,7 @@ selectAction.action('additionalLessons', async ctx => {
 })
 //-------------------------------------------------
 selectAction.command('settings', async ctx => { 
-    if(ctx.session.isAdmin == '1')
+    if(ctx.session.isAdmin == 1)
         await ctx.reply('Административное меню:', selectActionAdminMenu())
     else {
         await ctx.reply('Вы можете:', selectActionUserMenu())

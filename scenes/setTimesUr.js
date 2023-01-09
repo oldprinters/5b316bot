@@ -13,7 +13,7 @@ setTimesUr.enter( async ctx => {
     if(urTimeList.length == 0){
         ctx.scene.session.state.arTimesUr = []
         ctx.reply('Последовательно введите время начала каждого занятия в формате \'09:00\'. Для завершения введите букву q.')
-        ctx.reply(`Введите время начала ${ctx.scene.session.state.arTimesUr.length + 1} занятия или q для завершения ввода.`)
+        ctx.reply(`Введите время начала ${ctx.scene.session.state.arTimesUr.length + 1} занятия или "q" для завершения ввода.`)
     } else {
         const ar = urTimeList
 //        console.log("@@@!@ ar =", ar, ar.length)
@@ -85,7 +85,7 @@ setTimesUr.hears(/^[0-9]{3,4}$/, async ctx =>{
         }
     }
     ctx.scene.session.state.arTimesUr.push(t)
-    ctx.reply(`Введите время начала ${ctx.scene.session.state.arTimesUr.length + 1} занятия или q для завершения ввода.`)
+    ctx.reply(`Введите время начала ${ctx.scene.session.state.arTimesUr.length + 1} занятия или "q" для завершения ввода.`)
 })
 //-----------
 setTimesUr.hears(/^[qQйЙ]$/, async ctx =>{
