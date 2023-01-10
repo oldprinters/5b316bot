@@ -1,25 +1,27 @@
 import { call_q } from '../config/query.js'
 import BaseName from './basename.js'
-import ClassOi from './classOi.js'
+//import ClassOi from './classOi.js'
 //AdditionalClass.js класс работает с дополнительными занятиями
 
 class AdditionalClass extends BaseName {
     id
     tlg_user_id
+    class_id
     oper_interval   //периодичность
     time_s
     time_e
     constructor(ctx) {
         super('additional_class')
         this.tlg_user_id = ctx.from.id
+        this.class_id = ctx.session.class_id
     }
     //------------------------------------
     async addLesson(item){
         const name_id = await this.setName(item.name)
 
         const sql = `
-            INSERT INTO ivanych_bot.additionalLessons (tlgUserId, name_id, oi_id, note) 
-            VALUES (${this.tlg_user_id}, ${name_id}, ${item.oi_id}, '${item.note}');
+            INSERT INTO ivanych_bot.additionalLessons (tlgUserId, class_id, name_id, oi_id, note) 
+            VALUES (${this.tlg_user_id}, ${this.class_id}, ${name_id}, ${item.oi_id}, '${item.note}');
         `
         return await call_q(sql, 'addLesson')
     }
@@ -43,6 +45,7 @@ class AdditionalClass extends BaseName {
             LEFT JOIN oper_interval oi ON a.oi_id = oi.id
             LEFT JOIN addLessTime atl ON atl.atl_id = a.id
             WHERE tlgUserId = ${this.tlg_user_id}
+            AND class_id = ${this.class_id}
             AND atl.nDay = ${nDay}
             AND a.active = 1
             ORDER BY bn.name
@@ -57,6 +60,7 @@ class AdditionalClass extends BaseName {
             LEFT JOIN basename bn ON bn.id = a.name_id
             LEFT JOIN oper_interval oi ON a.oi_id = oi.id
             WHERE tlgUserId = ${this.tlg_user_id}
+            AND class_id = ${this.class_id}
             AND a.active = 1
             ORDER BY bn.name
         `
@@ -74,6 +78,7 @@ class AdditionalClass extends BaseName {
             FROM ivanych_bot.additionalLessons a
             LEFT JOIN basename bn ON bn.id = a.name_id
             WHERE tlgUserId = ${this.tlg_user_id}
+            AND class_id = ${this.class_id}
             AND a.active = 1
             ORDER BY bn.name
         `

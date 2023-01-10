@@ -140,7 +140,7 @@ const outShedule = async (listForDay, nLessons, today = false) => {
         }
     }
     if(list.length == 0)
-        list = 'Нет данных об уроках.'
+        list = 'Нет данных об уроках.\n'
     return list
 }
 //-------------------------------------------
