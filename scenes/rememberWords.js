@@ -122,7 +122,6 @@ freeWords.on('text', ctx => {
         const textE = ctx.message.text.slice(p1)
         const d = new Date()
         const nd = d.getDay()
-        console.log("nd =", nd, res.dn)
         if(res.dn > nd){
             d.setDate(d.getDate() + res.dn - nd)
         } else {
