@@ -22,14 +22,16 @@ class UrDay extends BaseName {
     }
     //------------------------
     async getNumberOfLesson(class_id){
-        const sql = `
-            SELECT MAX(order_num) n
-            FROM ivanych_bot.urTime
-            WHERE class_id = ${class_id}
-            AND active = 1
-        `
-        const res = (await call_q(sql))[0].n
-        return res == undefined? res: res + 1
+        if(class_id != undefined){
+            const sql = `
+                SELECT MAX(order_num) n
+                FROM ivanych_bot.urTime
+                WHERE class_id = ${class_id}
+                AND active = 1
+            `
+            const res = (await call_q(sql))[0].n
+            return res == undefined? res: res + 1
+        } else return undefined
     }
     //------------------------
     getNameDay(n){
