@@ -46,30 +46,30 @@ bot.action(/^answerAccepted\d{1,12}/, ctx => {
 
 cron.schedule('* * * * *', () => {getNotesTime()});
 
-if(process.env.ENVIRONMENT == 'PRODUCTION'){
-    bot.launch({
-        webhook: {
-            domain: 'szppk.oldprinters.ru',
-            port: 8443,
+// if(process.env.ENVIRONMENT == 'PRODUCTION'){
+//     bot.launch({
+//         webhook: {
+//             domain: 'szppk.oldprinters.ru',
+//             port: 8443,
         
-            // Optional path to listen for.
-            // `bot.secretPathComponent()` will be used by default
-            //hookPath: webhookPath,
+//             // Optional path to listen for.
+//             // `bot.secretPathComponent()` will be used by default
+//             //hookPath: webhookPath,
         
-            // Optional secret to be sent back in a header for security.
-            // e.g.: `crypto.randomBytes(64).toString("hex")`
-            //secretToken: randomAlphaNumericString,
-        },
-    }).then(res => {
-        console.log('Started production')
-    }).catch ( err => {
-        console.log('Error:', err)
-    })
-} else {
+//             // Optional secret to be sent back in a header for security.
+//             // e.g.: `crypto.randomBytes(64).toString("hex")`
+//             //secretToken: randomAlphaNumericString,
+//         },
+//     }).then(res => {
+//         console.log('Started production')
+//     }).catch ( err => {
+//         console.log('Error:', err)
+//     })
+// } else {
     bot.launch()
         .then(res => {
-            console.log('Started local')
+            console.log('Started')
         }).catch ( err => {
             console.log('Error', err)
         })
-}
+// }
