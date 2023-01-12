@@ -23,6 +23,8 @@ viewShedule.enter( async ctx => {
     list += '\n<u>' + urDay.getNameDay(0) + '</u>\n'
     const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, 0)
     list += await outShedule(listForDay, nLessons)
+    const cL = ctx.session.classList[ctx.session.i]
+    list += `\n${cL.name}`
     ctx.replyWithHTML(list)
 })
 //--------------------------------------
