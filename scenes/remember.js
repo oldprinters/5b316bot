@@ -18,6 +18,11 @@ remember.enter(async ctx => {
 //--------------------------------------
 remember.start( ctx => ctx.scene.enter('FIRST_STEP'))
 //--------------------------------------
+remember.help(ctx => {
+    ctx.replyWithHTML('<b><u>Привязка к уроку</u></b>\n Напоминание оповестит в день занятия, за 90 мин до начала первого урока\n\n' +
+    '<i>У "привязки к дате и времени" своя подсказка.</i>')
+})
+//--------------------------------------
 remember.hears(/^(Список|список|list|List)$/, async ctx => {
     const eC = new EventsClass(ctx)
     const list = await eC.listForUser()
