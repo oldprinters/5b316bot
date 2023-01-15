@@ -37,7 +37,7 @@ class EventsClass {
     async getNotesByTime(){
         const sql = `
             SELECT * FROM ivanych_bot.events_class
-            WHERE dataTime < NOW()
+            WHERE dataTime <= NOW()
             AND active > 0;
         `
         return await call_q(sql, 'getNotesByTime')
