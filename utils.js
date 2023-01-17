@@ -76,7 +76,7 @@ const outSelectedDay = async (ctx, nDay) => {
 //-------------------------------------------
 const getDnTime = (str) => {
     str = str.trim()
-    const seachDn = /^(понед|вторн|сред|четв|пятн|суб|воскр)/
+    const seachDn = /^(понед|вторн|сред|четв|пятн|суб|воскр)+/
     let obj = undefined //{dn: undefined, time_s: undefined, time_e: undefined}
     if(seachDn.test(str.toLowerCase())){
         const arTime = str.match(/\d{1,2}:\d{2}/g)

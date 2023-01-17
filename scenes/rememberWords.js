@@ -115,24 +115,30 @@ freeWords.command('remember', async ctx => {
 //--------------------------------------
 freeWords.on('text', ctx => {
     const str = ctx.message.text.trim().toLowerCase()
-    const res = getDnTime(str)
-    if(res != undefined){
-        const d1 = ctx.message.text.search(/\d{1,2}:\d{1,2}/)
-        const p1 = ctx.message.text.indexOf(' ', d1 + 3)
-        const textE = ctx.message.text.slice(p1)
-        const d = new Date()
-        const nd = d.getDay()
-        if(res.dn > nd){
-            d.setDate(d.getDate() + res.dn - nd)
-        } else {
-            d.setDate(d.getDate() + (res.dn - nd + 7))
-        }
-        const arT = res.time_s.split(':')
-        d.setHours(arT[0])
-        d.setMinutes(arT[1])
-        outTextRem(ctx, d, textE)
-    } else 
-        ctx.reply('Текст не распознан. После указания времени не забыли написать сообщение?')
+    try {
+        const res = getDnTime(str)
+        if(res != undefined && res.dn >= 1){
+            const d1 = ctx.message.text.search(/\d{1,2}:\d{1,2}/)
+
+            const p1 = ctx.message.text.indexOf(' ', d1 + 3)
+            const textE = ctx.message.text.slice(p1 + 1)
+            const d = new Date()
+            const nd = d.getDay()
+            if(res.dn > nd){
+                d.setDate(d.getDate() + res.dn - nd)
+            } else {
+                d.setDate(d.getDate() + (res.dn - nd + 7))
+            }
+            const arT = res.time_s.split(':')
+            d.setHours(arT[0])
+            d.setMinutes(arT[1])
+            outTextRem(ctx, d, textE)
+        } else 
+            ctx.reply('Текст не распознан. После указания времени не забыли написать сообщение?')
+    } catch (err) {
+        ctx.reply('Не понял задания. Посмотрите /help')
+        ctx.scene.reenter()
+    }
 })
 
 export default freeWords
