@@ -106,11 +106,16 @@ const searchByLessonName = async (ctx) => {
     if(seachDn.test(ctx.message.text.trim())){
         const sdv = ctx.message.text.indexOf(' ')
         const nDay = selectDay(ctx.message.text.slice(sdv + 1).trim())
-        const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, nDay)    
-        const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
-        await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
-        const list = await outShedule(listForDay, nLessons)
-        await ctx.replyWithHTML(list)
+        if(nDay >= 0){
+            const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, nDay)    
+            const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
+            await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
+            const list = await outShedule(listForDay, nLessons)
+            await ctx.replyWithHTML(list)
+        } else {
+            await ctx.replyWithHTML('Не определил день недели.')
+            return ctx.scene.reenter()
+        }
     } else if(seachSdv.test(ctx.message.text.trim())){
         const nDay = getNDayByWord(ctx.message.text)
         await outSelectedDay(ctx, nDay)
