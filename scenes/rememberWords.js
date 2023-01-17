@@ -73,6 +73,10 @@ freeWords.hears(/^\d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx =>
     const date = new Date()
     date.setHours(arT[0])
     date.setMinutes(arT[1])
+    const nDate = new Date()
+    if(nDate > date){
+        date.setDate(date.getDate() + 1)
+    }
     outTextRem(ctx, date, textE)
 })
 //--------------------------------------
