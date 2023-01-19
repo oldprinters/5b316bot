@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import additionalLesson from './scenes/additionalLessons.js'
 import createClass from './scenes/createClass.js'
 import createSchedule from './scenes/createSchedule.js'
+import durationLesson from './scenes/durationLesson.js'
 import EventsClass from './controllers/eventsClass.js'
 import freeWords from './scenes/rememberWords.js'
 import selectClass from './scenes/selectClass.js'
@@ -21,7 +22,7 @@ import { getNotesTime } from './utils.js'
 
 dotenv.config()
 
-const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, firstStep, freeWords, inpSheduleForDay, processRequests, remember,
+const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, durationLesson, firstStep, freeWords, inpSheduleForDay, processRequests, remember,
     selectClass, selectAction, sendQueryAdmin, setTimesUr, setSheduleDay, viewShedule])
 
 const bot = new Telegraf(process.env.KEY);//"5489794456:AAF89kL1SsQVK2-axyWO8VdARI8rlfAVxdM"
@@ -37,7 +38,7 @@ bot.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
 })
 //---------------------------------------------
 bot.action(/^answerAccepted\d{1,12}/, ctx => {
-    ctx.answerCbQuery()
+    ctx.answerCbQuery('Loading')
     const eC = new EventsClass(ctx)
     const ec_id = ctx.match[0].slice(14)
     eC.updateActive(ec_id, 0)

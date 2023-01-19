@@ -172,7 +172,7 @@ inpSheduleForDay.on('text', async ctx => {
 })
 //---------------------------------------
 inpSheduleForDay.action('queryDel', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     const urDay = new UrDay()
     try {
         await urDay.delById(ctx.scene.session.state.delId)
@@ -185,17 +185,17 @@ inpSheduleForDay.action('queryDel', async ctx => {
 })
 //---------------------------------------
 inpSheduleForDay.action('queryCancel', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     ctx.scene.reenter()
 })
 //--------------------------------------- временное изменение расписание
 inpSheduleForDay.action('queryYes2', ctx => {
-    ctx.answerCbQuery()
+    ctx.answerCbQuery('Loading')
 
 })
 //--------------------------------------- постоянное изменение расписания
 inpSheduleForDay.action('queryNo2', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     const urDay = new UrDay()
     try {
         await urDay.delById(ctx.scene.session.state.ud_id)

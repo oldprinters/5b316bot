@@ -67,39 +67,39 @@ selectAction.help(ctx => {
 })
 //-------------
 selectAction.action('viewSheduleDay', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     await ctx.scene.enter('VIEW_SHEDULE')
 })
 //-------------
 selectAction.action('viewRequests', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     await ctx.scene.enter('PROCESS_REQUESTS')
 })
 //-------------
 selectAction.action('selectClass', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     await ctx.scene.enter('SELECT_CLASS')
 })
 //---------
 selectAction.action('setTimesUr', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     await ctx.scene.enter('SET_TIMES_UR')
 })
 //---------
 selectAction.action('setSheduleDay', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     await ctx.scene.enter('SET_SHEDULE_DAY')
 })
 //---------
 selectAction.action('getClassInfo', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     const cL = ctx.session.classList[ctx.session.i]
     await ctx.replyWithHTML(`<i>Название класса:</i> "${cL.name}"\n<i>Длительность урока:</i> "${cL.duration.slice(0,5)}"\n<i>Ваша роль:</i> "${getRoleName(cL.role)}"`)
     await ctx.scene.reenter()
 })
 //----------------------
 selectAction.action('appendClass', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     await ctx.scene.enter('CREATE_CLASS')
 })
 
@@ -108,7 +108,7 @@ selectAction.start( async ctx => {
 })
 //-------------------------------------------------
 selectAction.action('additionalLessons', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     await ctx.scene.enter('ADDITIONAL_LESSONS')
 })
 //-------------------------------------------------

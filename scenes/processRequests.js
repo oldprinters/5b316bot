@@ -26,11 +26,13 @@ processRequests.enter( async ctx => {
 })
 //-------------------------------------
 processRequests.help( ctx => {
-    ctx.reply('<b><u>HELP</u></b>\nВаше право решать давать доступ к боту или нет. Для родителей это удобноЁ но не более.')
+    ctx.reply('<b><u>HELP</u></b>\nВаше право решать давать доступ к боту или нет. Для родителей это удобно, но не более.')
 })
+//------------------
+processRequests.start( ctx => { ctx.scene.enter('FIRST_STEP') })
 //--------------------------------------
 processRequests.action(/^iRequest_[0-9]{1,2}$/, async ctx => {
-    ctx.answerCbQuery()
+    ctx.answerCbQuery('Loading')
     const i = parseInt(ctx.match[0].slice(9))
     const el = ctx.scene.session.state.arrReq[i]
     ctx.scene.session.state.qA_id = el.id
@@ -39,12 +41,12 @@ processRequests.action(/^iRequest_[0-9]{1,2}$/, async ctx => {
 })
 //------------------------------
 processRequests.action('queryYes2', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     await ctx.reply('Укажите роль:', selectRoleMenu())
 })
 //------------------------------
 processRequests.action(/['studentRole', 'parentRole', 'teacherRole', 'c_teacherRole']/, async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     const role = ctx.callbackQuery.data.slice(0, -4)
     const qA = new QueryAdmin()
     const users = new Users(ctx)
@@ -52,11 +54,14 @@ processRequests.action(/['studentRole', 'parentRole', 'teacherRole', 'c_teacherR
     const user = await users.getUserByTlgId(ctx.scene.session.state.el.whoTlgId)
     await myClass.saveClassUserRoleExt(user.id, ctx.scene.session.state.el.class_id, role)
     await qA.setResult(ctx.scene.session.state.qA_id, 1)
+    const name = await myClass.getClassName(ctx.scene.session.state.el.class_id)
+    await ctx.telegram.sendMessage(ctx.scene.session.state.el.whoTlgId, 
+        `Заявка на вступление в группу "${name.name}" принята. Для начала просмотра нажмите /start`)
     ctx.scene.reenter()
 })
 //------------------------------
 processRequests.action('queryNo2', async ctx => {
-    ctx.answerCbQuery()
+    ctx.answerCbQuery('Loading')
     const qA = new QueryAdmin()
     await qA.setResult(ctx.scene.session.state.qA_id, -1)
     ctx.scene.reenter()

@@ -71,7 +71,8 @@ const selectClassMenu = (listClass) => {
 //    console.log("selectClassMenu listClass =", listClass)
     const ar = listClass.map((el, i) => Markup.button.callback(el.name, `iClass_${i}`))
     return Markup.inlineKeyboard([
-        ar
+        ar,
+        [Markup.button.callback("Добавить новый класс", "createNewClass")]
     ])
 }
 //-------------------------------------------

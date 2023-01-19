@@ -43,12 +43,36 @@ class UrTime {
         return (await call_q(sql)).affectedRows
     }
     //----------------------------
+    async #updateEl (id, time_s, time_e){
+        const sql = `
+            UPDATE ivanych_bot.urTime SET time_s = '${time_s}', time_e = '${time_e}' WHERE (id = ${id});
+        `
+        return (await call_q(sql)).affectedRows
+    }
+    //----------------------------
+    async updateTime(class_id, i, time_s, duration){
+        const res = await this.getByOrder(class_id, i)
+        if(res != undefined){
+            try {
+                return await this.#updateEl(res.id, time_s, sumTimes(time_s, duration))
+            } catch (err) {
+                console.error("!!!CATCH updateTime", err)
+            }
+        }
+        return res
+    }
+    //----------------------------
     async saveNewTimes(class_id, ar, duration){
         for(let i in ar){
             try {
-                await this.#saveEl(class_id, i, ar[i], sumTimes(ar[i], duration))
+                const res = await this.getByOrder(class_id, i)
+                if(res == undefined)
+                    await this.#saveEl(class_id, i, ar[i], sumTimes(ar[i], duration))
+                else {
+                    await this.#updateEl(res.id, ar[i], sumTimes(ar[i], duration))
+                }
             } catch(err) {
-                console.log("ERROR catch err:", err)
+                console.error("ERROR catch err:", err)
                 throw err
             }
         }

@@ -34,7 +34,7 @@ additionalLessons.command('settings', async ctx => {
 })
 //------------------------------------------------------
 additionalLessons.action(/^idDelLess_\d{1,1000000}$/, async ctx => {
-    ctx.answerCbQuery()
+    ctx.answerCbQuery('Loading')
     const id = parseInt(ctx.match[0].slice(10))
     const aC = new AdditionalClass(ctx)
     const res = await aC.delLessonById(id)
@@ -43,12 +43,12 @@ additionalLessons.action(/^idDelLess_\d{1,1000000}$/, async ctx => {
 })
 //------------------------------------------------------
 additionalLessons.action('createAdditional', ctx => {
-    ctx.answerCbQuery()
+    ctx.answerCbQuery('Loading')
         ctx.reply('Введите название занятия:')
 })
 //------------------------------------------------------
 additionalLessons.action('deleteAdditional', async ctx => {
-    ctx.answerCbQuery()
+    ctx.answerCbQuery('Loading')
     const aC = new AdditionalClass(ctx)
     const res = await aC.getListLessonsName()
     if(res[0] != undefined)
@@ -94,7 +94,7 @@ additionalLessons.on('text', async ctx => {
 })
 //-----------------------------------------
 additionalLessons.action('queryYes2', async ctx => {
-    ctx.answerCbQuery()
+    ctx.answerCbQuery('Loading')
     const st = ctx.scene.session.state
     const aC = new AdditionalClass(ctx)
     const res = await aC.addLesson(st)
@@ -112,7 +112,7 @@ additionalLessons.action('queryYes2', async ctx => {
 })
 //-----------------------------------------
 additionalLessons.action('queryNo2', async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Loading')
     await ctx.reply('Не сохраняем.')
     await ctx.scene.enter('SELECT_ACTION')
 })

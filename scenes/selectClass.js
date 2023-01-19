@@ -14,6 +14,15 @@ selectClass.start( ctx => ctx.scene.enter('FIRST_STEP'))
 selectClass.command('remember', async ctx => { 
     ctx.scene.enter('REMEMBER')
 })
+//-------------------------------------------------
+selectClass.command('settings', async ctx => { 
+    ctx.scene.enter('FIRST_STEP')
+})
+//-----------------------------
+selectClass.action('createNewClass', async ctx => {
+    await ctx.answerCbQuery('Loading')
+    ctx.scene.enter('CREATE_CLASS')
+})
 //--------------------------------------
 selectClass.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
     return ctx.scene.enter('FREE_WORDS')
@@ -43,7 +52,7 @@ selectClass.hears(/^delete [a-zA-Z. а-яА-ЯёЁйЙ-]*/, async ctx =>{
 })
 //----------------------------------------
 selectClass.action(/^iClass_[0-9]*/, async ctx => {
-    await ctx.answerCbQuery()
+    await ctx.answerCbQuery('Загружаю данные')
     ctx.session.i = ctx.callbackQuery.data.match(/[0-9]$/)[0]
     ctx.session.class_id = ctx.session.classList[ctx.session.i].class_id
     ctx.session.isAdmin = ctx.session.classList[ctx.session.i].isAdmin
