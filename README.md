@@ -1,5 +1,5 @@
 # 5b316bot
-<a href="https://t.me/IvanychSpb_bot">https://t.me/IvanychSpb_bot</a>
+<a href="https://t.me/IvanychSpb_bot" target="_blank">https://t.me/IvanychSpb_bot</a>
 Бот написан для родителей детей учащихся в школе. 
 Что может этот бот:
 - запомнить расписание одного или нескольких классов (если в семье несколько детей);
