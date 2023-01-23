@@ -39,22 +39,22 @@ freeWords.command('games', async ctx => {
     ctx.scene.enter('GAMES')
 })
 //--------------------------------------
-freeWords.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+freeWords.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
     const p1 = ctx.match[0].indexOf(' ')
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dateE = ctx.match[0].slice(0, p1)
-    const timeE = ctx.match[0].slice(p1, p2)
+    const timeE = ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
     const textE = ctx.match[0].slice(p2 + 1)
     const arD = dateE.split('.')
     const date = new Date(`${arD[2]}-${arD[1]}-${arD[0]} ${timeE}`)
     outTextRem(ctx, date, textE)
 })
 //--------------------------------------
-freeWords.hears(/^\d{1,2}\.\d{1,2} \d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+freeWords.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
     const p1 = ctx.match[0].indexOf(' ')
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dateE = ctx.match[0].slice(0, p1)
-    const timeE = ctx.match[0].slice(p1, p2)
+    const timeE = ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
     const textE = ctx.match[0].slice(p2 + 1)
     const arD = dateE.split('.')
     const arT = timeE.split(':')
@@ -69,9 +69,9 @@ freeWords.hears(/^\d{1,2}\.\d{1,2} \d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9]
     outTextRem(ctx, date, textE)
 })
 //--------------------------------------
-freeWords.hears(/^\d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+freeWords.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
     const p1 = ctx.match[0].indexOf(' ')
-    const timeE = ctx.match[0].slice(0, p1)
+    const timeE = ctx.match[0].slice(0, p1).replace(/[жЖ]/, ':')
     const textE = ctx.match[0].slice(p1 + 1)
     const arT = timeE.split(':')
     const date = new Date()
@@ -84,10 +84,10 @@ freeWords.hears(/^\d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx =>
     outTextRem(ctx, date, textE)
 })
 //--------------------------------------
-freeWords.hears(/^(завтра|Завтра) (в )?\d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
-    const d1 = ctx.match[0].search(/\d{1,2}:\d{1,2}/)
+freeWords.hears(/^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+    const d1 = ctx.match[0].search(/\d{1,2}[:жЖ]\d{1,2}/)
     const p1 = ctx.match[0].indexOf(' ', d1 + 3)
-    const timeE = (ctx.match[0].match(/\d{1,2}:\d{1,2}/))[0]
+    const timeE = (ctx.match[0].match(/\d{1,2}[:жЖ]\d{1,2}/))[0].replace(/[жЖ]/, ':')
     const textE = ctx.match[0].slice(p1)
     const arT = timeE.split(':')
     const date = new Date()
