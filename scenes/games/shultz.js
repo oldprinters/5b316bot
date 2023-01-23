@@ -18,6 +18,10 @@ const outTable5x5 = async (ctx, arr) => {
     strOut += '\n</pre>\n'
     await ctx.replyWithHTML(strOut, shultzEndGame("найдены все цифры"))
 }
+//-------------------------------------------------
+shultz.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
 //---------------------------------------------
 shultz.action("gameOver", async ctx => {
     ctx.answerCbQuery()
@@ -56,10 +60,10 @@ shultz.enter(async ctx => {
     await outTable5x5(ctx, arr)
     ctx.scene.session.state.tOut = setTimeout(async () => {
         if(ctx.scene.session.state.shultzId > 0){
-            const res = await shultz.delSet(game_id)
+            await shultz.delSet(game_id)
             await ctx.reply('Время вышло, игра сброшена. Результат не сохранен.')
         }
-    }, 300000)
+    }, 30000)
 })
 
 export default shultz

@@ -42,6 +42,10 @@ viewShedule.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, c
 viewShedule.command('remember', ctx => { 
     ctx.scene.enter('REMEMBER')
 })
+//-------------------------------------------------
+viewShedule.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
 //-------------------------------------
 viewShedule.start( async ctx => {
     await ctx.scene.enter('SELECT_ACTION')
