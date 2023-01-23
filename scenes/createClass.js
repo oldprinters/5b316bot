@@ -15,6 +15,10 @@ createClass.help( ctx => {
 })
 //---------------------------------------------
 createClass.start( ctx => {ctx.scene.enter('SELECT_ACTION')})
+//-------------------------------------------------
+createClass.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
 //---------------------------------------------
 createClass.on('text', async ctx => {
         ctx.session.className = ctx.message.text.match(/[а-яА-ЯёЁa-zA-Z0-9-_ ]*/)[0]

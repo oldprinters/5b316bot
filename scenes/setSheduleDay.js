@@ -16,6 +16,10 @@ setSheduleDay.hears('\w', async ctx => {
 setSheduleDay.help( ctx => {
     ctx.replyWithHTML('<b><u>HELP</u></b>\nРасписание устанавливается отдельно на каждый день. Выбрав день Вы сможете добавлять и удалять уроки.\n/start для возврата в основное меню.')
 })
+//-------------------------------------------------
+setSheduleDay.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
 //------------------
 setSheduleDay.start( ctx => { ctx.scene.enter('SELECT_ACTION') })
 //--------------------------------------- 

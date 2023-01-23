@@ -22,6 +22,10 @@ remember.help(ctx => {
     ctx.replyWithHTML('<b><u>Привязка к уроку</u></b>\n Напоминание оповестит в день занятия, за 90 мин до начала первого урока\n\n' +
     '<i>У "привязки к дате и времени" своя подсказка.</i>')
 })
+//-------------------------------------------------
+remember.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
 //--------------------------------------
 remember.hears(/^(Список|список|list|List)$/, async ctx => {
     const eC = new EventsClass(ctx)

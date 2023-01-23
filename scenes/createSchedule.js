@@ -18,6 +18,10 @@ createSchedule.enter(async ctx => {
 //-----------------------------------------------
 createSchedule.start( ctx => { ctx.scene.enter('SELECT_ACTION')})
 //-------------------------------------------------
+createSchedule.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
+//-------------------------------------------------
 createSchedule.action('setTimesUrMenu', async ctx => {
     ctx.scene.enter('SET_TIMES_UR')
 }) 

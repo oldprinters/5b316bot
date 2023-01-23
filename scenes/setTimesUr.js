@@ -35,6 +35,10 @@ setTimesUr.enter( async ctx => {
 setTimesUr.start( ctx => { ctx.scene.enter('SELECT_ACTION') })
 //------------------
 setTimesUr.command('settings', ctx => ctx.scene.enter('SELECT_ACTION'))
+//-------------------------------------------------
+setTimesUr.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
 //-------------------------------
 setTimesUr.help( ctx => {
     ctx.replyWithHTML('<b><u>HELP</u></b>\nОкончание уроков расчитывается автоматически, суммируя время начала урока и его продолжительность.\n'+

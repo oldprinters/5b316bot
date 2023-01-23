@@ -34,6 +34,10 @@ freeWords.hears(/^(Список|список|list|List)$/, async ctx => {
 })
 //--------------------------------------
 freeWords.start( ctx => ctx.scene.enter('FIRST_STEP'))
+//-------------------------------------------------
+freeWords.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
 //--------------------------------------
 freeWords.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}:\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
     const p1 = ctx.match[0].indexOf(' ')

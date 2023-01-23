@@ -6,6 +6,7 @@ import createSchedule from './scenes/createSchedule.js'
 import durationLesson from './scenes/durationLesson.js'
 import EventsClass from './controllers/eventsClass.js'
 import freeWords from './scenes/rememberWords.js'
+import games from './scenes/games.js'
 import selectClass from './scenes/selectClass.js'
 import selectAction from './scenes/selectAction.js'
 import setTimesUr from './scenes/setTimesUr.js'
@@ -14,6 +15,7 @@ import inpSheduleForDay from './scenes/inpSheduleForDay.js'
 import sendQueryAdmin from './scenes/queryMessage.js'
 import processRequests from './scenes/processRequests.js'
 import remember from './scenes/remember.js'
+import shultz from './scenes/games/shultz.js'
 import viewShedule from './scenes/viewShedule.js'
 import firstStep from './scenes/firstStep.js'
 
@@ -22,8 +24,8 @@ import { getNotesTime } from './utils.js'
 
 dotenv.config()
 
-const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, durationLesson, firstStep, freeWords, inpSheduleForDay, processRequests, remember,
-    selectClass, selectAction, sendQueryAdmin, setTimesUr, setSheduleDay, viewShedule])
+const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, durationLesson, firstStep, freeWords, games, inpSheduleForDay, processRequests, remember,
+    selectClass, selectAction, sendQueryAdmin, setTimesUr, setSheduleDay, shultz, viewShedule])
 
 const bot = new Telegraf(process.env.KEY);//"5489794456:AAF89kL1SsQVK2-axyWO8VdARI8rlfAVxdM"
 bot.use(session())

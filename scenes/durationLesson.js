@@ -15,6 +15,10 @@ durationLesson.help( ctx => {
 })
 //---------------------------------------------
 durationLesson.start( ctx => {ctx.scene.enter('SELECT_ACTION')})
+//-------------------------------------------------
+durationLesson.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
 //---------------------------------------------
 durationLesson.hears(/^\d{1,3}$/, async ctx => {
     if(/^\d{1,3}$/.test(ctx.message.text)){

@@ -193,6 +193,10 @@ inpSheduleForDay.action('queryYes2', ctx => {
     ctx.answerCbQuery('Loading')
 
 })
+//-------------------------------------------------
+inpSheduleForDay.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
 //--------------------------------------- постоянное изменение расписания
 inpSheduleForDay.action('queryNo2', async ctx => {
     await ctx.answerCbQuery('Loading')

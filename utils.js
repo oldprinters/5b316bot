@@ -267,6 +267,7 @@ const setCommands = async (ctx) => {
         {command: 'start', description: 'Перезапуск'}, 
         {command: 'help', description: 'Вызов справки'}, 
         {command: 'settings', description: 'Настройки'},
+        {command: 'games', description: 'Развивалки'},
         {command: 'remember', description: 'Напоминалки'},
     ])
 }

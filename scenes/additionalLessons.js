@@ -32,6 +32,10 @@ additionalLessons.start( ctx => {ctx.scene.enter('SELECT_ACTION')})
 additionalLessons.command('settings', async ctx => { 
     await ctx.scene.enter('SELECT_ACTION')
 })
+//-------------------------------------------------
+additionalLessons.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
 //------------------------------------------------------
 additionalLessons.action(/^idDelLess_\d{1,1000000}$/, async ctx => {
     ctx.answerCbQuery('Loading')

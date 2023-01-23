@@ -112,6 +112,10 @@ selectAction.action('additionalLessons', async ctx => {
     await ctx.scene.enter('ADDITIONAL_LESSONS')
 })
 //-------------------------------------------------
+selectAction.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
+//-------------------------------------------------
 selectAction.command('settings', async ctx => { 
     if(ctx.session.isAdmin == 1)
         await ctx.reply('Административное меню:', selectActionAdminMenu())

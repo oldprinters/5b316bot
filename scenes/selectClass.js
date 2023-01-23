@@ -18,6 +18,10 @@ selectClass.command('remember', async ctx => {
 selectClass.command('settings', async ctx => { 
     ctx.scene.enter('FIRST_STEP')
 })
+//-------------------------------------------------
+selectClass.command('games', async ctx => {
+    ctx.scene.enter('GAMES')
+})
 //-----------------------------
 selectClass.action('createNewClass', async ctx => {
     await ctx.answerCbQuery('Loading')

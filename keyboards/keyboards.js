@@ -132,6 +132,20 @@ const selectRemember = (class_id) => {
     }
     return Markup.inlineKeyboard(arrAction)
 }
+//----------------------------------------------------- GAMES
+const selectGame = (arrGame) => {
+    const ar = arrGame.map(el => [Markup.button.callback(el.name, el.sAct)])
+    return Markup.inlineKeyboard(
+        ar
+    )
+}
+//------------------------------------------------------
+const shultzEndGame = (str) => {
+    return Markup.inlineKeyboard([
+        [Markup.button.callback(str, "gameOver")],
+        [Markup.button.callback("Стоп", "gameStop")],
+    ])
+}
 
 export { createAdditionalMenu, createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, selectActionAdminMenu, selectActionUserMenu,
-    selectAddLessonMenu, selectLesson, selectRemember, selectRoleMenu, selectClassMenu, selectDay, selectShedActionMenu }
+    selectAddLessonMenu, selectLesson, selectRemember, selectRoleMenu, selectClassMenu, selectDay, selectGame, selectShedActionMenu, shultzEndGame }
