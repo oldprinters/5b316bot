@@ -63,7 +63,7 @@ shultz.enter(async ctx => {
             await shultz.delSet(game_id)
             await ctx.reply('Время вышло, игра сброшена. Результат не сохранен.')
         }
-    }, 300000)
+    }, 301000)
 })
 
 export default shultz
