@@ -100,13 +100,32 @@ const getDnTime = (str) => {
     return obj
 }
 //-------------------------------------------
+const searchRem = async (ctx) => {
+    const remTomorrow = /^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/
+    if(remTomorrow.test(ctx.message.text.trim())){
+        const d1 = ctx.message.text.search(/\d{1,2}[:жЖ]\d{1,2}/)
+        const p1 = ctx.message.text.indexOf(' ', d1 + 3)
+        const timeE = (ctx.message.text.match(/\d{1,2}[:жЖ]\d{1,2}/))[0].replace(/[жЖ]/, ':')
+        const textE = ctx.message.text.slice(p1)
+        const arT = timeE.split(':')
+        const date = new Date()
+        date.setDate(date.getDate() + 1)
+        date.setHours(arT[0])
+        date.setMinutes(arT[1])
+        outTextRem(ctx, date, textE)
+        return true
+    } else {
+        return false
+    }
+}
+//-------------------------------------------
 const searchByLessonName = async (ctx) => {
     const myClass = new MyClass(ctx)
     const urDay = new UrDay(ctx)
     await myClass.init()
     const seachDn = /^(Во|во|В|в)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)$/
     const seachSdv = /^(завтра|послезавтра|Завтра|Послезавтра)\s?$/
-    if(seachDn.test(ctx.message.text.trim())){
+        if(seachDn.test(ctx.message.text.trim())){
         const sdv = ctx.message.text.indexOf(' ')
         const nDay = selectDay(ctx.message.text.slice(sdv + 1).trim())
         if(nDay >= 0){
@@ -126,7 +145,8 @@ const searchByLessonName = async (ctx) => {
         const resNames = await myClass.searchLessonByName(ctx)
         const class_id = ctx.session.class_id
         if(resNames.length == 0){
-            ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
+            if(!(await searchRem(ctx)))
+                ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
         } else if(resNames.length == 1){
             await outSearchResult(ctx, resNames[0], class_id)
         } else {
