@@ -9,7 +9,7 @@ const adminStats = async () => {
 }
 //-------------------------------------------
 const helpForSearch = () => {
-    return 'Введите название урока (можно частично) и программа покажет когда на неделе проходят занятия.\n\n'+
+    return '<b><u>Расписание</u></b>\nВведите название урока (можно частично) и программа покажет когда на неделе проходят занятия.\n\n'+
     'Для просмотра расписания конкретного дня наберите: «в понедельник», «во вторник» и т.д.\n\n'+
     'Можно запросить расписаие «завтра» или «послезавтра».'
 }
@@ -18,10 +18,13 @@ const outSearchResult = async (ctx, el, class_id) => {
     const myClass = new MyClass(ctx)
     const urDay = new UrDay(ctx)
     const res = await myClass.getUrByNameId(el.name_id, class_id)
-    let strOut = `   <b><u>${res[0].name}</u></b>\n\n`
+    let strOut = '<i>Ничего не нашёл...</i>'
+    if(res[0] != undefined){
+        strOut = `   <b><u>${res[0].name}</u></b>\n\n`
 
-    for(let item of res){
-        strOut += `${urDay.getNameDay(item.dayOfWeek)}, ${item.order_num + 1} ур. <i>(${item.time_s.slice(0,5)} - ${item.time_e.slice(0,5)})</i>\n`
+        for(let item of res){
+            strOut += `${urDay.getNameDay(item.dayOfWeek)}, ${item.order_num + 1} ур. <i>(${item.time_s.slice(0,5)} - ${item.time_e.slice(0,5)})</i>\n`
+        }
     }
     await ctx.replyWithHTML(strOut)
 }

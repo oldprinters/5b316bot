@@ -61,7 +61,10 @@ selectAction.help(ctx => {
     ctx.replyWithHTML('<b><u>Основное меню слева от поля ввода</u></b>\n' +
         '/start - перезапуск бота\n/settings - настройки расписания\n' +
         '/remember - установка нвпоминалок\n' +
-        '"rem" - переход в напоминалки\nВыберите нужный пункт меню. Далее следуйте указаниям.\n' +
+        '<u>Планирование:</u>\n дд.мм.уууу чч:мм [сообщение]\nдд.мм чч:мм [сообщение]\nчч:мм [сообщение] - на текущий день\nзавтра в чч:мм [сообщение]\n'+
+        '<u>Отложенное сообщение:</u>\nMM мин [сообщение] - <i>сообщение через несколько минут</i>\n' +
+        'ЧЧ час [сообщение] - <i>отложить на несколько часов</i>\n\nсписок  - вывод списка активных напоминалок. (list тоже работает)\n'+
+        '"rem" - переход в напоминалки\n\n' +
         helpForSearch()
     )
 })
@@ -155,21 +158,6 @@ selectAction.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa
     const now = new Date()
     if(now > date)
         date.setFullYear(date.getFullYear() + 1)
-    outTextRem(ctx, date, textE)
-})
-//--------------------------------------
-selectAction.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
-    const p1 = ctx.match[0].indexOf(' ')
-    const timeE = ctx.match[0].slice(0, p1).replace(/[жЖ]/, ':')
-    const textE = ctx.match[0].slice(p1 + 1)
-    const arT = timeE.split(':')
-    const date = new Date()
-    date.setHours(arT[0])
-    date.setMinutes(arT[1])
-    const nDate = new Date()
-    if(nDate > date){
-        date.setDate(date.getDate() + 1)
-    }
     outTextRem(ctx, date, textE)
 })
 //--------------------------------------
