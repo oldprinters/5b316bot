@@ -5,7 +5,7 @@ import EventsClass from '../controllers/eventsClass.js'
 //import MyClass from '../controllers/classes.js'
 import UrDay from '../controllers/urDay.js'
 import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
-import { getRoleName, getSheduleToday, helpForSearch, outSelectedDay, outDateTime, searchByLessonName } from '../utils.js'
+import { getRoleName, getSheduleToday, helpForSearch, outSelectedDay, outDateTime, searchByLessonName, outTextRem } from '../utils.js'
 
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
@@ -126,6 +126,86 @@ selectAction.command('settings', async ctx => {
 //-------------------------------------------------
 selectAction.command('remember', ctx => { 
     ctx.scene.enter('REMEMBER')
+})
+//--------------------------------------
+selectAction.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const dateE = ctx.match[0].slice(0, p1)
+    const timeE = ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
+    const textE = ctx.match[0].slice(p2 + 1)
+    const arD = dateE.split('.')
+    const date = new Date(`${arD[2]}-${arD[1]}-${arD[0]} ${timeE}`)
+    outTextRem(ctx, date, textE)
+})
+//--------------------------------------
+selectAction.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const dateE = ctx.match[0].slice(0, p1)
+    const timeE = ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
+    const textE = ctx.match[0].slice(p2 + 1)
+    const arD = dateE.split('.')
+    const arT = timeE.split(':')
+    const date = new Date()
+    date.setDate(arD[0])
+    date.setMonth(arD[1] - 1)
+    date.setHours(arT[0])
+    date.setMinutes(arT[1])
+    const now = new Date()
+    if(now > date)
+        date.setFullYear(date.getFullYear() + 1)
+    outTextRem(ctx, date, textE)
+})
+//--------------------------------------
+selectAction.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const timeE = ctx.match[0].slice(0, p1).replace(/[жЖ]/, ':')
+    const textE = ctx.match[0].slice(p1 + 1)
+    const arT = timeE.split(':')
+    const date = new Date()
+    date.setHours(arT[0])
+    date.setMinutes(arT[1])
+    const nDate = new Date()
+    if(nDate > date){
+        date.setDate(date.getDate() + 1)
+    }
+    outTextRem(ctx, date, textE)
+})
+//--------------------------------------
+selectAction.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const timeE = ctx.match[0].slice(0, p1).replace(/[жЖ]/, ':')
+    const textE = ctx.match[0].slice(p1 + 1)
+    const arT = timeE.split(':')
+    const date = new Date()
+    date.setHours(arT[0])
+    date.setMinutes(arT[1])
+    const nDate = new Date()
+    if(nDate > date){
+        date.setDate(date.getDate() + 1)
+    }
+    outTextRem(ctx, date, textE)
+})
+//--------------------------------------
+selectAction.hears(/^\d{1,2} (мин)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const dt = ctx.match[0].slice(0, p1)
+    const textE = ctx.match[0].slice(p2)
+    const date = new Date()
+    date.setMinutes(date.getMinutes() + parseInt(dt))
+    outTextRem(ctx, date, textE)
+})
+//--------------------------------------
+selectAction.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const dt = ctx.match[0].slice(0, p1)
+    const textE = ctx.match[0].slice(p2)
+    const date = new Date()
+    date.setHours(date.getHours() + parseInt(dt))
+    outTextRem(ctx, date, textE)
 })
 //------------------------------------------
 selectAction.on('text', async ctx => {
