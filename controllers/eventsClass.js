@@ -23,13 +23,13 @@ class EventsClass {
     }
     //------------------------------------
     async searchEvents(class_id){}
-    //------------------------------------
-    async addEvent(dateTime, str){
+    //------------------------------------ день недели, число, месяц
+    async addEvent(dateTime, str, cronTab = ''){
         str = str.replaceAll("'", '"').trim()
         if(str == '')str = 'Вы просили Вам напомнить, так вот - уже пора.'
         const sql = `
             INSERT INTO ivanych_bot.events_class (class_id, client_id, cronTab, dataTime, text, cycle) 
-            VALUES (${this.class_id}, '${this.user_id}', '', '${getDateTimeBD(dateTime)}', '${str}',0);
+            VALUES (${this.class_id}, '${this.user_id}', '${cronTab}', '${getDateTimeBD(dateTime)}', '${str}',0);
         `
         return await call_q(sql, 'addEvent')
     }

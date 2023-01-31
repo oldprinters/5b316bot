@@ -5,7 +5,7 @@ import EventsClass from '../controllers/eventsClass.js'
 //import MyClass from '../controllers/classes.js'
 import UrDay from '../controllers/urDay.js'
 import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
-import { getRoleName, getSheduleToday, helpForSearch, outSelectedDay, outDateTime, searchByLessonName, outTextRem } from '../utils.js'
+import { getCronForDn, getRoleName, getSheduleToday, helpForSearch, outSelectedDay, outDateTime, searchByLessonName, outTextRem } from '../utils.js'
 
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
@@ -195,9 +195,23 @@ selectAction.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ct
     date.setHours(date.getHours() + parseInt(dt))
     outTextRem(ctx, date, textE)
 })
-//------------------------------------------
-selectAction.on('text', async ctx => {
-    await searchByLessonName(ctx)
+//------------------------------------------ обрабатываем каждый день недели 
+selectAction.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\sв? \d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙa-zA-Z0-9]*/, async (ctx) => {
+    let str = ctx.match[0]
+    const p = str.search(/\d{1,2}[:жЖ]\d{1,2}/)
+    const p1 = str.indexOf(' ', p + 3)
+    const text = str.slice(p1 + 1).trim()
+    const timeS = str.match(/\d{1,2}[:жЖ]\d{1,2}/)[0].replace(/[жЖ]/,':')
+    str = str.match(/(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)/)[0]
+    const cronTab = getCronForDn(str)
+    await ctx.reply(`${cronTab} ${timeS} ${text}`)
 })
+//-------------------------------------------
+//------------------------------------------
+selectAction.on('text', async (ctx, next) => {
+    if(!(await searchByLessonName(ctx)))
+        next()
+})
+
 
 export default selectAction

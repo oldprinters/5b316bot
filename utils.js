@@ -28,6 +28,13 @@ const outSearchResult = async (ctx, el, class_id) => {
     }
     await ctx.replyWithHTML(strOut)
 }
+//------------------------------------
+const getCronForDn = (str) => {
+    const nDay = selectDay(str)
+    if(nDay >= 0)
+        return `${nDay} * *`
+    return ''
+}
 //-------------------------------------------
 const selectDay = (str) => {
     str = str.trim()
@@ -125,7 +132,8 @@ const searchByLessonName = async (ctx) => {
     await myClass.init()
     const seachDn = /^(Во|во|В|в)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)$/
     const seachSdv = /^(завтра|послезавтра|Завтра|Послезавтра)\s?$/
-        if(seachDn.test(ctx.message.text.trim())){
+
+    if(seachDn.test(ctx.message.text.trim())){
         const sdv = ctx.message.text.indexOf(' ')
         const nDay = selectDay(ctx.message.text.slice(sdv + 1).trim())
         if(nDay >= 0){
@@ -145,8 +153,10 @@ const searchByLessonName = async (ctx) => {
         const resNames = await myClass.searchLessonByName(ctx)
         const class_id = ctx.session.class_id
         if(resNames.length == 0){
-            if(!(await searchRem(ctx)))
+            if(!(await searchRem(ctx))){
                 ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
+                return false
+            }
         } else if(resNames.length == 1){
             await outSearchResult(ctx, resNames[0], class_id)
         } else {
@@ -154,6 +164,7 @@ const searchByLessonName = async (ctx) => {
                 await outSearchResult(ctx, el, class_id)
             }
         }
+        return true
     }
 }
 //-------------------------------------------
@@ -300,5 +311,5 @@ const getNotesTime = async () => {
     await eC.getNotes()
 }
 
-export { compareTime, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
+export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
     outDate, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }
