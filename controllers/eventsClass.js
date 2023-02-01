@@ -29,9 +29,17 @@ class EventsClass {
         if(str == '')str = 'Вы просили Вам напомнить, так вот - уже пора.'
         const sql = `
             INSERT INTO ivanych_bot.events_class (class_id, client_id, cronTab, dataTime, text, cycle) 
-            VALUES (${this.class_id}, '${this.user_id}', '${cronTab}', '${getDateTimeBD(dateTime)}', '${str}',0);
+            VALUES (${this.class_id}, '${this.user_id}', '${cronTab}', '${getDateTimeBD(dateTime)}', '${str}', ${cronTab.length > 0});
         `
         return await call_q(sql, 'addEvent')
+    }
+    //--------------------------------------
+    async getNotesById(id){
+        const sql = `
+            SELECT * FROM ivanych_bot.events_class
+            WHERE id = ${id};
+        `
+        return await call_q(sql, 'getNotesById')
     }
     //--------------------------------------
     async getNotesByTime(){
@@ -82,13 +90,41 @@ class EventsClass {
         return await call_q(sql, 'updateActive')
     }
     //---------------------------------------
+    async updateDateTime(id, dt){
+        const sql = `
+            UPDATE ivanych_bot.events_class SET dataTime = '${getDateTimeBD(dt)}', active = 30 WHERE (id = ${id});
+        `
+        return await call_q(sql, 'updateActive')
+    }
+    //--------------------------------------- пересчитываем следующую остановку
+    async setNewPeriod(msg){
+        if(msg.cronTab.length > 0){
+            const dd = new Date(msg.dataTime)
+            const dt = new Date()
+            if(dt > dd) {
+                const arTab = msg.cronTab.split(' ')
+                if(arTab[0] != '*'){
+                    const sdt = parseInt(arTab[0]) - dt.getDay()
+                    dd.setDate(dd.getDate() + (sdt > 0? sdt: 7 - (sdt)))
+                }
+                if(arTab[1] != '*')
+                    dd.setMonth(dd.getMonth() + 1)
+                if(arTab[2] != '*')
+                    dd.setFullYear(dd.getFullYear() + 1)
+                await this.updateDateTime(msg.id, dd)
+            } 
+        }
+    }
+    //---------------------------------------
     async sendMsg() {
         this.sending = true
         while(this.arrEvents.length > 0){
             const msg = this.arrEvents.pop()
             if(msg.userORclass == 'user'){
                 if(msg.active > 0){
-                    this.updateActive(msg.id, msg.active - 1)
+                    await this.updateActive(msg.id, msg.active - 1)
+                    if(msg.active == 1 && msg.cycle)
+                        await this.setNewPeriod(msg)
                     if(msg.active%5 == 0)
                         await this.sendTlgMessage(msg)
                 }

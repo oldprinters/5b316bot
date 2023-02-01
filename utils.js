@@ -222,7 +222,11 @@ const getDateTimeBD = (d = undefined) => {
     if(d == undefined){ 
         d = new Date()
     }
-    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:00`
+    const dd = d.getDate()
+    const m = d.getMonth()
+    const mn = d.getMinutes()
+    const ch = d.getHours()
+    return `${d.getFullYear()}-${m>9?m:'0' + (m + 1)}-${dd>9?dd:'0'+dd} ${ch>9?ch:'0'+ch}:${mn>9?mn:'0'+mn}:00`
 }
 //-------------------------------------------
 const compareTime = (t1, t2, dt = 45) => {
@@ -312,4 +316,4 @@ const getNotesTime = async () => {
 }
 
 export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
-    outDate, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, searchByLessonName, setCommands, sumTimes }
+    outDate, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, searchByLessonName, selectDay, setCommands, sumTimes }

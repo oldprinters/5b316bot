@@ -5,7 +5,8 @@ import EventsClass from '../controllers/eventsClass.js'
 //import MyClass from '../controllers/classes.js'
 import UrDay from '../controllers/urDay.js'
 import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
-import { getCronForDn, getRoleName, getSheduleToday, helpForSearch, outSelectedDay, outDateTime, searchByLessonName, outTextRem } from '../utils.js'
+import { getCronForDn, getDateTimeBD, getRoleName, getSheduleToday, helpForSearch, 
+    outDate, outTimeDate, outSelectedDay, outDateTime, outTextRem, searchByLessonName, selectDay } from '../utils.js'
 
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
@@ -203,8 +204,24 @@ selectAction.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельни�
     const text = str.slice(p1 + 1).trim()
     const timeS = str.match(/\d{1,2}[:жЖ]\d{1,2}/)[0].replace(/[жЖ]/,':')
     str = str.match(/(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)/)[0]
-    const cronTab = getCronForDn(str)
-    await ctx.reply(`${cronTab} ${timeS} ${text}`)
+    const dn = selectDay(str)
+    if(dn >= 0){
+        const cronTab = getCronForDn(str)
+        const arDt = timeS.split(':')
+        const dt = new Date()
+        const tDn = dt.getDay()
+        dt.setDate(dt.getDate() + ((dn - tDn) < 0? dn-tDn+7:dn-tDn))
+        dt.setHours(arDt[0])
+        dt.setMinutes(arDt[1])
+        const eC = new EventsClass(ctx)
+        try {
+            if(eC.addEvent(dt, text, `${cronTab}`))
+                ctx.reply(`Еженедельное напоминание. Ближайшее напоминание "${text}" запланировано на ${outDate(dt)} ${outTimeDate(dt)}.`)
+            }catch (err){
+                ctx.reply("Ошибка сохранения.")
+                console.log("!!!Catch ", err)
+        }
+    }
 })
 //-------------------------------------------
 //------------------------------------------
