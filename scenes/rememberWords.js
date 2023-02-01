@@ -4,7 +4,7 @@ import EventsClass from '../controllers/eventsClass.js'
 //import MyClass from '../controllers/classes.js'
 //import { queryYesNoMenu, selectRemember, selectLesson } from '../keyboards/keyboards.js'
 //import UrDay from "../controllers/urDay.js"
-import { getDnTime, outDateTime, outTextRem } from '../utils.js'
+import { getDnTime, outDateTime, outTextRem, remForDay } from '../utils.js'
 
 const freeWords  = new Scenes.BaseScene('FREE_WORDS')
 //--------------------------------------
@@ -119,6 +119,11 @@ freeWords.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx =
 //-------------------------------------------------
 freeWords.command('remember', async ctx => { 
     ctx.scene.reenter()
+})
+//------------------------------------------ обрабатываем каждый день недели 
+freeWords.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\sв? \d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙa-zA-Z0-9]*/, 
+    async (ctx, next) => {
+        await remForDay(ctx, next)
 })
 //--------------------------------------
 freeWords.on('text', ctx => {

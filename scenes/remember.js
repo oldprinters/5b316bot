@@ -4,7 +4,7 @@ import EventsClass from '../controllers/eventsClass.js'
 import MyClass from '../controllers/classes.js'
 import { queryYesNoMenu, selectRemember, selectLesson } from '../keyboards/keyboards.js'
 import UrDay from "../controllers/urDay.js"
-import { outDate, outDateTime } from '../utils.js'
+import { outDate, outDateTime, remForDay } from '../utils.js'
 
 const remember = new Scenes.BaseScene('REMEMBER')
 //--------------------------------------
@@ -94,6 +94,11 @@ remember.action(/^iSelectedLess_\d+$/, async ctx => {
     ctx.reply(`${urName[0].name}. Введите текст напоминания:`)
     ctx.scene.session.state.rmDay = d
     ctx.scene.session.state.urName = urName[0].name
+})
+//------------------------------------------ обрабатываем каждый день недели 
+remember.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\sв? \d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙa-zA-Z0-9]*/, 
+    async (ctx, next) => {
+        await remForDay(ctx, next)
 })
 //-------------------------------------------------------------------------------------
 remember.on('text', async ctx => {

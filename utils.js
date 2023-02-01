@@ -106,6 +106,36 @@ const getDnTime = (str) => {
     }
     return obj
 }
+//---------------------------------------------------------------
+const remForDay = async (ctx, next) => { 
+    let str = ctx.match[0]
+    const p = str.search(/\d{1,2}[:жЖ]\d{1,2}/)
+    const p1 = str.indexOf(' ', p + 3)
+    const text = str.slice(p1 + 1).trim()
+    const timeS = str.match(/\d{1,2}[:жЖ]\d{1,2}/)[0].replace(/[жЖ]/,':')
+    str = str.match(/(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)/)[0]
+    const dn = selectDay(str)
+    if(dn >= 0){
+        const cronTab = getCronForDn(str)
+        const arDt = timeS.split(':')
+        const dt = new Date()
+        const tDn = dt.getDay()
+        dt.setDate(dt.getDate() + ((dn - tDn) < 0? dn-tDn+7:dn-tDn))
+        dt.setHours(arDt[0])
+        dt.setMinutes(arDt[1])
+        const eC = new EventsClass(ctx)
+        try {
+            if(eC.addEvent(dt, text, `${cronTab}`))
+                ctx.reply(`Еженедельное напоминание. Ближайшее напоминание "${text}" запланировано на ${outDate(dt)} ${outTimeDate(dt)}.`)
+            }catch (err){
+                ctx.reply("Ошибка сохранения.")
+                console.log("!!!Catch ", err)
+        }
+        return true
+    } else {
+        next()
+    }
+}
 //-------------------------------------------
 const searchRem = async (ctx) => {
     const remTomorrow = /^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/
@@ -316,4 +346,4 @@ const getNotesTime = async () => {
 }
 
 export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
-    outDate, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, searchByLessonName, selectDay, setCommands, sumTimes }
+    outDate, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, remForDay, searchByLessonName, selectDay, setCommands, sumTimes }

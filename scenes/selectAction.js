@@ -6,7 +6,8 @@ import EventsClass from '../controllers/eventsClass.js'
 import UrDay from '../controllers/urDay.js'
 import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
 import { getCronForDn, getDateTimeBD, getRoleName, getSheduleToday, helpForSearch, 
-    outDate, outTimeDate, outSelectedDay, outDateTime, outTextRem, searchByLessonName, selectDay } from '../utils.js'
+    outDate, outTimeDate, outSelectedDay, outDateTime, outTextRem, 
+    remForDay, searchByLessonName, selectDay } from '../utils.js'
 
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
@@ -61,10 +62,12 @@ selectAction.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, 
 selectAction.help(ctx => {
     ctx.replyWithHTML('<b><u>Основное меню слева от поля ввода</u></b>\n' +
         '/start - перезапуск бота\n/settings - настройки расписания\n' +
-        '/remember - установка нвпоминалок\n' +
+        '/remember - установка нвпоминалок\n\n' +
         '<u>Планирование:</u>\n дд.мм.уууу чч:мм [сообщение]\nдд.мм чч:мм [сообщение]\nчч:мм [сообщение] - на текущий день\nзавтра в чч:мм [сообщение]\n'+
         '<u>Отложенное сообщение:</u>\nMM мин [сообщение] - <i>сообщение через несколько минут</i>\n' +
-        'ЧЧ час [сообщение] - <i>отложить на несколько часов</i>\n\nсписок  - вывод списка активных напоминалок. (list тоже работает)\n'+
+        'ЧЧ час [сообщение] - <i>отложить на несколько часов</i>\n\nСписок - вывод списка активных напоминалок. (list тоже работает)\n\n'+
+        'Каждый(ую, ое) [день недели] в ЧЧ:ММ ТЕКСТ - еженедельное напоминание.\n <i>Каждое воскресенье в 19:00 проверить форму.</i>\n'+
+        'Аккуратнее, функция отключения ещё не написана :-)\n\n'+
         '"rem" - переход в напоминалки\n\n' +
         helpForSearch()
     )
@@ -197,31 +200,9 @@ selectAction.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ct
     outTextRem(ctx, date, textE)
 })
 //------------------------------------------ обрабатываем каждый день недели 
-selectAction.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\sв? \d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙa-zA-Z0-9]*/, async (ctx) => {
-    let str = ctx.match[0]
-    const p = str.search(/\d{1,2}[:жЖ]\d{1,2}/)
-    const p1 = str.indexOf(' ', p + 3)
-    const text = str.slice(p1 + 1).trim()
-    const timeS = str.match(/\d{1,2}[:жЖ]\d{1,2}/)[0].replace(/[жЖ]/,':')
-    str = str.match(/(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)/)[0]
-    const dn = selectDay(str)
-    if(dn >= 0){
-        const cronTab = getCronForDn(str)
-        const arDt = timeS.split(':')
-        const dt = new Date()
-        const tDn = dt.getDay()
-        dt.setDate(dt.getDate() + ((dn - tDn) < 0? dn-tDn+7:dn-tDn))
-        dt.setHours(arDt[0])
-        dt.setMinutes(arDt[1])
-        const eC = new EventsClass(ctx)
-        try {
-            if(eC.addEvent(dt, text, `${cronTab}`))
-                ctx.reply(`Еженедельное напоминание. Ближайшее напоминание "${text}" запланировано на ${outDate(dt)} ${outTimeDate(dt)}.`)
-            }catch (err){
-                ctx.reply("Ошибка сохранения.")
-                console.log("!!!Catch ", err)
-        }
-    }
+selectAction.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\sв? \d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙa-zA-Z0-9]*/, 
+    async (ctx, next) => {
+        await remForDay(ctx, next)
 })
 //-------------------------------------------
 //------------------------------------------
