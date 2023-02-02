@@ -5,7 +5,7 @@ import EventsClass from '../controllers/eventsClass.js'
 //import MyClass from '../controllers/classes.js'
 import UrDay from '../controllers/urDay.js'
 import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
-import { getCronForDn, getDateTimeBD, getRoleName, getSheduleToday, helpForSearch, 
+import { getDateTimeBD, getRoleName, getSheduleToday, helpForSearch, 
     outDate, outTimeDate, outSelectedDay, outDateTime, outTextRem, 
     remForDay, searchByLessonName, selectDay } from '../utils.js'
 
@@ -22,7 +22,11 @@ selectAction.enter(async ctx => {
         nRequest = arrRequest.length > 0
     }
     if(nLessons){
-        const list = await getSheduleToday(ctx)
+        const eC = new EventsClass(ctx)
+
+        let list = await getSheduleToday(ctx)
+        list += await eC.listForDayUser()
+
         if(list.length > 0){
             const d = new Date()
             await ctx.replyWithHTML(`<b>Расписание на сегодня</b> <i>(${urDay.getNameDay(d.getDay())})</i>:\n\n${list}`)

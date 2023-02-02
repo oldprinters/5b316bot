@@ -1,6 +1,6 @@
 import { call_q } from '../config/query.js'
 import axios from 'axios'
-import { getDateTimeBD } from '../utils.js'
+import { getDateTimeBD, outTimeDate } from '../utils.js'
 import {Telegraf} from "telegraf"
 //eventsClass.js класс работает с событиями (каникулы, экскурсии и т.п.)
 //каждое событие имеет дату и время начала и окончания. Дата окончания включена в событие.
@@ -15,6 +15,7 @@ class EventsClass {
     user_id
     arrEvents = []
     sending = false
+    //-------------------------------------
     constructor(ctx) {
         if(ctx){
             this.user_id = ctx.from.id
@@ -49,6 +50,31 @@ class EventsClass {
             AND active > 0;
         `
         return await call_q(sql, 'getNotesByTime')
+    }
+    //----------------------------------------
+    async listForDayUser(){
+        const arr = await this.getForDayUser()
+        let list = arr.length > 0? '\n<b>Не забудьте:</b>\n': ''
+        arr.forEach(el => {
+            const d = new Date(el.dateTime)
+            list += `${outTimeDate(d)} ${el.text}\n`
+        })
+        return list
+    }
+    //----------------------------------------
+    async getForDayUser(){
+        const de = new Date()
+        de.setHours(23, 59)
+        const sql = `
+            SELECT id, dataTime dateTime, ec.text
+            FROM ivanych_bot.events_class ec
+            WHERE ec.active > 0
+            AND client_id = ${this.user_id}
+            AND dataTime > NOW()
+            AND dataTime < '${getDateTimeBD(de)}'
+            ORDER BY dataTime ASC;
+        `
+        return await call_q(sql, 'listForDayUser')
     }
     //----------------------------------------
     async listForUser(){
