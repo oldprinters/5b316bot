@@ -34,6 +34,13 @@ class EventsClass {
         `
         return await call_q(sql, 'addEvent')
     }
+    //------------------------------------
+    async delRemById(id){
+        const sql = `
+            UPDATE ivanych_bot.events_class SET cronTab = '', active = 0 WHERE (id = ${id});
+        `
+        return (await call_q(sql, 'addEvent')).affectedRows
+    }
     //--------------------------------------
     async getNotesById(id){
         const sql = `
@@ -41,6 +48,21 @@ class EventsClass {
             WHERE id = ${id};
         `
         return await call_q(sql, 'getNotesById')
+    }
+    //----------------------------------------
+    async getForDayUser(){
+        const de = new Date()
+        de.setHours(23, 59)
+        const sql = `
+            SELECT id, dataTime dateTime, ec.text
+            FROM ivanych_bot.events_class ec
+            WHERE ec.active > 0
+            AND client_id = ${this.user_id}
+            AND dataTime > NOW()
+            AND dataTime < '${getDateTimeBD(de)}'
+            ORDER BY dataTime ASC;
+        `
+        return await call_q(sql, 'listForDayUser')
     }
     //--------------------------------------
     async getNotesByTime(){
@@ -62,28 +84,24 @@ class EventsClass {
         return list
     }
     //----------------------------------------
-    async getForDayUser(){
-        const de = new Date()
-        de.setHours(23, 59)
-        const sql = `
-            SELECT id, dataTime dateTime, ec.text
-            FROM ivanych_bot.events_class ec
-            WHERE ec.active > 0
-            AND client_id = ${this.user_id}
-            AND dataTime > NOW()
-            AND dataTime < '${getDateTimeBD(de)}'
-            ORDER BY dataTime ASC;
-        `
-        return await call_q(sql, 'listForDayUser')
-    }
-    //----------------------------------------
     async listForUser(){
         const sql = `
-            SELECT id, dataTime dateTime, ec.text
+            SELECT id, dataTime dateTime, ec.text, cycle
             FROM ivanych_bot.events_class ec
             WHERE ec.active > 0
             AND client_id = ${this.user_id}
-            ORDER BY dataTime ASC;
+            ORDER BY cycle, dataTime ASC;
+        `
+        return await call_q(sql, 'listForUser')
+    }
+    //----------------------------------------
+    async listForDel(){
+        const sql = `
+            SELECT id, dataTime dateTime, ec.text, cycle, cronTab
+            FROM ivanych_bot.events_class ec
+            WHERE ec.active > 0
+            AND client_id = ${this.user_id}
+            ORDER BY cycle, dataTime ASC;
         `
         return await call_q(sql, 'listForUser')
     }
@@ -105,22 +123,6 @@ class EventsClass {
                 ]
             })}
         })
-//        console.log("@@@@ sendTlgMessage url =", url)
-//        return await axios.get(url)
-    }
-    //---------------------------------------
-    async updateActive(id, active){
-        const sql = `
-            UPDATE ivanych_bot.events_class SET active = ${active} WHERE (id = ${id});
-        `
-        return await call_q(sql, 'updateActive')
-    }
-    //---------------------------------------
-    async updateDateTime(id, dt){
-        const sql = `
-            UPDATE ivanych_bot.events_class SET dataTime = '${getDateTimeBD(dt)}', active = 30 WHERE (id = ${id});
-        `
-        return await call_q(sql, 'updateActive')
     }
     //--------------------------------------- пересчитываем следующую остановку
     async setNewPeriod(msg){
@@ -140,6 +142,20 @@ class EventsClass {
                 await this.updateDateTime(msg.id, dd)
             } 
         }
+    }
+    //---------------------------------------
+    async updateActive(id, active){
+        const sql = `
+            UPDATE ivanych_bot.events_class SET active = ${active} WHERE (id = ${id});
+        `
+        return await call_q(sql, 'updateActive')
+    }
+    //---------------------------------------
+    async updateDateTime(id, dt){
+        const sql = `
+            UPDATE ivanych_bot.events_class SET dataTime = '${getDateTimeBD(dt)}', active = 30 WHERE (id = ${id});
+        `
+        return await call_q(sql, 'updateActive')
     }
     //---------------------------------------
     async sendMsg() {

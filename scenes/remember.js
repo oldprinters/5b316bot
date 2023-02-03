@@ -10,7 +10,7 @@ const remember = new Scenes.BaseScene('REMEMBER')
 //--------------------------------------
 remember.enter(async ctx => {
     if(ctx.session.class_id > 0)
-        await ctx.reply('Событие привязано к времени или уроку?', selectRemember(ctx.session.class_id))
+        await ctx.reply('Чем могу помочь?', selectRemember(ctx.session.class_id))
     else {
         ctx.scene.enter('FREE_WORDS')
     }
@@ -62,6 +62,11 @@ remember.action('freeWords', async ctx => {
     ctx.answerCbQuery('Loading')
     ctx.scene.enter('FREE_WORDS')
 })
+//--------------------------------------
+remember.action('delRems', async ctx => {
+    ctx.answerCbQuery('Loading')
+    ctx.scene.enter('DEL_REMS')
+})
 //---------------------------------------
 remember.action(/^iSelectedLess_\d+$/, async ctx => {
     ctx.answerCbQuery('Loading')
@@ -96,7 +101,7 @@ remember.action(/^iSelectedLess_\d+$/, async ctx => {
     ctx.scene.session.state.urName = urName[0].name
 })
 //------------------------------------------ обрабатываем каждый день недели 
-remember.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\sв? \d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙa-zA-Z0-9]*/, 
+remember.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\s(в )?\d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙa-zA-Z0-9]*/, 
     async (ctx, next) => {
         await remForDay(ctx, next)
 })

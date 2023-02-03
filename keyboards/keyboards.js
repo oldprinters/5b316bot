@@ -1,5 +1,6 @@
 //keyboards.js
 import { Markup } from "telegraf";
+import { outDateTime } from "../utils.js";
 
 //------------------------------------------
 const queryDelCancelMenu = () => {
@@ -67,6 +68,14 @@ const selectDay = () => {
     ])
 }
 //-------------------------------------------
+const buttonsRems = (arRems) => {
+    let ar = []
+    arRems.forEach( el => {
+        ar.push([Markup.button.callback(`${el.cycle?'(C)  ':''}${outDateTime(el.dateTime)} ${el.text}`, `delRem_${el.id}`)])
+    })
+    return Markup.inlineKeyboard(ar)
+}
+//-------------------------------------------
 const selectClassMenu = (listClass) => {
 //    console.log("selectClassMenu listClass =", listClass)
     const ar = listClass.map((el, i) => Markup.button.callback(el.name, `iClass_${i}`))
@@ -124,8 +133,8 @@ const selectLesson = (listLess) => {
 //------------------------------------------------
 const selectRemember = (class_id) => {
     let arrAction = [
+        [Markup.button.callback("Удаление напоминалок", "delRems")],
         [Markup.button.callback("Привязка к дате и времени", "freeWords")],
-//        [Markup.button.callback("На дату", "setDate")],
     ]
     if(class_id){
         arrAction.push([Markup.button.callback("Привязка к уроку", "nextLesson")])
@@ -147,5 +156,5 @@ const shultzEndGame = (str) => {
     ])
 }
 
-export { createAdditionalMenu, createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, selectActionAdminMenu, selectActionUserMenu,
+export { buttonsRems, createAdditionalMenu, createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, selectActionAdminMenu, selectActionUserMenu,
     selectAddLessonMenu, selectLesson, selectRemember, selectRoleMenu, selectClassMenu, selectDay, selectGame, selectShedActionMenu, shultzEndGame }
