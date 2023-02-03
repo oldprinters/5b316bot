@@ -89,7 +89,8 @@ const getDnTime = (str) => {
     const seachDn = /^(понед|вторн|сред|четв|пятн|суб|воскр)+/
     let obj = undefined //{dn: undefined, time_s: undefined, time_e: undefined}
     if(seachDn.test(str.toLowerCase())){
-        const arTime = str.match(/\d{1,2}:\d{2}/g)
+        const arT = str.match(/\d{1,2}[:жЖ]\d{2}/g)
+        const arTime = arT.map( el => el.replace(/[жЖ]/, ':'))
         if(arTime != null){
             const dayName = str.slice(0, str.indexOf(' '))
             obj = {
@@ -105,6 +106,110 @@ const getDnTime = (str) => {
         throw 'Не разобрал день недели, проверьте, пожалуйста.'
     }
     return obj
+}
+//--------------------------------------------------------------- day to rem
+const dayToRem = async (ctx) => {
+    const str = ctx.message.text.trim().toLowerCase()
+    const res = getDnTime(str)
+    if(res != undefined && res.dn >= 1){
+        const d1 = ctx.message.text.search(/\d{1,2}[:жЖ]\d{1,2}/)
+
+        const p1 = ctx.message.text.indexOf(' ', d1 + 3)
+        const textE = ctx.message.text.slice(p1 + 1)
+        const d = new Date()
+        const nd = d.getDay()
+        if(res.dn > nd){
+            d.setDate(d.getDate() + res.dn - nd)
+        } else {
+            d.setDate(d.getDate() + (res.dn - nd + 7))
+        }
+        const arT = res.time_s.split(':')
+        d.setHours(arT[0])
+        d.setMinutes(arT[1])
+        await outTextRem(ctx, d, textE)
+        return true
+    } else {
+        //ctx.reply('Текст не распознан. После указания времени не забыли написать сообщение?')
+        return false
+    }
+}
+//--------------------------------------------------------------- dd.mm.yyyy hh:mm
+const fullToRem = async (ctx) => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const dateE = ctx.match[0].slice(0, p1)
+    const timeE = ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
+    const textE = ctx.match[0].slice(p2 + 1)
+    const arD = dateE.split('.')
+    const date = new Date(`${arD[2]}-${arD[1]}-${arD[0]} ${timeE}`)
+    await outTextRem(ctx, date, textE)
+}
+//---------------------------------------------------- dd.mm hh:mm
+const dmhmToRem = async (ctx) => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const dateE = ctx.match[0].slice(0, p1)
+    const timeE = ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
+    const textE = ctx.match[0].slice(p2 + 1)
+    const arD = dateE.split('.')
+    const arT = timeE.split(':')
+    const date = new Date()
+    date.setDate(arD[0])
+    date.setMonth(arD[1] - 1)
+    date.setHours(arT[0])
+    date.setMinutes(arT[1])
+    const now = new Date()
+    if(now > date)
+        date.setFullYear(date.getFullYear() + 1)
+    await outTextRem(ctx, date, textE)
+}
+//--------------------------------------------------------------- fullToRem, dmhmToRem, nHoursToRem, nHMtoRem, nMinutesToRem
+const nHoursToRem = async (ctx) => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const dt = ctx.match[0].slice(0, p1)
+    const textE = ctx.match[0].slice(p2)
+    const date = new Date()
+    date.setHours(date.getHours() + parseInt(dt))
+    await outTextRem(ctx, date, textE)
+}
+//----------------------------------------------
+const nHMtoRem = async (ctx) => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const timeE = ctx.match[0].slice(0, p1).replace(/[жЖ]/, ':')
+    const textE = ctx.match[0].slice(p1 + 1)
+    const arT = timeE.split(':')
+    const date = new Date()
+    date.setHours(arT[0])
+    date.setMinutes(arT[1])
+    const nDate = new Date()
+    if(nDate > date){
+        date.setDate(date.getDate() + 1)
+    }
+    await outTextRem(ctx, date, textE)
+}
+//----------------------------------------------
+const nMinutesToRem = async (ctx) => {
+    const p1 = ctx.match[0].indexOf(' ')
+    const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const dt = ctx.match[0].slice(0, p1)
+    const textE = ctx.match[0].slice(p2)
+    const date = new Date()
+    date.setMinutes(date.getMinutes() + parseInt(dt))
+    await outTextRem(ctx, date, textE)
+}
+//--------------------------------------------
+const tomorrowRem = async (ctx) => {
+    const d1 = ctx.match[0].search(/\d{1,2}[:жЖ]\d{1,2}/)
+    const p1 = ctx.match[0].indexOf(' ', d1 + 3)
+    const timeE = (ctx.match[0].match(/\d{1,2}[:жЖ]\d{1,2}/))[0].replace(/[жЖ]/, ':')
+    const textE = ctx.match[0].slice(p1)
+    const arT = timeE.split(':')
+    const date = new Date()
+    date.setDate(date.getDate() + 1)
+    date.setHours(arT[0])
+    date.setMinutes(arT[1])
+    await outTextRem(ctx, date, textE)
 }
 //---------------------------------------------------------------
 const remForDay = async (ctx, next) => { 
@@ -149,7 +254,7 @@ const searchRem = async (ctx) => {
         date.setDate(date.getDate() + 1)
         date.setHours(arT[0])
         date.setMinutes(arT[1])
-        outTextRem(ctx, date, textE)
+        await outTextRem(ctx, date, textE)
         return true
     } else {
         return false
@@ -184,7 +289,7 @@ const searchByLessonName = async (ctx) => {
         const class_id = ctx.session.class_id
         if(resNames.length == 0){
             if(!(await searchRem(ctx))){
-                ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
+                await ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
                 return false
             }
         } else if(resNames.length == 1){
@@ -295,9 +400,9 @@ const outDate = (dd, r = '.') => {
 	return (d > 9?'':'0') + d + r + (m > 9?'':'0') + m + r + dd.getFullYear()
 }
 //-------------------------------------------
-const outTextRem = (ctx, date, textE) => {
+const outTextRem = async (ctx, date, textE) => {
     const eC = new EventsClass(ctx)
-    if(eC.addEvent(date, textE))
+    if(await eC.addEvent(date, textE))
         ctx.reply(`Напоминание "${textE}" запланировано на ${outDate(date)} ${outTimeDate(date)}.`)
     else
         ctx.reply("Ошибка сохранения.")
@@ -346,4 +451,5 @@ const getNotesTime = async () => {
 }
 
 export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
+    dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, tomorrowRem,
     outDate, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, remForDay, searchByLessonName, selectDay, setCommands, sumTimes }
