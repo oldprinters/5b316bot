@@ -4,7 +4,8 @@ import EventsClass from '../controllers/eventsClass.js'
 //import MyClass from '../controllers/classes.js'
 //import { queryYesNoMenu, selectRemember, selectLesson } from '../keyboards/keyboards.js'
 //import UrDay from "../controllers/urDay.js"
-import { dayToRem, outDateTime, outTextRem, remForDay, fullToRem, dmhmToRem, nHoursToRem, nHMtoRem, nMinutesToRem, tomorrowRem } from '../utils.js'
+import { dayToRem, outDateTime, remForDay, fullToRem, dmhmToRem, 
+    nHoursToRem, nHMtoRem, nMinutesToRem, tomorrowRem, everyMonth, everyYear, } from '../utils.js'
 
 const freeWords  = new Scenes.BaseScene('FREE_WORDS')
 //--------------------------------------
@@ -39,27 +40,27 @@ freeWords.command('games', async ctx => {
     ctx.scene.enter('GAMES')
 })
 //-------------------------------------- dd.mm.yyyy hh:mm
-freeWords.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+freeWords.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await fullToRem(ctx)
 })
 //-------------------------------------- dd.mm hh:mm
-freeWords.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+freeWords.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await dmhmToRem(ctx)
 })
 //-------------------------------------- hh:mm
-freeWords.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+freeWords.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await nHMtoRem(ctx)
 })
 //--------------------------------------
-freeWords.hears(/^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+freeWords.hears(/^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await tomorrowRem(ctx)
 })
 //--------------------------------------
-freeWords.hears(/^\d{1,2} (мин)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+freeWords.hears(/^\d{1,2} (мин)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await nMinutesToRem(ctx)
 })
 //--------------------------------------
-freeWords.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+freeWords.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await nHoursToRem(ctx)
 })
 //-------------------------------------------------
@@ -67,9 +68,17 @@ freeWords.command('remember', async ctx => {
     ctx.scene.reenter()
 })
 //------------------------------------------ обрабатываем каждый день недели 
-freeWords.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\s(в )?\d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙa-zA-Z0-9]*/, 
+freeWords.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\s(в )?\d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙёЁa-zA-Z0-9]*/, 
     async (ctx, next) => {
         await remForDay(ctx, next)
+})
+//------------------------------------------- каждый месяц 
+freeWords.hears(/^\d{1,2} (повтор) ([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
+    await everyMonth(ctx)
+})
+//------------------------------------------- каждый год
+freeWords.hears(/^\d{1,2}.\d{1,2} (повтор) ([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
+    await everyYear(ctx)
 })
 //--------------------------------------
 freeWords.on('text', async ctx => {

@@ -65,7 +65,7 @@ selectClass.action(/^iClass_[0-9]*/, async ctx => {
 })
 //------------------------------------------
 //--------------------------------------
-selectClass.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+selectClass.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     const p1 = ctx.match[0].indexOf(' ')
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dateE = ctx.match[0].slice(0, p1)
@@ -76,7 +76,7 @@ selectClass.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА
     outTextRem(ctx, date, textE)
 })
 //--------------------------------------
-selectClass.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+selectClass.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     const p1 = ctx.match[0].indexOf(' ')
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dateE = ctx.match[0].slice(0, p1)
@@ -95,7 +95,7 @@ selectClass.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-
     outTextRem(ctx, date, textE)
 })
 //--------------------------------------
-selectClass.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+selectClass.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     const p1 = ctx.match[0].indexOf(' ')
     const timeE = ctx.match[0].slice(0, p1).replace(/[жЖ]/, ':')
     const textE = ctx.match[0].slice(p1 + 1)
@@ -110,7 +110,7 @@ selectClass.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, asyn
     outTextRem(ctx, date, textE)
 })
 //--------------------------------------
-selectClass.hears(/^\d{1,2} (мин)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+selectClass.hears(/^\d{1,2} (мин)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     const p1 = ctx.match[0].indexOf(' ')
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dt = ctx.match[0].slice(0, p1)
@@ -120,7 +120,7 @@ selectClass.hears(/^\d{1,2} (мин)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx
     outTextRem(ctx, date, textE)
 })
 //--------------------------------------
-selectClass.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+selectClass.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     const p1 = ctx.match[0].indexOf(' ')
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dt = ctx.match[0].slice(0, p1)

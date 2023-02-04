@@ -5,8 +5,11 @@ import EventsClass from '../controllers/eventsClass.js'
 //import MyClass from '../controllers/classes.js'
 import UrDay from '../controllers/urDay.js'
 import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
-import { dayToRem, getRoleName, getSheduleToday, helpForSearch, 
-    fullToRem, dmhmToRem, nHoursToRem, nHMtoRem, nMinutesToRem, outSelectedDay, outDateTime, remForDay, searchByLessonName, tomorrowRem } from '../utils.js'
+import { 
+    dayToRem, getRoleName, getSheduleToday, helpForSearch, everyMonth, everyYear,
+    fullToRem, dmhmToRem, nHoursToRem, nHMtoRem, nMinutesToRem, outSelectedDay, outDateTime, 
+    remForDay, searchByLessonName, tomorrowRem 
+} from '../utils.js'
 
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
@@ -138,33 +141,41 @@ selectAction.command('settings', async ctx => {
 selectAction.command('remember', ctx => { 
     ctx.scene.enter('REMEMBER')
 })
-//--------------------------------------
-selectAction.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+//------------------------------------------- каждый месяц 
+selectAction.hears(/^(повтор) \d{1,2} (в )?\d{1,2}[:жЖ]\d{1,2} ([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
+    await everyMonth(ctx)
+})
+//------------------------------------------- каждый год
+selectAction.hears(/^(повтор) \d{1,2}.\d{1,2} (в )?\d{1,2}[:жЖ]\d{1,2} ([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
+    await everyYear(ctx)
+})
+//-------------------------------------- дата с годом однократно
+selectAction.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await fullToRem(ctx)
 })
-//--------------------------------------
-selectAction.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+//-------------------------------------- дата однократно
+selectAction.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await dmhmToRem(ctx)
 })
 //--------------------------------------
-selectAction.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+selectAction.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await nHMtoRem(ctx)
 })
 //--------------------------------------
-selectAction.hears(/^\d{1,2} (мин)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+selectAction.hears(/^\d{1,2} (мин)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await nMinutesToRem(ctx)
 })
 //--------------------------------------
-selectAction.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+selectAction.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await nHoursToRem(ctx)
 })
 //------------------------------------------ обрабатываем каждый день недели 
-selectAction.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\s(в )?\d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙa-zA-Z0-9]*/, 
+selectAction.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\s(в )?\d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙёЁa-zA-Z0-9]*/, 
     async (ctx, next) => {
         await remForDay(ctx, next)
 })
 //-------------------------------------------
-selectAction.hears(/^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/, async ctx => {
+selectAction.hears(/^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/, async ctx => {
     await tomorrowRem(ctx)
 })
 //--------------------------------------
@@ -172,7 +183,8 @@ selectAction.on('text', async (ctx) => {
     try {
         await dayToRem(ctx)
     } catch (err) {
-        await searchByLessonName(ctx)
+        if(!(await searchByLessonName(ctx)))
+            await ctx.reply('Не понял запрос, извините.')
     }
 })
 

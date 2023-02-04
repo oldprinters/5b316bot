@@ -242,8 +242,48 @@ const remForDay = async (ctx, next) => {
     }
 }
 //-------------------------------------------
+const everyMonth = async (ctx) => {
+    const str = ctx.match[0].slice(7)
+    const p1 = str.indexOf(' ')
+    const p2 = str.indexOf(' ', p1 + 1)
+    const text = str.slice(p2 + 1).trim()
+    const d = parseInt(str.slice(0, p1))
+    const t = str.slice(p1 + 1, p2).replace(/[жЖ]/, ':')
+    const arT = t.split(':')
+    const date = new Date()
+    date.setDate(d)
+    date.setHours(arT[0])
+    date.setMinutes(arT[1])
+    const nDate = new Date()
+    date.setMonth(date.getMonth() + (nDate > date))
+    const croneTab = `* ${parseInt(d)} *`
+    await outTextRem(ctx, date, text, croneTab)
+}
+//-------------------------------------------
+const everyYear = async (ctx) => {
+    const str = ctx.match[0].slice(7)
+    const p1 = str.indexOf(' ')
+    const p2 = str.indexOf(' ', p1 + 1)
+    const text = str.slice(p2 + 1).trim()
+    const d = str.slice(0, p1)
+    const t = str.slice(p1 + 1, p2).replace(/[жЖ]/, ':')
+    const arT = t.split(':')
+    const arD = d.split('.')
+    const date = new Date()
+    date.setDate(arD[0])
+    date.setMonth(arD[1] - 1)
+    date.setHours(arT[0])
+    date.setMinutes(arT[1])
+    const nDate = new Date()
+    if(nDate > date){
+        date.setFullYear(date.getFullYear() + 1)
+    }
+    const croneTab = `* ${parseInt(arD[0])} ${parseInt(arD[1])}`
+    await outTextRem(ctx, date, text, croneTab)
+}
+//-------------------------------------------
 const searchRem = async (ctx) => {
-    const remTomorrow = /^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙa-zA-Z0-9])*/
+    const remTomorrow = /^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/
     if(remTomorrow.test(ctx.message.text.trim())){
         const d1 = ctx.message.text.search(/\d{1,2}[:жЖ]\d{1,2}/)
         const p1 = ctx.message.text.indexOf(' ', d1 + 3)
@@ -289,7 +329,7 @@ const searchByLessonName = async (ctx) => {
         const class_id = ctx.session.class_id
         if(resNames.length == 0){
             if(!(await searchRem(ctx))){
-                await ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
+//                await ctx.reply(`Урок, в название которого входит "${ctx.message.text}", не найден.`)
                 return false
             }
         } else if(resNames.length == 1){
@@ -400,9 +440,9 @@ const outDate = (dd, r = '.') => {
 	return (d > 9?'':'0') + d + r + (m > 9?'':'0') + m + r + dd.getFullYear()
 }
 //-------------------------------------------
-const outTextRem = async (ctx, date, textE) => {
+const outTextRem = async (ctx, date, textE, croneTab = '') => {
     const eC = new EventsClass(ctx)
-    if(await eC.addEvent(date, textE))
+    if(await eC.addEvent(date, textE, croneTab))
         ctx.reply(`Напоминание "${textE}" запланировано на ${outDate(date)} ${outTimeDate(date)}.`)
     else
         ctx.reply("Ошибка сохранения.")
@@ -451,5 +491,5 @@ const getNotesTime = async () => {
 }
 
 export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
-    dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, tomorrowRem,
+    dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, tomorrowRem, everyMonth, everyYear,
     outDate, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, remForDay, searchByLessonName, selectDay, setCommands, sumTimes }
