@@ -9,7 +9,8 @@ firstStep.enter(async ctx => {
     await myClass.init()
     const classList = await myClass.searchClasses()
     if(classList.length == 0){
-        ctx.scene.enter('CREATE_CLASS')
+        ctx.session.i = -1  //класс отсутствует
+        ctx.scene.enter('SELECT_ACTION')
     } else {
         ctx.session.classList = classList
         if(classList.length > 1){

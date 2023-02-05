@@ -14,37 +14,46 @@ import {
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
 selectAction.enter(async ctx => {
-    const urDay = new UrDay()
-    const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
-    const isAdmin = ctx.session.classList[ctx.session.i].isAdmin
-    let nRequest = false
-    if(isAdmin){
-        const queryAdmin = new QueryAdmin()
-        const arrRequest = await queryAdmin.getRequests(ctx.from.id, ctx.session.class_id)
-        nRequest = arrRequest.length > 0
-    }
-    if(nLessons){
-        const eC = new EventsClass(ctx)
+    const eC = new EventsClass(ctx)
+    if(ctx.session.i >=0){
+        const urDay = new UrDay()
+        const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
+        const isAdmin = ctx.session.classList[ctx.session.i].isAdmin
+        let nRequest = false
+        if(isAdmin){
+            const queryAdmin = new QueryAdmin()
+            const arrRequest = await queryAdmin.getRequests(ctx.from.id, ctx.session.class_id)
+            nRequest = arrRequest.length > 0
+        }
+        if(nLessons){
+            const eC = new EventsClass(ctx)
 
-        let list = await getSheduleToday(ctx)
-        list += await eC.listForDayUser()
+            let list = await getSheduleToday(ctx)
+            list += await eC.listForDayUser()
 
-        if(list.length > 0){
+            if(list.length > 0){
+                const d = new Date()
+                await ctx.replyWithHTML(`<b>Расписание на сегодня</b> <i>(${urDay.getNameDay(d.getDay())})</i>:\n\n${list}`)
+                //await ctx.replyWithHTML(list)
+            } else {
+                await ctx.reply('На сегодня расписание отсутствует.')
+            }
             const d = new Date()
-            await ctx.replyWithHTML(`<b>Расписание на сегодня</b> <i>(${urDay.getNameDay(d.getDay())})</i>:\n\n${list}`)
-            //await ctx.replyWithHTML(list)
+            if(d.getHours() > 15){
+                const nDay = d.getDay()
+                await outSelectedDay(ctx, nDay + 1)
+            }
         } else {
-            await ctx.reply('На сегодня расписание отсутствует.')
+            await ctx.reply('Для продолжения необходимо внести время начала уроков.')
         }
-        const d = new Date()
-        if(d.getHours() > 15){
-            const nDay = d.getDay()
-            await outSelectedDay(ctx, nDay + 1)
-        }
+        await ctx.reply('Выберите действие:', selectShedActionMenu(nLessons, ctx.session.classList.length, ctx.session.classList[ctx.session.i].isAdmin, nRequest))
     } else {
-        await ctx.reply('Для продолжения необходимо внести время начала уроков.')
+        const list = await eC.listForDayUser()
+        if(list.length == 0)
+            await ctx.reply('На сегодня ничего не запланировано.')
+        else 
+            await ctx.replyWithHTML(`${list}`)
     }
-    await ctx.reply('Выберите действие:', selectShedActionMenu(nLessons, ctx.session.classList.length, ctx.session.classList[ctx.session.i].isAdmin, nRequest))
 })
 //--------------------------------------
 selectAction.hears(/^(Список|список|list|List)$/, async ctx => {
@@ -74,12 +83,12 @@ selectAction.help(ctx => {
         'ЧЧ час [сообщение] - <i>отложить на несколько часов</i>\n\nСписок - вывод списка активных напоминалок. (list тоже работает)\n\n'+
         '<b>Повторяющиеся напоминания:</b>\n'+
         'Каждый(ую, ое) [день недели] в ЧЧ:ММ ТЕКСТ - еженедельное напоминание.\n<i>Каждое воскресенье в 19:00 проверить форму.</i>\n'+
-        'Повтор [дд.мм][чч:мм] [сообщение] - ежегодное напоминание\n'+
+        'Повтор [дд.мм] [чч:мм] [сообщение] - ежегодное напоминание\n'+
         '<i>Повтор 4.02 10:00 др Лёни</i> - напоминалки о днях рождения\n'+
-        'Повтор [дд][чч:мм] [сообщение] - ежемесячное напоминание\n'+
+        'Повтор [дд] [чч:мм] [сообщение] - ежемесячное напоминание\n'+
         '<i>Повтор 6 11:05 оплатить телефон</i> - ежемесячная оплата 6-го числа.\n\n'+
         '<b><u>Удаление напоминалок</u></b> - Меню -> Напоминалки -> Удаление напоминалок\n\n'+
-        helpForSearch()
+        helpForSearch(ctx)
     )
 })
 //-------------

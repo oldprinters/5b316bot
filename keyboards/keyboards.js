@@ -78,10 +78,13 @@ const buttonsRems = (arRems) => {
 //-------------------------------------------
 const selectClassMenu = (listClass) => {
 //    console.log("selectClassMenu listClass =", listClass)
-    const ar = listClass.map((el, i) => Markup.button.callback(el.name, `iClass_${i}`))
+    let ar = []
+    if(listClass != undefined)
+        ar = listClass.map((el, i) => Markup.button.callback(el.name, `iClass_${i}`))
+    ar.push(Markup.button.callback("Добавить новый класс", "createNewClass"))
     return Markup.inlineKeyboard([
         ar,
-        [Markup.button.callback("Добавить новый класс", "createNewClass")]
+//        [Markup.button.callback("Добавить новый класс", "createNewClass")]
     ])
 }
 //-------------------------------------------

@@ -21,7 +21,7 @@ createClass.command('games', async ctx => {
 })
 //---------------------------------------------
 createClass.on('text', async ctx => {
-        ctx.session.className = ctx.message.text.match(/[а-яА-ЯёЁa-zA-Z0-9-_ ]*/)[0]
+        ctx.session.className = ctx.message.text.match(/[а-яА-ЯёЁйЙa-zA-Z0-9-_ ]*/)[0]
         const myClass = new MyClass(ctx)
         await myClass.init()
         const tClass = await myClass.searchClassesByName(ctx.session.className)

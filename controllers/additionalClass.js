@@ -38,33 +38,41 @@ class AdditionalClass extends BaseName {
     }
     //------------------------------------
     async getListLessonsTDay(nDay){
-        const sql = `
-            SELECT a.id, bn.name bn_name, a.note, oi.name oi_name, atl.time_s, atl.time_e
-            FROM ivanych_bot.additionalLessons a
-            LEFT JOIN basename bn ON bn.id = a.name_id
-            LEFT JOIN oper_interval oi ON a.oi_id = oi.id
-            LEFT JOIN addLessTime atl ON atl.atl_id = a.id
-            WHERE tlgUserId = ${this.tlg_user_id}
-            AND class_id = ${this.class_id}
-            AND atl.nDay = ${nDay}
-            AND a.active = 1
-            ORDER BY bn.name
-        `
-        return await call_q(sql, 'getListLessonsTDay')
+        if(this.class_id != undefined){
+                const sql = `
+                SELECT a.id, bn.name bn_name, a.note, oi.name oi_name, atl.time_s, atl.time_e
+                FROM ivanych_bot.additionalLessons a
+                LEFT JOIN basename bn ON bn.id = a.name_id
+                LEFT JOIN oper_interval oi ON a.oi_id = oi.id
+                LEFT JOIN addLessTime atl ON atl.atl_id = a.id
+                WHERE tlgUserId = ${this.tlg_user_id}
+                AND class_id = ${this.class_id}
+                AND atl.nDay = ${nDay}
+                AND a.active = 1
+                ORDER BY bn.name
+            `
+            return await call_q(sql, 'getListLessonsTDay')
+        } else {
+            return []
+        }
     }
     //------------------------------------
     async getListLessons(){
-        const sql = `
-            SELECT a.id, bn.name bn_name, a.note, oi.name oi_name
-            FROM ivanych_bot.additionalLessons a
-            LEFT JOIN basename bn ON bn.id = a.name_id
-            LEFT JOIN oper_interval oi ON a.oi_id = oi.id
-            WHERE tlgUserId = ${this.tlg_user_id}
-            AND class_id = ${this.class_id}
-            AND a.active = 1
-            ORDER BY bn.name
-        `
-        return await call_q(sql, 'getListLessons')
+        if(this.class_id != undefined){
+            const sql = `
+                SELECT a.id, bn.name bn_name, a.note, oi.name oi_name
+                FROM ivanych_bot.additionalLessons a
+                LEFT JOIN basename bn ON bn.id = a.name_id
+                LEFT JOIN oper_interval oi ON a.oi_id = oi.id
+                WHERE tlgUserId = ${this.tlg_user_id}
+                AND class_id = ${this.class_id}
+                AND a.active = 1
+                ORDER BY bn.name
+            `
+            return await call_q(sql, 'getListLessons')
+        } else {
+            return []
+        }
     }
     //------------------------------------
     async delLessonById(id){
@@ -73,16 +81,20 @@ class AdditionalClass extends BaseName {
     }
     //------------------------------------
     async getListLessonsName(){
-        const sql = `
-            SELECT a.id, bn.name
-            FROM ivanych_bot.additionalLessons a
-            LEFT JOIN basename bn ON bn.id = a.name_id
-            WHERE tlgUserId = ${this.tlg_user_id}
-            AND class_id = ${this.class_id}
-            AND a.active = 1
-            ORDER BY bn.name
-        `
-        return await call_q(sql, 'getListLessonsName')
+        if(this.class_id != undefined){
+            const sql = `
+                SELECT a.id, bn.name
+                FROM ivanych_bot.additionalLessons a
+                LEFT JOIN basename bn ON bn.id = a.name_id
+                WHERE tlgUserId = ${this.tlg_user_id}
+                AND class_id = ${this.class_id}
+                AND a.active = 1
+                ORDER BY bn.name
+            `
+            return await call_q(sql, 'getListLessonsName')
+        } else {
+            return []
+        }
     }
     //-------------------------------
     async saerchByName(name){

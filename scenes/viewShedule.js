@@ -32,7 +32,7 @@ viewShedule.help(async ctx => {
     let text = 'Для изменения расписания, обратитесь к администратору.\n\n'
     if(ctx.session.isAdmin == '1')
         text = ''
-    ctx.replyWithHTML(`<b><u>HELP</u></b>\n${text} ${helpForSearch()}`)
+    ctx.replyWithHTML(`<b><u>HELP</u></b>\n${text} ${helpForSearch(ctx)}`)
 })
 //-------------------------------------------------
 viewShedule.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
