@@ -64,7 +64,7 @@ selectAction.hears(/^(Список|список|list|List)$/, async ctx => {
     } else {
         let arOut = ''
         for(let el of list){
-            arOut += `${outDateTime(el.dateTime)} ${el.text}\n`
+            arOut += `${el.cycle?'<u>':''}${outDateTime(el.dateTime)}${el.cycle?'</u>':''} ${el.text}\n`
         }
         ctx.replyWithHTML(`Список напоминалок:\n${arOut}`)
     }
