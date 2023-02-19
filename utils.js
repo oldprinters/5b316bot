@@ -321,7 +321,9 @@ const searchByLessonName = async (ctx) => {
                 const listForDay = await urDay.listSheduleForDay(ctx.session.class_id, nDay)    
                 const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
                 await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
-                const list = await outShedule(listForDay, nLessons)
+                let list = await outShedule(listForDay, nLessons)
+                const eC = new EventsClass(ctx)
+                list += await eC.listForDayNed(nDay)
                 await ctx.replyWithHTML(list)
                 return true
             } else {

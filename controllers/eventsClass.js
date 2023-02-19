@@ -49,6 +49,23 @@ class EventsClass {
         `
         return await call_q(sql, 'getNotesById')
     }
+    //---------------------------------------- 
+    async getForDayNed(d){
+        const ds = new Date(d.getTime())
+        ds.setHours(0, 0)
+        const de = new Date(d.getTime())
+        de.setHours(23, 59)
+        const sql = `
+            SELECT id, dataTime dateTime, ec.text
+            FROM ivanych_bot.events_class ec
+            WHERE ec.active > 0
+            AND client_id = ${this.user_id}
+            AND dataTime > '${getDateTimeBD(ds)}'
+            AND dataTime < '${getDateTimeBD(de)}'
+            ORDER BY dataTime ASC;
+        `
+        return await call_q(sql, 'getForDayNed')
+    }
     //----------------------------------------
     async getForDayUser(){
         const de = new Date()
@@ -62,7 +79,7 @@ class EventsClass {
             AND dataTime < '${getDateTimeBD(de)}'
             ORDER BY dataTime ASC;
         `
-        return await call_q(sql, 'listForDayUser')
+        return await call_q(sql, 'getForDayUser')
     }
     //--------------------------------------
     async getNotesByTime(){
@@ -77,6 +94,19 @@ class EventsClass {
     async listForDayUser(){
         const arr = await this.getForDayUser()
         let list = arr.length > 0? '\n<b>Не забудьте:</b>\n': ''
+        arr.forEach(el => {
+            const d = new Date(el.dateTime)
+            list += `${outTimeDate(d)} ${el.text}\n`
+        })
+        return list
+    }
+    //----------------------------------------
+    async listForDayNed(dn){
+        const dt = new Date()
+        const tDn = dt.getDay()
+        dt.setDate(dt.getDate() + ((dn - tDn) < 0? dn-tDn+7:dn-tDn))
+        const arr = await this.getForDayNed(dt)
+        let list = arr.length > 0? '\n<b>Не забудьте в этот день:</b>\n': ''
         arr.forEach(el => {
             const d = new Date(el.dateTime)
             list += `${outTimeDate(d)} ${el.text}\n`
