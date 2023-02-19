@@ -33,6 +33,7 @@ bot.use(session())
 bot.use(stage.middleware())
 
 bot.start(async ctx => {
+    await ctx.replyWithHTML('Для понимания логики работы бота пользуйтесь подсказками\n<b>Меню -> Вызов справки</b> или /help.')
     await ctx.scene.enter('FIRST_STEP')
 });
 

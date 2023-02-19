@@ -25,7 +25,8 @@ viewShedule.enter( async ctx => {
     list += await outShedule(listForDay, nLessons)
     const cL = ctx.session.classList[ctx.session.i]
     list += `\n${cL.name}`
-    ctx.replyWithHTML(list)
+    await ctx.replyWithHTML(list)
+    await ctx.scene.enter('SELECT_ACTION')
 })
 //--------------------------------------
 viewShedule.help(async ctx => {
