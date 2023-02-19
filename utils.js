@@ -288,7 +288,7 @@ const everyYear = async (ctx) => {
 }
 //-------------------------------------------
 const searchRem = async (ctx) => {
-    const remTomorrow = /^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9])*/
+    const remTomorrow = /^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/
     if(remTomorrow.test(ctx.message.text.trim())){
         const d1 = ctx.message.text.search(/\d{1,2}[:жЖ]\d{1,2}/)
         const p1 = ctx.message.text.indexOf(' ', d1 + 3)
