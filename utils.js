@@ -43,7 +43,7 @@ const getCronForDn = (str) => {
 }
 //-------------------------------------------
 const selectDay = (str) => {
-    str = str.trim()
+    str = str.trim().toLowerCase()
     let nDay = -1
     if(/^пон\S*/.test(str)){
         nDay = 1
@@ -289,7 +289,7 @@ const everyYear = async (ctx) => {
 //-------------------------------------------
 const searchRem = async (ctx) => {
     const remTomorrow = /^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/
-    if(remTomorrow.test(ctx.message.text.trim())){
+    if(remTomorrow.test(ctx.message.text.trim().toLowerCase())){
         const d1 = ctx.message.text.search(/\d{1,2}[:жЖ]\d{1,2}/)
         const p1 = ctx.message.text.indexOf(' ', d1 + 3)
         const timeE = (ctx.message.text.match(/\d{1,2}[:жЖ]\d{1,2}/))[0].replace(/[жЖ]/, ':')
@@ -314,7 +314,7 @@ const searchByLessonName = async (ctx) => {
         const seachDn = /^(Во|во|В|в)?\s?(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)$/
         const seachSdv = /^(завтра|послезавтра|Завтра|Послезавтра)\s?$/
 
-        if(seachDn.test(ctx.message.text.trim())){
+        if(seachDn.test(ctx.message.text.trim().toLowerCase())){
             const sdv = ctx.message.text.indexOf(' ')
             const nDay = selectDay(ctx.message.text.slice(sdv + 1).trim())
             if(nDay >= 0){
@@ -330,7 +330,7 @@ const searchByLessonName = async (ctx) => {
                 await ctx.replyWithHTML('Не определил день недели.')
                 return ctx.scene.reenter()
             }
-        } else if(seachSdv.test(ctx.message.text.trim())){
+        } else if(seachSdv.test(ctx.message.text.trim().toLowerCase())){
             const nDay = getNDayByWord(ctx.message.text)
             await outSelectedDay(ctx, nDay)
             return true
