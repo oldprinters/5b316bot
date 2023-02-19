@@ -311,7 +311,7 @@ const searchByLessonName = async (ctx) => {
         const myClass = new MyClass(ctx)
         const urDay = new UrDay(ctx)
         await myClass.init()
-        const seachDn = /^(Во|во|В|в)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)$/
+        const seachDn = /^(Во|во|В|в)?\s?(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)$/
         const seachSdv = /^(завтра|послезавтра|Завтра|Послезавтра)\s?$/
 
         if(seachDn.test(ctx.message.text.trim())){
@@ -323,6 +323,7 @@ const searchByLessonName = async (ctx) => {
                 await ctx.replyWithHTML(`<b><u>${urDay.getNameDay(nDay)}</u></b>`)
                 const list = await outShedule(listForDay, nLessons)
                 await ctx.replyWithHTML(list)
+                return true
             } else {
                 await ctx.replyWithHTML('Не определил день недели.')
                 return ctx.scene.reenter()
