@@ -20,7 +20,10 @@ additionalLessons.enter(async ctx => {
         }
         await ctx.replyWithHTML(`Зарегистрированные дополнительные занятия:\n${list}`)
     }
-    await ctx.reply('Для добавления нового занятия ответьте на вопросы:', createAdditionalMenu())
+    if(ctx.session.class_id)
+        await ctx.reply('Для добавления нового занятия ответьте на вопросы:', createAdditionalMenu())
+    else
+        await ctx.reply('Дополнительные занятия привязываются к учебному классу. Введите расписание уроков.')
 })
 //-----------------------------
 additionalLessons.help( ctx => {
