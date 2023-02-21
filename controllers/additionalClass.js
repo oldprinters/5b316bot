@@ -17,13 +17,18 @@ class AdditionalClass extends BaseName {
     }
     //------------------------------------
     async addLesson(item){
-        const name_id = await this.setName(item.name)
+        if(this.class_id > 0){
+            const name_id = await this.setName(item.name)
 
-        const sql = `
-            INSERT INTO ivanych_bot.additionalLessons (tlgUserId, class_id, name_id, oi_id, note) 
-            VALUES (${this.tlg_user_id}, ${this.class_id}, ${name_id}, ${item.oi_id}, '${item.note}');
-        `
-        return await call_q(sql, 'addLesson')
+            const sql = `
+                INSERT INTO ivanych_bot.additionalLessons (tlgUserId, class_id, name_id, oi_id, note) 
+                VALUES (${this.tlg_user_id}, ${this.class_id}, ${name_id}, ${item.oi_id}, '${item.note}');
+            `
+            return await call_q(sql, 'addLesson')
+        } else {
+            console.log("AdditionalClass.js addLesson this.class_id =", this.class_id)
+            throw 'Не выбран класс.'
+        }
     }
     //------------------------------------
     async getListForDay(nDay){

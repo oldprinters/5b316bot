@@ -101,17 +101,20 @@ additionalLessons.action('queryYes2', async ctx => {
     ctx.answerCbQuery('Loading')
     const st = ctx.scene.session.state
     const aC = new AdditionalClass(ctx)
-    const res = await aC.addLesson(st)
-    if(res.affectedRows > 0){
-        const alt = new AddLessTime()
-        try {
-            await alt.addListLess(res.insertId, st.arALT)
-            ctx.reply('Данные сохранены.')
-        } catch(err){
-            ctx.reply(`ERROR ${err}`)
+    try {
+        const res = await aC.addLesson(st)
+        if(res.affectedRows > 0){
+            const alt = new AddLessTime()
+            try {
+                await alt.addListLess(res.insertId, st.arALT)
+                ctx.reply('Данные сохранены.')
+            } catch(err){
+                ctx.reply(`ERROR ${err}`)
+            }
         }
-    }
-        
+    } catch (err) {
+        await  ctx.reply(`ERROR ${err}`)
+    }        
     await ctx.scene.enter('SELECT_ACTION')
 })
 //-----------------------------------------
