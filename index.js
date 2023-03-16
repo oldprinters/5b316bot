@@ -53,6 +53,10 @@ bot.action(/^answerAccepted\d{1,12}/, async ctx => {
     await ctx.replyWithHTML('<i>Готов к выполнению новых заданий! Обращайтесь.</i>')
 })
 
+bot.on('text', async (ctx) => {
+    await ctx.replyWithHTML(`<b>Перезапустите бот нажав /start</b>`);
+});
+
 cron.schedule('* * * * *', () => {getNotesTime()});
 
 bot.launch()
