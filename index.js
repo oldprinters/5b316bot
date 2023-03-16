@@ -28,7 +28,7 @@ dotenv.config()
 const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, delRems, durationLesson, firstStep, freeWords, games, inpSheduleForDay, processRequests, remember,
     selectClass, selectAction, sendQueryAdmin, setTimesUr, setSheduleDay, shultz, viewShedule])
 
-const bot = new Telegraf(process.env.KEY);//"5489794456:AAF89kL1SsQVK2-axyWO8VdARI8rlfAVxdM"
+const bot = new Telegraf(process.env.KEY);
 bot.use(session())
 bot.use(stage.middleware())
 
