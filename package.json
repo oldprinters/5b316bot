@@ -18,5 +18,8 @@
     "telegraf": "^4.9.2"
   },
   "description": "",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "nodemon": "^2.0.21"
+  }
 }
