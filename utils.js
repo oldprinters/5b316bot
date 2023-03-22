@@ -305,6 +305,18 @@ const searchRem = async (ctx) => {
         return false
     }
 }
+//------------------------
+const getNameDayWhenEmpty = (n) => {
+    switch(n){
+        case 0: return 'воскресенье'
+        case 1: return 'понедельник'
+        case 2: return 'вторник'
+        case 3: return 'среду'
+        case 4: return 'четверг'
+        case 5: return 'пятницу'
+        case 6: return 'субботу'
+    }
+}
 //-------------------------------------------
 const searchByLessonName = async (ctx) => {
     if(ctx.session.i >= 0){
@@ -456,6 +468,12 @@ const outDate = (dd, r = '.') => {
 	return (d > 9?'':'0') + d + r + (m > 9?'':'0') + m + r + dd.getFullYear()
 }
 //-------------------------------------------
+const outDateMonth = (dd, r = '.') => {
+    let m = dd.getMonth() + 1
+	let d = dd.getDate()
+	return (d > 9?'':'0') + d + r + (m > 9?'':'0') + m
+}
+//-------------------------------------------
 const outTextRem = async (ctx, date, textE, croneTab = '') => {
     const eC = new EventsClass(ctx)
     if(await eC.addEvent(date, textE, croneTab))
@@ -495,6 +513,7 @@ const setCommands = async (ctx) => {
     await ctx.setMyCommands([
         {command: 'start', description: 'Перезапуск'}, 
         {command: 'help', description: 'Вызов справки'}, 
+//        {command: 'catalogs', description: 'Каталоги'},
         {command: 'settings', description: 'Настройки'},
         {command: 'games', description: 'Развивалки'},
         {command: 'remember', description: 'Напоминалки'},
@@ -506,6 +525,6 @@ const getNotesTime = async () => {
     await eC.getNotes()
 }
 
-export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
+export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNameDayWhenEmpty, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
     dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, tomorrowRem, everyMonth, everyYear,
-    outDate, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, remForDay, searchByLessonName, selectDay, setCommands, sumTimes }
+    outDate, outDateMonth, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, remForDay, searchByLessonName, selectDay, setCommands, sumTimes }

@@ -12,7 +12,7 @@ delRems.enter(async ctx => {
     const eC = new EventsClass(ctx)
     const arRems = await eC.listForUser()
     if(arRems.length > 0)
-        await ctx.reply('Для удаления напоминалки нажмине на кнопку. Действие необратимо.', buttonsRems(arRems))
+        await ctx.reply('Для удаления напоминалки нажмите на кнопку. Действие необратимо.', buttonsRems(arRems))
     else {
         await ctx.reply('Напоминалок нет.')
         ctx.scene.enter('SELECT_ACTION')

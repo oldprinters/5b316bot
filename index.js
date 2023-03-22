@@ -1,6 +1,8 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
 import dotenv from 'dotenv'
 import additionalLesson from './scenes/additionalLessons.js'
+import catalogAppend from "./scenes/catalogAppend.js"
+import catalogList from "./scenes/catalogList.js"
 import createClass from './scenes/createClass.js'
 import createSchedule from './scenes/createSchedule.js'
 import durationLesson from './scenes/durationLesson.js'
@@ -25,7 +27,7 @@ import { getNotesTime } from './utils.js'
 
 dotenv.config()
 
-const stage = new Scenes.Stage([additionalLesson, createClass, createSchedule, delRems, durationLesson, firstStep, freeWords, games, inpSheduleForDay, processRequests, remember,
+const stage = new Scenes.Stage([additionalLesson, catalogAppend, catalogList, createClass, createSchedule, delRems, durationLesson, firstStep, freeWords, games, inpSheduleForDay, processRequests, remember,
     selectClass, selectAction, sendQueryAdmin, setTimesUr, setSheduleDay, shultz, viewShedule])
 
 const bot = new Telegraf(process.env.KEY);

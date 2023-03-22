@@ -17,6 +17,14 @@ const queryYesNoMenu = () => {
     ])
 }
 //------------------------------------------
+const menuPeriod = () => {
+    return Markup.inlineKeyboard([
+        [Markup.button.callback("Каждую неделю", "period_N")],
+        [Markup.button.callback("Каждый месяц", "period_M")],
+        [Markup.button.callback("Каждый год", "period_Y")],
+    ])
+}
+//------------------------------------------
 const queryYesNoCancelMenu = () => {
     return Markup.inlineKeyboard([
         [
@@ -87,25 +95,11 @@ const selectClassMenu = (listClass) => {
     ])
 }
 //-------------------------------------------
-const selectShedActionMenu = (nLesson, nClass, isAdmin, isRequest = false) => {
-    let arrAction = [
-        [Markup.button.callback("Просмотр расписания уроков", "viewSheduleDay")], 
-//        [Markup.button.callback("Добавить класс", "appendClass")]
-    ]
-    if(isAdmin && false)
-        arrAction.push([Markup.button.callback("Установка времени начала уроков", "setTimesUr")])
-    if(nLesson){
-        if(isAdmin && false)
-            arrAction.push([Markup.button.callback("Редактирование расписания уроков", "setSheduleDay")])
-    }
-    if(nClass > 1){
-        arrAction.push([Markup.button.callback("О классе", "getClassInfo")])
-        arrAction.push([Markup.button.callback("Выбрать класс", "selectClass")])
-    }
-    if(isRequest)
-        arrAction.push([Markup.button.callback("Посмотреть запросы", "viewRequests")])
-
-    return Markup.inlineKeyboard(arrAction)
+const selectShedActionMenu = (arrAction) => {
+    const ar = arrAction.map(el => [Markup.button.callback(el.name, el.action)])
+    return Markup.inlineKeyboard(
+        ar
+    )
 }
 //------------------------------------------------
 const selectActionAdminMenu = () => {
@@ -157,6 +151,21 @@ const shultzEndGame = (str) => {
         [Markup.button.callback("Стоп", "gameStop")],
     ])
 }
+//--------------------------------------------------------
+const menuActionCL = (list, isExp, parentId) => {
+    const ar = list.map(el => [Markup.button.callback(el.name, 'cL_' + el.id)])
+    ar.push([Markup.button.callback('+', 'catalogAppend')])
+    if(parentId > 0)
+        ar[ar.length-1].push(Markup.button.callback('^', 'catalogBack'))
+    if(!list.length)
+        ar[ar.length-1].push(Markup.button.callback('del', 'catalogDel'))
+    if(isExp)
+        ar[ar.length-1].push(Markup.button.callback('>>', 'catalogFile'))
+    return Markup.inlineKeyboard(
+        ar
+    )
+}
 
-export { buttonsRems, createAdditionalMenu, createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, selectActionAdminMenu, selectActionUserMenu,
-    selectAddLessonMenu, selectLesson, selectRemember, selectRoleMenu, selectClassMenu, selectDay, selectGame, selectShedActionMenu, shultzEndGame }
+export { buttonsRems, createAdditionalMenu, createNewClassMenu, queryDelCancelMenu, queryYesNoMenu, queryYesNoCancelMenu, menuActionCL, menuPeriod, 
+    selectActionAdminMenu, selectActionUserMenu, selectAddLessonMenu, selectLesson, selectRemember, selectRoleMenu, selectClassMenu, selectDay, 
+    selectGame, selectShedActionMenu, shultzEndGame }

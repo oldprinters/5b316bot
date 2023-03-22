@@ -67,12 +67,6 @@ class BaseName {
   async readById(id){
     const sql = `SELECT * FROM basename WHERE id = ${id}`
     let rows = await call_q(sql)
-    // console.log("basename readById id =", id, rows)
-    // this.str = rows[0].name
-    // this.id = rows[0].id
-    // this.active = rows[0].active
-    // this.class_name = rows[0].class_name
-    // console.log("basename readById", this.str)
     return rows[0]
   }
   //************************************** */

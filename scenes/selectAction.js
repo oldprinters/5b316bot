@@ -12,9 +12,20 @@ import {
 } from '../utils.js'
 
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
+//----------------------------------------
+const collectMenu = (arrAction, nClass, isRequest) => {
+    arrAction.push({name: "Просмотр расписания уроков", action: "viewSheduleDay"})
+    if(nClass > 1){
+        arrAction.push({name: "О классе", action: "getClassInfo"})
+        arrAction.push({name: "Выбрать класс", action: "selectClass"})
+    }
+    if(isRequest)
+        arrAction.push([Markup.button.callback("Посмотреть запросы", "viewRequests")])
+}
 //--------------------------------------
 selectAction.enter(async ctx => {
     const eC = new EventsClass(ctx)
+    let arrAction = []
     if(ctx.session.i >=0){
         const urDay = new UrDay()
         const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
@@ -46,7 +57,7 @@ selectAction.enter(async ctx => {
         } else {
             await ctx.reply('Для продолжения необходимо внести время начала уроков.')
         }
-        await ctx.reply('Выберите действие:', selectShedActionMenu(nLessons, ctx.session.classList.length, ctx.session.classList[ctx.session.i].isAdmin, nRequest))
+        collectMenu(arrAction, ctx.session.classList.length, nRequest)
     } else {
         const list = await eC.listForDayUser()
         if(list.length == 0)
@@ -54,6 +65,11 @@ selectAction.enter(async ctx => {
         else 
             await ctx.replyWithHTML(`${list}`)
     }
+//    arrAction.push({name: "Добавить в каталог", action: "appendToCat"})
+    ctx.session.id = 0
+    ctx.session.parentId = -1
+    arrAction.push({name: "Просмотр каталога", action: "readCat"})
+    await ctx.reply('Выберите действие:', selectShedActionMenu(arrAction))
 })
 //--------------------------------------
 selectAction.hears(/^(Список|список|list|List)$/, async ctx => {
@@ -90,6 +106,16 @@ selectAction.help(ctx => {
         '<b><u>Удаление напоминалок</u></b> - Меню -> Напоминалки -> Удаление напоминалок\n\n'+
         helpForSearch(ctx)
     )
+})
+//-------------
+selectAction.action('appendToCat', async ctx => {
+    await ctx.answerCbQuery('Loading')
+    await ctx.scene.enter('CATALOG_APPEND')
+})
+//-------------
+selectAction.action('readCat', async ctx => {
+    await ctx.answerCbQuery('Loading')
+    await ctx.scene.enter('CATALOG_LIST')
 })
 //-------------
 selectAction.action('viewSheduleDay', async ctx => {
@@ -140,6 +166,10 @@ selectAction.action('additionalLessons', async ctx => {
 //-------------------------------------------------
 selectAction.command('games', async ctx => {
     ctx.scene.enter('GAMES')
+})
+//-------------------------------------------------
+selectAction.command('catalogs', async ctx => {
+    ctx.scene.enter('CATALOG_LIST')
 })
 //-------------------------------------------------
 selectAction.command('settings', async ctx => { 
