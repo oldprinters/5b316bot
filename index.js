@@ -1,4 +1,5 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
+import backup from "./config/backup.js"
 import dotenv from 'dotenv'
 import additionalLesson from './scenes/additionalLessons.js'
 import catalogAppend from "./scenes/catalogAppend.js"
@@ -60,6 +61,8 @@ bot.on('text', async (ctx) => {
 });
 
 cron.schedule('* * * * *', () => {getNotesTime()});
+
+cron.schedule('25 2 * * *', () => {backup()});
 
 bot.launch()
     .then(res => {
