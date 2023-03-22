@@ -3,6 +3,7 @@ import Users from '../controllers/users.js'
 import Folder from "../b_tree/folder.js"
 import { menuActionCL, queryYesNoMenu} from '../keyboards/keyboards.js'
 import { outDateTime } from '../utils.js'
+import backup from "../config/backup.js"
 
 const catalogList = new Scenes.BaseScene('CATALOG_LIST')
 //*************************************** */
@@ -12,6 +13,10 @@ const getListCat = async (ctx, id) => {
     // await folder.getById(id)
     return await folder.getByParentId(id)
 }
+//======================================
+catalogList.command('backup', async () =>{
+    await backup()
+})
 //-----------------------------
 catalogList.enter(async ctx => {
     if(ctx.session.parentId == undefined)
@@ -36,7 +41,7 @@ catalogList.help( ctx => {
     'Учитель или руководитель может сохранять заметки об учениках или подчиненных.\n\n'+
     'Система позволяет настроить <b>периодическое напоминание</b> о необходимости контроля данного события.\n\n'+
     'Нижний ряд кнопок позволяет:\n   « + » - добавить подкаталог,\n   « ^ » - подняться на уровень выше,\n'+
-    '   « del » - удалить каталог,\n   « >> » - сохраненить данных в файл.' )
+    '   « del » - удалить каталог,\n   « >> » - сохранить данных в файл.' )
 })
 //-------------------------------------
 catalogList.action('catalogAppend', ctx => {
