@@ -217,6 +217,16 @@ const tomorrowRem = async (ctx) => {
     date.setMinutes(arT[1])
     await outTextRem(ctx, date, textE)
 }
+//--------------------------------------------
+const tomorrowRemT = async (ctx, sTime, d1 = 7) => {
+    const textE = ctx.match[0].slice(d1)
+    const arT = sTime.split(':')
+    const date = new Date()
+    date.setDate(date.getDate() + 1)
+    date.setHours(arT[0])
+    date.setMinutes(arT[1])
+    await outTextRem(ctx, date, textE)
+}
 //---------------------------------------------------------------
 const remForDay = async (ctx, next) => { 
     let str = ctx.match[0]
@@ -526,5 +536,5 @@ const getNotesTime = async () => {
 }
 
 export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNameDayWhenEmpty, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
-    dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, tomorrowRem, everyMonth, everyYear,
+    dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, tomorrowRem, tomorrowRemT, everyMonth, everyYear,
     outDate, outDateMonth, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, remForDay, searchByLessonName, selectDay, setCommands, sumTimes }
