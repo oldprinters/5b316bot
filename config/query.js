@@ -20,8 +20,8 @@ const call_q = async (sql, message = '') => {
         return res
     }
     catch (err) {
-        console.error(`call_q() ${message}: `, sql)
-        // throw err
+        console.log(`call_q() ${message}: `, sql)
+        throw err
     }
 }
 

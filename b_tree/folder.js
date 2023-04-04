@@ -16,7 +16,7 @@ class Folder extends BaseName {
     //------------------------------------------
     async addFolder(name, parentId){
       const name_id = await this.setName(name)
-      const sql = `INSERT INTO folders (user_id, name_id, parentId) VALUES (${this.user_id}, '${name_id}', ${parentId})`;
+      const sql = `INSERT INTO folders (user_id, name_id, parentId) VALUES ('${this.user_id}', ${name_id}, ${parentId})`;
       const res = await call_q(sql, 'constructor')
       this.id = res.insertId;
       return this.id

@@ -8,6 +8,7 @@ firstStep.enter(async ctx => {
     const myClass = new MyClass(ctx)
     await myClass.init()
     const classList = await myClass.searchClasses()
+    ctx.session.parentId = -1
     if(classList.length == 0){
         ctx.session.i = -1  //класс отсутствует
         ctx.scene.enter('SELECT_ACTION')
