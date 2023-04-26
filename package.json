@@ -1,10 +1,10 @@
 {
   "name": "telegtaf-bot",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index_5b.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon index_5b.js"
   },
   "keywords": [],
   "author": "",
