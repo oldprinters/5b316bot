@@ -24,6 +24,8 @@ selectAction.enter(async ctx => {
             const queryAdmin = new QueryAdmin()
             const arrRequest = await queryAdmin.getRequests(ctx.from.id, ctx.session.class_id)
             nRequest = arrRequest.length > 0
+        } else {
+            console.log("Not admin")
         }
         if(nLessons){
             const eC = new EventsClass(ctx)
