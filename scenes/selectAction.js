@@ -14,8 +14,7 @@ import {
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
 selectAction.enter(async ctx => {
-    // const eC = new EventsClass(ctx)
-    console.log("Admin ---------------------")
+    const eC = new EventsClass(ctx)
     if(ctx.session.i >=0){
         const urDay = new UrDay()
         const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
@@ -25,9 +24,7 @@ selectAction.enter(async ctx => {
             const queryAdmin = new QueryAdmin()
             const arrRequest = await queryAdmin.getRequests(ctx.from.id, ctx.session.class_id)
             nRequest = arrRequest.length > 0
-        } else {
-            console.log("Not admin")
-        }
+        } 
         if(nLessons){
             const eC = new EventsClass(ctx)
 
@@ -49,6 +46,7 @@ selectAction.enter(async ctx => {
         } else {
             await ctx.reply('Для продолжения необходимо внести время начала уроков.')
         }
+        await ctx.reply('nRequest:', nRequest)
         await ctx.reply('Выберите действие:', selectShedActionMenu(nLessons, ctx.session.classList.length, ctx.session.classList[ctx.session.i].isAdmin, nRequest))
     } else {
         const list = await eC.listForDayUser()
