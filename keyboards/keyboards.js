@@ -98,7 +98,7 @@ const selectShedActionMenu = (nLesson, nClass, isAdmin, isRequest = false) => {
         if(isAdmin && false)
             arrAction.push([Markup.button.callback("Редактирование расписания уроков", "setSheduleDay")])
     }
-    if(nClass > 1){
+    if(nClass >= 1){
         arrAction.push([Markup.button.callback("О классе", "getClassInfo")])
         arrAction.push([Markup.button.callback("Выбрать класс", "selectClass")])
     }
