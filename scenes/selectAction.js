@@ -15,13 +15,13 @@ const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
 selectAction.enter(async ctx => {
     const eC = new EventsClass(ctx)
+    console.log("Admin ---------------------")
     if(ctx.session.i >=0){
         const urDay = new UrDay()
         const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
         const isAdmin = ctx.session.classList[ctx.session.i].isAdmin
         let nRequest = false
         if(isAdmin){
-            console.log("Admin ---------------------")
             const queryAdmin = new QueryAdmin()
             const arrRequest = await queryAdmin.getRequests(ctx.from.id, ctx.session.class_id)
             nRequest = arrRequest.length > 0
