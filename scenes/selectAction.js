@@ -39,10 +39,10 @@ selectAction.enter(async ctx => {
                 await ctx.reply('На сегодня расписание отсутствует.')
             }
             const d = new Date()
-            if(d.getHours() > 15){
-                const nDay = d.getDay()
-                await outSelectedDay(ctx, nDay + 1)
-            }
+            // if(d.getHours() > 15){
+            //     const nDay = d.getDay()
+            //     await outSelectedDay(ctx, nDay + 1)
+            // }
         } else {
             await ctx.reply('Для продолжения необходимо внести время начала уроков.')
         }
