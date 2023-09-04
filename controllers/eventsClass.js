@@ -19,7 +19,7 @@ class EventsClass {
     constructor(ctx) {
         if(ctx){
             this.user_id = ctx.from.id
-            this.class_id = ctx.session.class_id | 0
+            this.class_id = ctx.session.class_id || 0
         }
     }
     //------------------------------------
