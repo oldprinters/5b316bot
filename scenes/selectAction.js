@@ -14,49 +14,49 @@ import {
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //--------------------------------------
 selectAction.enter(async ctx => {
-    const eC = new EventsClass(ctx)
+    // const eC = new EventsClass(ctx)
     console.log("Admin ---------------------")
-    // if(ctx.session.i >=0){
-    //     const urDay = new UrDay()
-    //     const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
-    //     const isAdmin = ctx.session.classList[ctx.session.i].isAdmin
-    //     let nRequest = false
-    //     if(isAdmin){
-    //         const queryAdmin = new QueryAdmin()
-    //         const arrRequest = await queryAdmin.getRequests(ctx.from.id, ctx.session.class_id)
-    //         nRequest = arrRequest.length > 0
-    //     } else {
-    //         console.log("Not admin")
-    //     }
-    //     if(nLessons){
-    //         const eC = new EventsClass(ctx)
+    if(ctx.session.i >=0){
+        const urDay = new UrDay()
+        const nLessons = await urDay.getNumberOfLesson(ctx.session.class_id)
+        const isAdmin = ctx.session.classList[ctx.session.i].isAdmin
+        let nRequest = false
+        if(isAdmin){
+            const queryAdmin = new QueryAdmin()
+            const arrRequest = await queryAdmin.getRequests(ctx.from.id, ctx.session.class_id)
+            nRequest = arrRequest.length > 0
+        } else {
+            console.log("Not admin")
+        }
+        if(nLessons){
+            const eC = new EventsClass(ctx)
 
-    //         let list = await getSheduleToday(ctx)
-    //         list += await eC.listForDayUser()
+            let list = await getSheduleToday(ctx)
+            list += await eC.listForDayUser()
 
-    //         if(list.length > 0){
-    //             const d = new Date()
-    //             await ctx.replyWithHTML(`<b>Расписание на сегодня</b> <i>(${urDay.getNameDay(d.getDay())})</i>:\n\n${list}`)
-    //             //await ctx.replyWithHTML(list)
-    //         } else {
-    //             await ctx.reply('На сегодня расписание отсутствует.')
-    //         }
-    //         const d = new Date()
-    //         if(d.getHours() > 15){
-    //             const nDay = d.getDay()
-    //             await outSelectedDay(ctx, nDay + 1)
-    //         }
-    //     } else {
-    //         await ctx.reply('Для продолжения необходимо внести время начала уроков.')
-    //     }
-    //     await ctx.reply('Выберите действие:', selectShedActionMenu(nLessons, ctx.session.classList.length, ctx.session.classList[ctx.session.i].isAdmin, nRequest))
-    // } else {
-    //     const list = await eC.listForDayUser()
-    //     if(list.length == 0)
-    //         await ctx.reply('На сегодня ничего не запланировано.')
-    //     else 
-    //         await ctx.replyWithHTML(`${list}`)
-    // }
+            if(list.length > 0){
+                const d = new Date()
+                await ctx.replyWithHTML(`<b>Расписание на сегодня</b> <i>(${urDay.getNameDay(d.getDay())})</i>:\n\n${list}`)
+                //await ctx.replyWithHTML(list)
+            } else {
+                await ctx.reply('На сегодня расписание отсутствует.')
+            }
+            const d = new Date()
+            if(d.getHours() > 15){
+                const nDay = d.getDay()
+                await outSelectedDay(ctx, nDay + 1)
+            }
+        } else {
+            await ctx.reply('Для продолжения необходимо внести время начала уроков.')
+        }
+        await ctx.reply('Выберите действие:', selectShedActionMenu(nLessons, ctx.session.classList.length, ctx.session.classList[ctx.session.i].isAdmin, nRequest))
+    } else {
+        const list = await eC.listForDayUser()
+        if(list.length == 0)
+            await ctx.reply('На сегодня ничего не запланировано.')
+        else 
+            await ctx.replyWithHTML(`${list}`)
+    }
 })
 //--------------------------------------
 selectAction.hears(/^(Список|список|list|List)$/, async ctx => {
