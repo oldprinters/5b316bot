@@ -46,7 +46,7 @@ selectAction.enter(async ctx => {
         } else {
             await ctx.reply('Для продолжения необходимо внести время начала уроков.')
         }
-        await ctx.reply('Выберите действие:', selectShedActionMenu(nLessons, ctx.session.classList.length, ctx.session.classList[ctx.session.i].isAdmin, nRequest))
+        // await ctx.reply('Выберите действие:', selectShedActionMenu(nLessons, ctx.session.classList.length, ctx.session.classList[ctx.session.i].isAdmin, nRequest))
     } else {
         const list = await eC.listForDayUser()
         if(list.length == 0)
