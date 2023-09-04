@@ -12,7 +12,7 @@ class UrDay extends BaseName {
         const d = new Date()
         const m = d.getMonth()
         let y = d.getFullYear()
-        y += (m > 8)
+        y += (m > 7)
         return `${y}${this.dateEnd}`
     }
     //------------------------
