@@ -20,7 +20,8 @@ const collectMenu = (arrAction, nClass, isRequest) => {
         arrAction.push({name: "Выбрать класс", action: "selectClass"})
     }
     if(isRequest)
-        arrAction.push([Markup.button.callback("Посмотреть запросы", "viewRequests")])
+        arrAction.push({name: "Посмотреть запросы",  action: "viewRequests"})
+    // arrAction.push([Markup.button.callback("Посмотреть запросы", "viewRequests")])
 }
 //--------------------------------------
 selectAction.enter(async ctx => {
