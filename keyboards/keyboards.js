@@ -161,7 +161,7 @@ const menuActionCL = (list, isExp, parentId) => {
         ar[ar.length-1].push(Markup.button.callback('del', 'catalogDel'))
     if(isExp)
         ar[ar.length-1].push(Markup.button.callback('>>', 'catalogFile'))
-    ar.push([Markup.button.callback("В начало", "break_up")])
+    ar.push([Markup.button.callback("=>  В начало  <=", "break_up")])
     return Markup.inlineKeyboard(
         ar
     )
