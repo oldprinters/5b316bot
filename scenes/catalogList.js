@@ -44,6 +44,12 @@ catalogList.help( ctx => {
     '   « del » - удалить каталог,\n   « >> » - сохранить данных в файл.' )
 })
 //-------------------------------------
+catalogList.action('break_up', ctx => {
+    ctx.answerCbQuery()
+    ctx.scene.enter('FIRST_STEP')
+})
+
+//-------------------------------------
 catalogList.action('catalogAppend', ctx => {
     ctx.answerCbQuery()
     ctx.scene.enter('CATALOG_APPEND')
