@@ -159,6 +159,8 @@ class EventsClass {
         if(msg.cronTab.length > 0){
             const dd = new Date(msg.dataTime)
             const dt = new Date()
+            console.log(dd)
+            console.log(dt)
             if(dt > dd) {
                 const arTab = msg.cronTab.split(' ')
                 if(arTab[0] != '*'){
@@ -166,7 +168,7 @@ class EventsClass {
                     dd.setDate(dd.getDate() + (sdt > 0? sdt: 7 - (sdt)))
                 }
                 if(arTab[1] != '*')
-                    dd.setMonth(dd.getMonth() + 1)
+                    dd.setMonth(dd.getMonth() + 2)
                 if(arTab[2] != '*')
                     dd.setFullYear(dd.getFullYear() + 1)
                 await this.updateDateTime(msg.id, dd)
