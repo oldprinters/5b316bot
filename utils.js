@@ -197,9 +197,9 @@ const nHMtoRem = async (ctx) => {
 //----------------------------------------------
 const nMinutesToRem = async (ctx) => {
     const p1 = ctx.match[0].indexOf(' ')
-    const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dt = ctx.match[0].slice(0, p1)
-    const textE = ctx.match[0].slice(p2)
+    const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const textE = p2 > 0? ctx.match[0].slice(p2): '';
     const date = new Date()
     date.setMinutes(date.getMinutes() + parseInt(dt))
     await outTextRem(ctx, date, textE)
@@ -486,8 +486,9 @@ const outDateMonth = (dd, r = '.') => {
 //-------------------------------------------
 const outTextRem = async (ctx, date, textE, croneTab = '') => {
     const eC = new EventsClass(ctx)
+    const textT = textE.length > 0? textE: "***"
     if(await eC.addEvent(date, textE, croneTab))
-        ctx.reply(`Напоминание "${textE}" запланировано на ${outDate(date)} ${outTimeDate(date)}.`)
+        ctx.reply(`Напоминание "${textT}" запланировано на ${outDate(date)} ${outTimeDate(date)}.`)
     else
         ctx.reply("Ошибка сохранения.")
 }
