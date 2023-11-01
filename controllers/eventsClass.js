@@ -39,7 +39,7 @@ class EventsClass {
         const sql = `
             UPDATE ivanych_bot.events_class SET cronTab = '', active = 0 WHERE (id = ${id});
         `
-        return (await call_q(sql, 'addEvent')).affectedRows
+        return (await call_q(sql, 'delRemById')).affectedRows
     }
     //--------------------------------------
     async getNotesById(id){

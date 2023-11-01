@@ -439,7 +439,7 @@ const getDateTimeBD = (d = undefined) => {
     const m = d.getMonth()
     const mn = d.getMinutes()
     const ch = d.getHours()
-    return `${d.getFullYear()}-${m>9?m:'0' + (m + 1)}-${dd>9?dd:'0'+dd} ${ch>9?ch:'0'+ch}:${mn>9?mn:'0'+mn}:00`
+    return `${d.getFullYear()}-${m>9? m + 1 : '0' + (m + 1)}-${dd>9?dd:'0'+dd} ${ch>9?ch:'0'+ch}:${mn>9?mn:'0'+mn}:00`
 }
 //-------------------------------------------
 const compareTime = (t1, t2, dt = 45) => {
