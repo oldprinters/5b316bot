@@ -159,8 +159,8 @@ class EventsClass {
         if(msg.cronTab.length > 0){
             const dd = new Date(msg.dataTime)
             const dt = new Date()
-            console.log(dd)
-            console.log(dt)
+            // console.log(dd)
+            // console.log(dt)
             if(dt > dd) {
                 const arTab = msg.cronTab.split(' ')
                 if(arTab[0] != '*'){
