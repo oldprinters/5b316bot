@@ -163,14 +163,15 @@ class EventsClass {
                 const arTab = msg.cronTab.split(' ')
                 if(arTab[0] != '*'){
                     const sdt = parseInt(arTab[0]) - dt.getDay()
-                    dd.setDate(dd.getDate() + (sdt > 0? sdt: 7 - (sdt)))
+                    const nNed = Math.floor((dt.getTime() - dd.getTime())/ (1000 * 3600 *24 * 7));
+                    dd.setDate(dd.getDate() + (sdt > 0? sdt: 7 * (nNed + 1) - (sdt)))
                 }
                 if(arTab[1] != '*')
-                    dd.setMonth(dd.getMonth() + 1)
+                    dd.setMonth(dd.getMonth() + (dt.getMonth() - dd.getMonth()) + ((dt.getMonth() - dd.getMonth()) == 0))
                 if(arTab[2] != '*')
                     dd.setFullYear(dd.getFullYear() + 1)
                 await this.updateDateTime(msg.id, dd)
-            } 
+            }
         }
     }
     //---------------------------------------
