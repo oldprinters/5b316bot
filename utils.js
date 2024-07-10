@@ -169,6 +169,24 @@ const dmhmToRem = async (ctx) => {
         date.setFullYear(date.getFullYear() + 1)
     await outTextRem(ctx, date, textE)
 }
+//---------------------------------------------------- dd.mm hh:mm
+const dmNnToRem = async (ctx) => {
+    const p1 = ctx.match[0].indexOf(' ')
+    // const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const dateE = ctx.match[0].slice(0, p1)
+    // const timeE = '10:00'   //ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
+    const textE = ctx.match[0].slice(p1 + 1)
+    const arD = dateE.split('.')
+    // const arT = timeE.split(':')
+    const date = new Date()
+    date.setMonth(arD[1] - 1, arD[0])
+    date.setHours(10)
+    date.setMinutes(0)
+    const now = new Date()
+    if(now > date)
+        date.setFullYear(date.getFullYear() + 1)
+    await outTextRem(ctx, date, textE)
+}
 //--------------------------------------------------------------- fullToRem, dmhmToRem, nHoursToRem, nHMtoRem, nMinutesToRem
 const nHoursToRem = async (ctx) => {
     const p1 = ctx.match[0].indexOf(' ')
@@ -507,5 +525,5 @@ const getNotesTime = async () => {
 }
 
 export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
-    dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, tomorrowRem, everyMonth, everyYear,
+    dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, dmNnToRem, tomorrowRem, everyMonth, everyYear,
     outDate, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, remForDay, searchByLessonName, selectDay, setCommands, sumTimes }

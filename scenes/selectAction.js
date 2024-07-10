@@ -7,7 +7,7 @@ import UrDay from '../controllers/urDay.js'
 import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
 import { 
     dayToRem, getRoleName, getSheduleToday, helpForSearch, everyMonth, everyYear,
-    fullToRem, dmhmToRem, nHoursToRem, nHMtoRem, nMinutesToRem, outSelectedDay, outDateTime, 
+    fullToRem, dmhmToRem, dmNnToRem, nHoursToRem, nHMtoRem, nMinutesToRem, outSelectedDay, outDateTime, 
     remForDay, searchByLessonName, tomorrowRem 
 } from '../utils.js'
 
@@ -168,6 +168,10 @@ selectAction.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-я�
 //-------------------------------------- дата однократно
 selectAction.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
     await dmhmToRem(ctx)
+})
+//-------------------------------------- дата однократно
+selectAction.hears(/^\d{1,2}\.\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
+    await dmNnToRem(ctx)
 })
 //--------------------------------------
 selectAction.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
