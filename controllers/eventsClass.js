@@ -167,9 +167,11 @@ class EventsClass {
                     dd.setDate(dd.getDate() + (sdt > 0? sdt: 7 * (nNed + 1) - (sdt)))
                 }
                 if(arTab[1] != '*')
-                    dd.setMonth(dd.getMonth() + (dt.getMonth() - dd.getMonth()) + ((dt.getMonth() - dd.getMonth()) == 0))
-                if(arTab[2] != '*')
-                    dd.setFullYear(dd.getFullYear() + 1)
+                    if(arTab[2] == '*'){
+                        dd.setFullYear(dt.getFullYear())
+                        dd.setMonth(dt.getMonth() + 1)
+                    } else
+                        dd.setFullYear(dd.getFullYear() + (dt.getFullYear() - dd.getFullYear()) + 1)
                 await this.updateDateTime(msg.id, dd)
             }
         }
