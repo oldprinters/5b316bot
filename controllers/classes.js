@@ -42,7 +42,7 @@ class MyClass extends BaseName {
             AND u.active = 1
             ;
         `
-        console.log("^^^", sql)
+        // console.log("^^^", sql)
         return await call_q(sql)
     }
     //-------------------------------------------
