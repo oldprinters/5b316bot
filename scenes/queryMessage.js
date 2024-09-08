@@ -12,7 +12,7 @@ sendQueryAdmin.start( ctx => { ctx.scene.enter('FIRST_STEP') })
 //-----------------------------
 sendQueryAdmin.on('text', async ctx => {
     const queryAdmin = new QueryAdmin()
-    const qRes = (await queryAdmin.getRepeatRequest(ctx.from.id, ctx.session.admin.tlg_id))[0]
+    const qRes = (await queryAdmin.getRepeatRequest(ctx.from.id, ctx.session.admin.tlg_id, ctx.session.admin.class_id))[0]
     if(qRes == undefined){ 
         const res = await queryAdmin.insertQuery(ctx.from.id, ctx.session.admin.tlg_id, ctx.message.text, ctx.session.admin.class_id)
         await ctx.telegram.sendMessage(ctx.session.admin.tlg_id, 

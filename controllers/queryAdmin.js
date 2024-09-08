@@ -5,12 +5,13 @@ import { outTime } from '../utils.js'
 
 class QueryAdmin {
     //************************************** */
-    async getRepeatRequest(whoTlgId, toTlgId){
+    async getRepeatRequest(whoTlgId, toTlgId, class_id){
         const sql = `
             SELECT * 
             FROM ivanych_bot.queryAdmin qa
             WHERE whoTlgId = ${whoTlgId}
             AND toTlgId = ${toTlgId}
+            AND class_id = ${class_id}
             AND qa.active = 1
             ;`
             return await call_q(sql)
