@@ -5,7 +5,7 @@ import EventsClass from '../controllers/eventsClass.js'
 //import { queryYesNoMenu, selectRemember, selectLesson } from '../keyboards/keyboards.js'
 //import UrDay from "../controllers/urDay.js"
 import { dayToRem, outDateTime, remForDay, fullToRem, dmhmToRem, 
-    nHoursToRem, nHMtoRem, nMinutesToRem, tomorrowRem, everyMonth, everyYear, } from '../utils.js'
+    nHoursToRem, nHMtoRem, nMinutesToRem, tomorrowRem, everyMonth, everyYear} from '../utils.js'
 
 const freeWords  = new Scenes.BaseScene('FREE_WORDS')
 //--------------------------------------

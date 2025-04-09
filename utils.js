@@ -304,6 +304,40 @@ const everyYear = async (ctx) => {
     const croneTab = `* ${parseInt(arD[0])} ${parseInt(arD[1])}`
     await outTextRem(ctx, date, text, croneTab)
 }
+//-----------------------------------------
+const compareTimeAi = (currentTime, targetTime) => {
+    const [ch, cm] = currentTime.split(':').map(Number);
+    const [th, tm] = targetTime.split(':').map(Number);
+    let res = 1
+
+    if (ch * 60 + cm > th * 60 + tm) {
+        res = 0
+    }
+    return res
+}
+//-------------------------------------------
+const everyDay = async (ctx) => {
+    let str = ctx.match[0]
+    const p = str.search(/\d{1,2}[:жЖ]\d{1,2}/)
+    const p1 = str.indexOf(' ', p + 3)
+    const text = str.slice(p1 + 1).trim()
+    const timeS = str.match(/\d{1,2}[:жЖ]\d{1,2}/)[0].replace(/[жЖ]/,':')
+    const now = new Date();
+    const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    const res = compareTimeAi(currentTime, timeS)
+    now.setDate(now.getDate() + res);
+    const currentDay = now.getDay(); // 0 - воскресенье, 1 - понедельник, ..., 6 - суббота
+    // if(res === 1){
+    //     const cronTab = '0 0 * * *'
+    //     const dt = new Date()
+    //     dt.setDate(dt.getDate() + 1)
+    //     dt.setHours(parseInt(timeS.split(':')[0]))
+    //     dt.setMinutes(parseInt(timeS.split(':')[1]))
+    //     const eC = new EventsClass(ctx)
+
+    // }
+    console.log('everyDay timeS=', timeS, ", currentTime =", currentTime, currentDay)
+}
 //-------------------------------------------
 const searchRem = async (ctx) => {
     const remTomorrow = /^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/
@@ -525,5 +559,5 @@ const getNotesTime = async () => {
 }
 
 export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
-    dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, dmNnToRem, tomorrowRem, everyMonth, everyYear,
+    dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, dmNnToRem, tomorrowRem, everyMonth, everyYear, everyDay,
     outDate, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, remForDay, searchByLessonName, selectDay, setCommands, sumTimes }

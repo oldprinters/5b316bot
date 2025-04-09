@@ -8,7 +8,7 @@ import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } fro
 import { 
     dayToRem, getRoleName, getSheduleToday, helpForSearch, everyMonth, everyYear,
     fullToRem, dmhmToRem, dmNnToRem, nHoursToRem, nHMtoRem, nMinutesToRem, outSelectedDay, outDateTime, 
-    remForDay, searchByLessonName, tomorrowRem 
+    remForDay, searchByLessonName, tomorrowRem, everyDay 
 } from '../utils.js'
 
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
@@ -193,6 +193,10 @@ selectAction.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельни�
 //-------------------------------------------
 selectAction.hears(/^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
     await tomorrowRem(ctx)
+})
+//------------------------------------------- каждый год
+selectAction.hears(/^[Ее]жедневно (в )?\d{1,2}[:жЖ]\d{1,2} ([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
+    await everyDay(ctx)
 })
 //--------------------------------------
 selectAction.on('text', async (ctx) => {
