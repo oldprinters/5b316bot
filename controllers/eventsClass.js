@@ -32,6 +32,7 @@ class EventsClass {
             INSERT INTO ivanych_bot.events_class (class_id, client_id, cronTab, dataTime, text, cycle) 
             VALUES (${this.class_id}, '${this.user_id}', '${cronTab}', '${getDateTimeBD(dateTime)}', '${str}', ${cronTab.length > 0});
         `
+        // console.log('addEvent sql =', sql)
         return await call_q(sql, 'addEvent')
     }
     //------------------------------------

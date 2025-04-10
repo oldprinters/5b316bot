@@ -308,10 +308,10 @@ const everyYear = async (ctx) => {
 const compareTimeAi = (currentTime, targetTime) => {
     const [ch, cm] = currentTime.split(':').map(Number);
     const [th, tm] = targetTime.split(':').map(Number);
-    let res = 1
+    let res = 0
 
     if (ch * 60 + cm > th * 60 + tm) {
-        res = 0
+        res = 1
     }
     return res
 }
@@ -326,17 +326,15 @@ const everyDay = async (ctx) => {
     const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     const res = compareTimeAi(currentTime, timeS)
     now.setDate(now.getDate() + res);
+    now.setHours(parseInt(timeS.split(':')[0]))
+    now.setMinutes(parseInt(timeS.split(':')[1]))
     const currentDay = now.getDay(); // 0 - воскресенье, 1 - понедельник, ..., 6 - суббота
-    // if(res === 1){
-    //     const cronTab = '0 0 * * *'
-    //     const dt = new Date()
-    //     dt.setDate(dt.getDate() + 1)
-    //     dt.setHours(parseInt(timeS.split(':')[0]))
-    //     dt.setMinutes(parseInt(timeS.split(':')[1]))
-    //     const eC = new EventsClass(ctx)
-
-    // }
-    console.log('everyDay timeS=', timeS, ", currentTime =", currentTime, currentDay)
+    let arrInsert = []
+    for(let i = 0; i < 7; i++) {
+        await outTextRem(ctx, now, text, `${now.getDay()} * *`)
+        now.setDate(now.getDate() + 1)
+    }
+    ctx.reply(`Созданы напоминания на каждый день недели.\n«${text}» в ${timeS}`)
 }
 //-------------------------------------------
 const searchRem = async (ctx) => {
