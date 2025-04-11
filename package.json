@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "archiver": "^5.3.1",
+    "archiver": "^5.3.2",
     "axios": "^1.2.2",
     "dotenv": "^16.0.3",
     "ftp": "^0.3.10",
