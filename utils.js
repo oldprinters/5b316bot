@@ -169,6 +169,24 @@ const dmhmToRem = async (ctx) => {
         date.setFullYear(date.getFullYear() + 1)
     await outTextRem(ctx, date, textE)
 }
+//---------------------------------------------------- dd.mm hh:mm
+const dmNnToRem = async (ctx) => {
+    const p1 = ctx.match[0].indexOf(' ')
+    // const p2 = ctx.match[0].indexOf(' ', p1 + 1)
+    const dateE = ctx.match[0].slice(0, p1)
+    // const timeE = '10:00'   //ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
+    const textE = ctx.match[0].slice(p1 + 1)
+    const arD = dateE.split('.')
+    // const arT = timeE.split(':')
+    const date = new Date()
+    date.setMonth(arD[1] - 1, arD[0])
+    date.setHours(10)
+    date.setMinutes(0)
+    const now = new Date()
+    if(now > date)
+        date.setFullYear(date.getFullYear() + 1)
+    await outTextRem(ctx, date, textE)
+}
 //--------------------------------------------------------------- fullToRem, dmhmToRem, nHoursToRem, nHMtoRem, nMinutesToRem
 const nHoursToRem = async (ctx) => {
     const p1 = ctx.match[0].indexOf(' ')
@@ -311,6 +329,38 @@ const everyYear = async (ctx) => {
     const croneTab = `* ${parseInt(arD[0])} ${parseInt(arD[1])}`
     await outTextRem(ctx, date, text, croneTab)
 }
+//-----------------------------------------
+const compareTimeAi = (currentTime, targetTime) => {
+    const [ch, cm] = currentTime.split(':').map(Number);
+    const [th, tm] = targetTime.split(':').map(Number);
+    let res = 0
+
+    if (ch * 60 + cm > th * 60 + tm) {
+        res = 1
+    }
+    return res
+}
+//-------------------------------------------
+const everyDay = async (ctx) => {
+    let str = ctx.match[0]
+    const p = str.search(/\d{1,2}[:жЖ]\d{1,2}/)
+    const p1 = str.indexOf(' ', p + 3)
+    const text = str.slice(p1 + 1).trim()
+    const timeS = str.match(/\d{1,2}[:жЖ]\d{1,2}/)[0].replace(/[жЖ]/,':')
+    const now = new Date();
+    const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    const res = compareTimeAi(currentTime, timeS)
+    now.setDate(now.getDate() + res);
+    now.setHours(parseInt(timeS.split(':')[0]))
+    now.setMinutes(parseInt(timeS.split(':')[1]))
+    const currentDay = now.getDay(); // 0 - воскресенье, 1 - понедельник, ..., 6 - суббота
+    let arrInsert = []
+    for(let i = 0; i < 7; i++) {
+        await outTextRem(ctx, now, text, `${now.getDay()} * *`)
+        now.setDate(now.getDate() + 1)
+    }
+    ctx.reply(`Созданы напоминания на каждый день недели.\n«${text}» в ${timeS}`)
+}
 //-------------------------------------------
 const searchRem = async (ctx) => {
     const remTomorrow = /^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/
@@ -447,7 +497,7 @@ const getDateBD = (str = undefined) => {
 }
 //-------------------------------------------
 const getDateTimeBD = (d = undefined) => {
-    if(d == undefined){ 
+    if(d == undefined){  
         d = new Date()
     }
     const dd = d.getDate()
@@ -552,5 +602,5 @@ const getNotesTime = async () => {
 }
 
 export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNameDayWhenEmpty, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
-    dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, dmNnToRem, tomorrowRem, tomorrowRemT, everyMonth, everyYear,
+    dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, dmNnToRem, dmNnToRem, tomorrowRem, tomorrowRemT, everyMonth, everyYear, everyDay,
     outDate, outDateMonth, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, remForDay, searchByLessonName, selectDay, setCommands, sumTimes }

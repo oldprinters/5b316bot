@@ -8,7 +8,7 @@ import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } fro
 import { 
     dayToRem, getRoleName, getSheduleToday, helpForSearch, everyMonth, everyYear,
     fullToRem, dmhmToRem, dmNnToRem, nHoursToRem, nHMtoRem, nMinutesToRem, outSelectedDay, outDateTime, 
-    remForDay, searchByLessonName, tomorrowRem, tomorrowRemT 
+    remForDay, searchByLessonName, tomorrowRem, tomorrowRemT, everyDay 
 } from '../utils.js'
 //---------------------------------
 
@@ -37,7 +37,7 @@ selectAction.enter(async ctx => {
             const queryAdmin = new QueryAdmin()
             const arrRequest = await queryAdmin.getRequests(ctx.from.id, ctx.session.class_id)
             nRequest = arrRequest.length > 0
-        }
+        } 
         if(nLessons){
             const eC = new EventsClass(ctx)
 
@@ -93,6 +93,8 @@ selectAction.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, 
 })
 //-------------------------------------------------
 selectAction.help(ctx => {
+    const tempTime = Math.floor(Math.random() * 55) + 3
+    const tt = tempTime > 9? tempTime: `0${tempTime}`
     ctx.replyWithHTML('<b><u>Основное меню слева от поля ввода</u></b>\n' +
         '/start - перезапуск бота\n/settings - настройки расписания\n\n' +
         '<u><b>Планирование:</b></u>\nдд.мм.гггг чч:мм [сообщение]\nдд.мм чч:мм [сообщение]\nчч:мм [сообщение] - на текущий день\nзавтра в чч:мм [сообщение]\n'+
@@ -101,9 +103,11 @@ selectAction.help(ctx => {
         '<u>Отложенное сообщение:</u>\nMM мин [сообщение] - <i>сообщение через несколько минут</i>\n' +
         'ЧЧ час [сообщение] - <i>отложить на несколько часов</i>\n\nСписок - вывод списка активных напоминалок. (list тоже работает)\n\n'+
         '<b>Повторяющиеся напоминания:</b>\n'+
-        'Каждый(ую, ое) [день недели] в ЧЧ:ММ ТЕКСТ - еженедельное напоминание.\n<i>Каждое воскресенье в 19:00 проверить форму.</i>\n'+
+        'Ежедневно чч:мм [сообщение] - <i>ежедневное напоминание</i>\n'+
+        `<u>Пример:</u> <i>Ежедневно 11:${tt} ByteEpic</i>\n\n`+
+        'Каждый(ую, ое) [день недели] в ЧЧ:ММ ТЕКСТ - еженедельное напоминание.\n<u>Пример:</u> <i>Каждое воскресенье в 19:00 проверить форму.</i>\n\n'+
         'Повтор [дд.мм] [чч:мм] [сообщение] - ежегодное напоминание\n'+
-        '<i>Повтор 4.02 10:00 др Лёни</i> - напоминалки о днях рождения\n'+
+        '<u>Пример:</u> <i>Повтор 4.02 10:00 др Лёни</i> - напоминалки о днях рождения\n\n'+
         'Повтор [дд] [чч:мм] [сообщение] - ежемесячное напоминание\n'+
         '<i>Повтор 6 11:05 оплатить телефон</i> - ежемесячная оплата 6-го числа.\n\n'+
         '<b><u>Удаление напоминалок</u></b> - Меню -> Напоминалки -> Удаление напоминалок\n\n'+
@@ -241,6 +245,10 @@ selectAction.hears(/^(завтра|Завтра) (в )?\d{1,2}[:жЖ]\d{1,2}([ _
 //------------------------------------------- завтра без времени
 selectAction.hears(/^(завтра|Завтра) ([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
     await tomorrowRemT(ctx, '10:00')
+})
+//------------------------------------------- каждый год
+selectAction.hears(/^[Ее]жедневно (в )?\d{1,2}[:жЖ]\d{1,2} ([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
+    await everyDay(ctx)
 })
 //--------------------------------------
 selectAction.on('text', async (ctx) => {

@@ -5,7 +5,7 @@ import EventsClass from '../controllers/eventsClass.js'
 //import { queryYesNoMenu, selectRemember, selectLesson } from '../keyboards/keyboards.js'
 //import UrDay from "../controllers/urDay.js"
 import { dayToRem, outDateTime, remForDay, fullToRem, dmhmToRem, 
-    nHoursToRem, nHMtoRem, nMinutesToRem, tomorrowRem, everyMonth, everyYear, } from '../utils.js'
+    nHoursToRem, nHMtoRem, nMinutesToRem, tomorrowRem, everyMonth, everyYear} from '../utils.js'
 
 const freeWords  = new Scenes.BaseScene('FREE_WORDS')
 //--------------------------------------
@@ -15,7 +15,7 @@ freeWords.enter(async ctx => {
 //--------------------------------------
 freeWords.help(ctx => {
     ctx.replyWithHTML('<u>Планирование:</u>\n дд.мм.уууу чч:мм [сообщение]\nдд.мм чч:мм [сообщение]\nчч:мм [сообщение] - на текущий день\nзавтра в чч:мм [сообщение]\n'+
-    '[день недели] чч:мм [сообщение]\n'+
+    '[день недели] чч:мм [сообщение]\nЕжедневно чч:мм [сообщение] - <i>ежедневное напоминание</i>\n\n'+
     '<u>Отложенное сообщение:</u>\nMM мин [сообщение] - <i>сообщение через несколько минут</i>\n' +
     'ЧЧ час [сообщение] - <i>отложить на несколько часов</i>\n\nсписок  - вывод списка активных напоминалок. (list тоже работает) ')
 })

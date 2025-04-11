@@ -49,9 +49,9 @@ bot.action(/^answerAccepted\d{1,12}/, async ctx => {
     const eC = new EventsClass(ctx)
     const ec_id = ctx.match[0].slice(14)
     const msg = (await eC.getNotesById(ec_id))[0]
-    if(msg.cronTab.length == 0)
+    if(msg.cronTab.length == 0){
         await eC.updateActive(ec_id, 0)
-    else
+    } else
         await eC.setNewPeriod(msg)
     await ctx.replyWithHTML('<i>Готов к выполнению новых заданий! Обращайтесь.</i>')
 })
