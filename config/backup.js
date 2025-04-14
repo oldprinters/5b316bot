@@ -9,6 +9,8 @@ import Client from 'ftp'
 //------------------------------------------------------
 const backup = async () => {
     const connection = await pool.getConnection()
+    // Удаляем записи с active = 0 и cycle = 0
+    await connection.query('DELETE FROM ivanych_bot.events_class WHERE active = 0 AND cycle = 0');
     // Формируем имя файла дампа
         const filename = `./ivanych_bot/ivanych_bot_${getDateTimeBD()}.sql`
         // Создаем файловый поток для записи дампа
@@ -49,7 +51,11 @@ const backup = async () => {
                                 console.error('Ошибка загрузки файла на FTP-сервер:', err);
                             }
                             // Закрываем соединение с FTP-сервером и удаляем файл дампа
-                            ftpClient.end();
+                            ftpClient.end((err) => {
+                                if (err) {
+                                    console.error('Ошибка закрытия соединения с FTP-сервером:', err);
+                                }
+                            });
                             fs.unlink(filename, (err) => {
                                 if (err) {
                                     console.error('Ошибка удаления файла дампа:', err);
