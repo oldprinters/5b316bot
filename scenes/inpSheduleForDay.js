@@ -4,7 +4,7 @@ import UrTime from "../controllers/urTime.js"
 import Users from '../controllers/users.js'
 import MyClass from '../controllers/classes.js'
 import {queryDelCancelMenu, queryYesNoMenu} from '../keyboards/keyboards.js'
-import { getDateBD, outShedule } from '../utils.js'
+import { getDateBD, outShedule, sanitizeInput } from '../utils.js'
 //inpSheduleForDay.js
 const inpSheduleForDay = new Scenes.BaseScene('INP_SHEDULE_FOR_DAY')
 //--------------------------------------
@@ -75,7 +75,7 @@ inpSheduleForDay.hears(/^[0-9] del+$/, async ctx =>{
 inpSheduleForDay.hears(/^[0-9] [a-zA-Z. а-яА-ЯёЁйЙ-]+/, async ctx =>{
     const n = parseInt(ctx.message.text[0]) - 1
     if(!isNaN(n) && n >= 0){
-        const str = ctx.message.text.slice(2).trim()
+        const str = sanitizeInput(ctx.message.text.slice(2).trim())
         await ctx.reply(`Замена урока ${n+1} => ${str}`)
         const urTime = new UrTime()
         const urDay = new UrDay()
@@ -102,7 +102,7 @@ inpSheduleForDay.hears(/^[0-9] [a-zA-Z. а-яА-ЯёЁйЙ-]+/, async ctx =>{
 })
 //------------------------ временное изменение урока
 inpSheduleForDay.hears(/^\d{1,2}.\d{1,2}.\d{4} \d{1,2}.\d{1,2}.\d{4} [0-9] [a-zA-Zа-я А-ЯёЁйЙ-]+/, async ctx =>{
-    const text = ctx.message.text.trim().replaceAll('  ', ' ')
+    const text = sanitizeInput(ctx.message.text.trim().replaceAll('  ', ' '))
     const firstSpace = text.indexOf(' ')
     const secondSpace = text.indexOf(' ', firstSpace + 1)
     const date_s = text.slice(0, firstSpace)

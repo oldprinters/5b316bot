@@ -3,7 +3,7 @@ import Users from '../controllers/users.js'
 import EventsClass from "../controllers/eventsClass.js"
 import Folder from "../b_tree/folder.js"
 import { menuPeriod, queryYesNoMenu} from '../keyboards/keyboards.js'
-import { getNameDayWhenEmpty, outDateMonth } from '../utils.js'
+import { getNameDayWhenEmpty, outDateMonth, sanitizeInput } from '../utils.js'
 
 const catalogAppend = new Scenes.BaseScene('CATALOG_APPEND')
 //-----------------------------
@@ -80,7 +80,7 @@ catalogAppend.hears(/^\/[а-яА-ЯёЁйЙa-zA-Z0-9]+$/, ctx => {
 })
 //-------------------------------------------------
 catalogAppend.hears(/^[а-яА-ЯёЁйЙa-zA-Z0-9_+-=<> ]+/, async ctx => {
-    const str = ctx.match[0]
+    const str = sanitizeInput(ctx.match[0])
     const folder = new Folder(ctx)
     ctx.scene.session.state.name = str
     const res = await folder.addFolder(str, ctx.session.parentId)

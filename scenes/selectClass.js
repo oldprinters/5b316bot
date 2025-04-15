@@ -2,7 +2,7 @@ import {Telegraf, Markup, Scenes, session} from "telegraf"
 import Users from '../controllers/users.js'
 import MyClass from '../controllers/classes.js'
 import { selectClassMenu } from '../keyboards/keyboards.js'
-import { outTextRem } from '../utils.js'
+import { outTextRem, sanitizeInput } from '../utils.js'
 
 const selectClass = new Scenes.BaseScene('SELECT_CLASS')
 //--------------------------------------
@@ -40,7 +40,7 @@ selectClass.help(async ctx => {
 //----------------------------------------
 selectClass.hears(/^delete [a-zA-Z. а-яА-ЯёЁйЙ-]*/, async ctx =>{
     const myClass = new MyClass(ctx)
-    const name = ctx.message.text.slice(7)
+    const name = sanitizeInput(ctx.message.text.slice(7))
     const mC = await myClass.searchClassesByName(name)
     const users = new Users(ctx)
     users.init()
@@ -70,7 +70,7 @@ selectClass.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dateE = ctx.match[0].slice(0, p1)
     const timeE = ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
-    const textE = ctx.match[0].slice(p2 + 1)
+    const textE = sanitizeInput(ctx.match[0].slice(p2 + 1))
     const arD = dateE.split('.')
     const date = new Date(`${arD[2]}-${arD[1]}-${arD[0]} ${timeE}`)
     outTextRem(ctx, date, textE)
@@ -81,7 +81,7 @@ selectClass.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙё
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dateE = ctx.match[0].slice(0, p1)
     const timeE = ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
-    const textE = ctx.match[0].slice(p2 + 1)
+    const textE = sanitizeInput(ctx.match[0].slice(p2 + 1))
     const arD = dateE.split('.')
     const arT = timeE.split(':')
     const date = new Date()
@@ -98,7 +98,7 @@ selectClass.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙё
 selectClass.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
     const p1 = ctx.match[0].indexOf(' ')
     const timeE = ctx.match[0].slice(0, p1).replace(/[жЖ]/, ':')
-    const textE = ctx.match[0].slice(p1 + 1)
+    const textE = sanitizeInput(ctx.match[0].slice(p1 + 1))
     const arT = timeE.split(':')
     const date = new Date()
     date.setHours(arT[0])
@@ -114,7 +114,7 @@ selectClass.hears(/^\d{1,2} (мин)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, 
     const p1 = ctx.match[0].indexOf(' ')
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dt = ctx.match[0].slice(0, p1)
-    const textE = ctx.match[0].slice(p2)
+    const textE = sanitizeInput(ctx.match[0].slice(p2))
     const date = new Date()
     date.setMinutes(date.getMinutes() + parseInt(dt))
     outTextRem(ctx, date, textE)
@@ -124,7 +124,7 @@ selectClass.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, 
     const p1 = ctx.match[0].indexOf(' ')
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dt = ctx.match[0].slice(0, p1)
-    const textE = ctx.match[0].slice(p2)
+    const textE = sanitizeInput(ctx.match[0].slice(p2))
     const date = new Date()
     date.setHours(date.getHours() + parseInt(dt))
     outTextRem(ctx, date, textE)

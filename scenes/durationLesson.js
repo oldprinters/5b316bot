@@ -24,7 +24,7 @@ durationLesson.hears(/^\d{1,3}$/, async ctx => {
     if(/^\d{1,3}$/.test(ctx.message.text)){
         const myClass = new MyClass(ctx)
         await myClass.init()
-        ctx.session.duration = parseInt(ctx.message.text)
+        ctx.session.duration = sanitizeInput(parseInt(ctx.message.text))
         ctx.session.class_id = await myClass.appendClass(ctx.session.className, ctx.session.duration)
         ctx.session.isAdmin = 1
         await ctx.reply(`Код класса "${ctx.session.className}" записан.`)

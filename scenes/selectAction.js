@@ -8,7 +8,7 @@ import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } fro
 import { 
     dayToRem, getRoleName, getSheduleToday, helpForSearch, everyMonth, everyYear,
     fullToRem, dmhmToRem, dmNnToRem, nHoursToRem, nHMtoRem, nMinutesToRem, outSelectedDay, outDateTime, 
-    remForDay, searchByLessonName, tomorrowRem, tomorrowRemT, everyDay 
+    remForDay, searchByLessonName, tomorrowRem, tomorrowRemT, everyDay, sanitizeInput
 } from '../utils.js'
 //---------------------------------
 

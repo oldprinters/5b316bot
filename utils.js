@@ -92,7 +92,7 @@ const outSelectedDay = async (ctx, nDay) => {
 }
 //-------------------------------------------
 const getDnTime = (str) => {
-    str = str.trim()
+    str = sanitizeInput(str.trim())
     const seachDn = /^(понед|вторн|сред|четв|пятн|суб|воскр)+/
     let obj = undefined //{dn: undefined, time_s: undefined, time_e: undefined}
     if(seachDn.test(str.toLowerCase())){
@@ -116,7 +116,7 @@ const getDnTime = (str) => {
 }
 //--------------------------------------------------------------- day to rem
 const dayToRem = async (ctx) => {
-    const str = ctx.message.text.trim().toLowerCase()
+    const str = sanitizeInput(ctx.message.text.trim().toLowerCase())
     const res = getDnTime(str)
     if(res != undefined && res.dn >= 1){
         const d1 = ctx.message.text.search(/\d{1,2}[:жЖ]\d{1,2}/)
@@ -146,7 +146,7 @@ const fullToRem = async (ctx) => {
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dateE = ctx.match[0].slice(0, p1)
     const timeE = ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
-    const textE = ctx.match[0].slice(p2 + 1)
+    const textE = sanitizeInput(ctx.match[0].slice(p2 + 1))
     const arD = dateE.split('.')
     const date = new Date(`${arD[2]}-${arD[1]}-${arD[0]} ${timeE}`)
     await outTextRem(ctx, date, textE)
@@ -157,7 +157,7 @@ const dmhmToRem = async (ctx) => {
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dateE = ctx.match[0].slice(0, p1)
     const timeE = ctx.match[0].slice(p1, p2).replace(/[жЖ]/, ':')
-    const textE = ctx.match[0].slice(p2 + 1)
+    const textE = sanitizeInput(ctx.match[0].slice(p2 + 1))
     const arD = dateE.split('.')
     const arT = timeE.split(':')
     const date = new Date()
@@ -192,7 +192,7 @@ const nHoursToRem = async (ctx) => {
     const p1 = ctx.match[0].indexOf(' ')
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
     const dt = ctx.match[0].slice(0, p1)
-    const textE = ctx.match[0].slice(p2)
+    const textE = sanitizeInput(ctx.match[0].slice(p2))
     const date = new Date()
     date.setHours(date.getHours() + parseInt(dt))
     await outTextRem(ctx, date, textE)
@@ -201,7 +201,7 @@ const nHoursToRem = async (ctx) => {
 const dmNnToRem = async (ctx) => {
     const p1 = ctx.match[0].indexOf(' ')
     const dateE = ctx.match[0].slice(0, p1)
-    const textE = ctx.match[0].slice(p1 + 1)
+    const textE = sanitizeInput(ctx.match[0].slice(p1 + 1))
     const arD = dateE.split('.')
     const date = new Date()
     date.setMonth(arD[1] - 1, arD[0])
@@ -216,7 +216,7 @@ const dmNnToRem = async (ctx) => {
 const nHMtoRem = async (ctx) => {
     const p1 = ctx.match[0].indexOf(' ')
     const timeE = ctx.match[0].slice(0, p1).replace(/[жЖ]/, ':')
-    const textE = ctx.match[0].slice(p1 + 1)
+    const textE = sanitizeInput(ctx.match[0].slice(p1 + 1))
     const arT = timeE.split(':')
     const date = new Date()
     date.setHours(arT[0])
@@ -232,7 +232,7 @@ const nMinutesToRem = async (ctx) => {
     const p1 = ctx.match[0].indexOf(' ')
     const dt = ctx.match[0].slice(0, p1)
     const p2 = ctx.match[0].indexOf(' ', p1 + 1)
-    const textE = p2 > 0? ctx.match[0].slice(p2): '';
+    const textE = p2 > 0? sanitizeInput(ctx.match[0].slice(p2)): '';
     const date = new Date()
     date.setMinutes(date.getMinutes() + parseInt(dt))
     await outTextRem(ctx, date, textE)
@@ -242,7 +242,7 @@ const tomorrowRem = async (ctx) => {
     const d1 = ctx.match[0].search(/\d{1,2}[:жЖ]\d{1,2}/)
     const p1 = ctx.match[0].indexOf(' ', d1 + 3)
     const timeE = (ctx.match[0].match(/\d{1,2}[:жЖ]\d{1,2}/))[0].replace(/[жЖ]/, ':')
-    const textE = ctx.match[0].slice(p1)
+    const textE = sanitizeInput(ctx.match[0].slice(p1))
     const arT = timeE.split(':')
     const date = new Date()
     date.setDate(date.getDate() + 1)
@@ -252,7 +252,7 @@ const tomorrowRem = async (ctx) => {
 }
 //--------------------------------------------
 const tomorrowRemT = async (ctx, sTime, d1 = 7) => {
-    const textE = ctx.match[0].slice(d1)
+    const textE = sanitizeInput(ctx.match[0].slice(d1))
     const arT = sTime.split(':')
     const date = new Date()
     date.setDate(date.getDate() + 1)
@@ -265,7 +265,7 @@ const remForDay = async (ctx, next) => {
     let str = ctx.match[0]
     const p = str.search(/\d{1,2}[:жЖ]\d{1,2}/)
     const p1 = str.indexOf(' ', p + 3)
-    const text = str.slice(p1 + 1).trim()
+    const text = sanitizeInput(str.slice(p1 + 1).trim())
     const timeS = str.match(/\d{1,2}[:жЖ]\d{1,2}/)[0].replace(/[жЖ]/,':')
     str = str.match(/(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)/)[0]
     const dn = selectDay(str)
@@ -295,7 +295,7 @@ const everyMonth = async (ctx) => {
     const str = ctx.match[0].slice(7)
     const p1 = str.indexOf(' ')
     const p2 = str.indexOf(' ', p1 + 1)
-    const text = str.slice(p2 + 1).trim()
+    const text = sanitizeInput(str.slice(p2 + 1).trim())
     const d = parseInt(str.slice(0, p1))
     const t = str.slice(p1 + 1, p2).replace(/[жЖ]/, ':')
     const arT = t.split(':')
@@ -313,7 +313,7 @@ const everyYear = async (ctx) => {
     const str = ctx.match[0].slice(7)
     const p1 = str.indexOf(' ')
     const p2 = str.indexOf(' ', p1 + 1)
-    const text = str.slice(p2 + 1).trim()
+    const text = sanitizeInput(str.slice(p2 + 1).trim())
     const d = str.slice(0, p1)
     const t = str.slice(p1 + 1, p2).replace(/[жЖ]/, ':')
     const arT = t.split(':')
@@ -345,7 +345,7 @@ const everyDay = async (ctx) => {
     let str = ctx.match[0]
     const p = str.search(/\d{1,2}[:жЖ]\d{1,2}/)
     const p1 = str.indexOf(' ', p + 3)
-    const text = str.slice(p1 + 1).trim()
+    const text = sanitizeInput(str.slice(p1 + 1).trim())
     const timeS = str.match(/\d{1,2}[:жЖ]\d{1,2}/)[0].replace(/[жЖ]/,':')
     const now = new Date();
     const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
@@ -368,7 +368,7 @@ const searchRem = async (ctx) => {
         const d1 = ctx.message.text.search(/\d{1,2}[:жЖ]\d{1,2}/)
         const p1 = ctx.message.text.indexOf(' ', d1 + 3)
         const timeE = (ctx.message.text.match(/\d{1,2}[:жЖ]\d{1,2}/))[0].replace(/[жЖ]/, ':')
-        const textE = ctx.message.text.slice(p1)
+        const textE = sanitizeInput(ctx.message.text.slice(p1))
         const arT = timeE.split(':')
         const date = new Date()
         date.setDate(date.getDate() + 1)
@@ -600,7 +600,15 @@ const getNotesTime = async () => {
     const eC = new EventsClass()
     await eC.getNotes()
 }
+//------------------------------------------------
+const sanitizeInput = (input) => {
+    // Экранируем апострофы, обратные слеши и двойные кавычки
+    return input
+        .replace(/\\/g, '\\\\') // Экранируем обратную косую черту
+        .replace(/'/g, "\\'")   // Экранируем одиночные кавычки
+        .replace(/"/g, '\\"');  // Экранируем двойные кавычки
+}
 
 export { compareTime, getCronForDn, getDateBD, getDateTimeBD, getDnTime, getNameDayWhenEmpty, getNotesTime, getPause, getRoleName, getSheduleToday, helpForSearch, inLesson, 
     dayToRem, fullToRem, nHoursToRem, nMinutesToRem, nHMtoRem, dmhmToRem, dmNnToRem, tomorrowRem, tomorrowRemT, everyMonth, everyYear, everyDay,
-    outDate, outDateMonth, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, remForDay, searchByLessonName, selectDay, setCommands, sumTimes }
+    outDate, outDateMonth, outDateTime, outSelectedDay, outShedule, outTextRem, outTime, outTimeDate, remForDay, searchByLessonName, selectDay, setCommands, sumTimes, sanitizeInput }

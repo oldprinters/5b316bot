@@ -2,7 +2,7 @@ import {Telegraf, Markup, Scenes, session} from "telegraf"
 import Users from '../controllers/users.js'
 import Folder from "../b_tree/folder.js"
 import { menuActionCL, queryYesNoMenu} from '../keyboards/keyboards.js'
-import { outDateTime } from '../utils.js'
+import { outDateTime, sanitizeInput } from '../utils.js'
 import backup from "../config/backup.js"
 
 const catalogList = new Scenes.BaseScene('CATALOG_LIST')
@@ -120,7 +120,7 @@ catalogList.action( /(cL_)\d/, async ctx => {
 catalogList.hears(/^\/[а-яА-ЯёЁйЙa-zA-Z0-9]+$/, ctx => ctx.scene.enter('SELECT_ACTION'))
 //-------------------------------------------------
 catalogList.hears(/^[а-яА-ЯёЁйЙa-zA-Z0-9_+-=<> ]+/, async ctx => {
-    const str = ctx.match.input
+    const str = sanitizeInput(ctx.match.input)
     if(ctx.session.parentId > 0){
         const folder = new Folder(ctx)
         const res = await folder.addString(str, ctx.session.parentId)    
