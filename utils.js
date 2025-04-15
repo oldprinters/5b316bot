@@ -394,6 +394,7 @@ const getNameDayWhenEmpty = (n) => {
 }
 //-------------------------------------------
 const searchByLessonName = async (ctx) => {
+    ctx.message.text = sanitizeInput(ctx.message.text)
     if(ctx.session.i >= 0){
         const myClass = new MyClass(ctx)
         const urDay = new UrDay(ctx)

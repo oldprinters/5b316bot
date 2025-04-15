@@ -3,6 +3,7 @@ import AdditionalClass from '../controllers/additionalClass.js'
 import AddLessTime from '../controllers/addLessTime.js'
 import ClassOi from '../controllers/classOi.js'
 import {selectAddLessonMenu, createAdditionalMenu, queryYesNoMenu} from '../keyboards/keyboards.js'
+import {sanitizeInput} from '../utils.js'
 
 const additionalLessons = new Scenes.BaseScene('ADDITIONAL_LESSONS')
 //-----------------------------
@@ -68,7 +69,7 @@ additionalLessons.action('deleteAdditional', async ctx => {
 //-------------------------------------------------------
 additionalLessons.on('text', async ctx => {
     if(ctx.scene.session.state.name == undefined){
-        ctx.scene.session.state.name = ctx.message.text.trim().replaceAll("'", '"')
+        ctx.scene.session.state.name = sanitizeInput(ctx.message.text.trim())
         ctx.reply('Введите, через запятую, дни недели, время начала и окончания занятий\n Пример: вторник 19:10 20:30, четверг 20:10 21:30 и т.д.')
     } else if(ctx.scene.session.state.arALT == undefined){
         const str = ctx.message.text.trim().replaceAll("'", '"').toLowerCase()

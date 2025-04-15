@@ -1,7 +1,7 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
-import Users from '../controllers/users.js'
 import MyClass from '../controllers/classes.js'
-import {createNewClassMenu, queryYesNoMenu, selectRoleMenu} from '../keyboards/keyboards.js'
+import { queryYesNoMenu } from '../keyboards/keyboards.js'
+import {sanitizeInput} from '../utils.js'
 
 const createClass = new Scenes.BaseScene('CREATE_CLASS')
 //-----------------------------
@@ -21,7 +21,7 @@ createClass.command('games', async ctx => {
 })
 //---------------------------------------------
 createClass.on('text', async ctx => {
-        ctx.session.className = ctx.message.text.match(/[а-яА-ЯёЁйЙa-zA-Z0-9_+-=<> ]*/)[0]
+        ctx.session.className = sanitizeInput(ctx.message.text.match(/[а-яА-ЯёЁйЙa-zA-Z0-9_+-=<> ]*/)[0])
         const myClass = new MyClass(ctx)
         await myClass.init()
         const tClass = await myClass.searchClassesByName(ctx.session.className)
