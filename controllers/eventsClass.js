@@ -134,7 +134,7 @@ class EventsClass {
             AND client_id = ${this.user_id}
             ORDER BY cycle, dataTime ASC;
         `
-        return await call_q(sql, 'listForUser')
+        return await call_q(sql, 'listForDel')
     }
     //----------------------------------------
     async sendTlgMessage(msg){

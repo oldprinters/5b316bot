@@ -9,11 +9,7 @@ import { outDate, outDateTime, remForDay, sanitizeInput } from '../utils.js'
 const remember = new Scenes.BaseScene('REMEMBER')
 //--------------------------------------
 remember.enter(async ctx => {
-    if(ctx.session.class_id > 0)
         await ctx.reply('Чем могу помочь?', selectRemember(ctx.session.class_id))
-    else {
-        ctx.scene.enter('FREE_WORDS')
-    }
 })
 //--------------------------------------
 remember.start( ctx => ctx.scene.enter('FIRST_STEP'))
