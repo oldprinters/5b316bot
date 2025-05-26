@@ -10,14 +10,8 @@ delRems.help( ctx => {
 //----------------------------------------------
 delRems.enter(async ctx => {
     const eC = new EventsClass(ctx)
-    const arRems = await eC.listForUser()
-    if(arRems.length > 0)
-        await ctx.reply('Для удаления напоминалки нажмите на кнопку. Действие необратимо.', buttonsRems(arRems))
-    else {
-        await ctx.reply('Напоминалок нет.')
-        ctx.scene.enter('SELECT_ACTION')
-    }
-    // console.log(arRems)
+    console.log('remember.on res =', ctx.session.arrRems)
+    await ctx.reply('Для удаления напоминалки нажмите на кнопку. Действие необратимо.', buttonsRems(ctx.session.arrRems))
 })
 //----------------------------------------------
 delRems.action(/^(delRem_)\d+/, async ctx => {
@@ -25,7 +19,7 @@ delRems.action(/^(delRem_)\d+/, async ctx => {
     const id = parseInt(ctx.match[0].slice(7))
     const eC = new EventsClass(ctx)
     if(await eC.delRemById(id))
-        ctx.scene.reenter()
+        ctx.scene.enter('REMEMBER')
     else
         ctx.reply('Ошибка удаления.')
 })

@@ -9,7 +9,9 @@ import { outDate, outDateTime, remForDay, sanitizeInput } from '../utils.js'
 const remember = new Scenes.BaseScene('REMEMBER')
 //--------------------------------------
 remember.enter(async ctx => {
-        await ctx.reply('Чем могу помочь?', selectRemember(ctx.session.class_id))
+    ctx.session.arrRems = []
+
+    await ctx.reply('Введите часть текста напоминалки:', selectRemember(ctx.session.class_id, ctx.session.arrRems.length))
 })
 //--------------------------------------
 remember.start( ctx => ctx.scene.enter('FIRST_STEP'))
@@ -106,8 +108,21 @@ remember.on('text', async ctx => {
     ctx.scene.session.state.msgText = sanitizeInput(ctx.message.text).replaceAll("'", '"').replaceAll("`", '"').trim()
     const d = ctx.scene.session.state.rmDay
     if(d == undefined){
-        await ctx.reply('Нужен ответ на вопрос!')
-        await ctx.scene.reenter()
+        const eC = new EventsClass(ctx)
+        const res = await eC.searchByText(ctx.scene.session.state.msgText)
+        let text = ''
+        if(res.length > 0){
+            ctx.session.arrRems = res
+            for(let el of res){
+                text += `${outDateTime(el.dateTime)} ${el.text}\n`
+            }
+        } else {
+            ctx.session.arrRems = []
+            text ='Такого текста нет в напоминалках.'
+        }
+        await ctx.reply(text, selectRemember(0, ctx.session.arrRems.length))
+        // console.log('remember.on res =', res)
+        // await ctx.scene.reenter()
     } else {
         const urDay = new UrDay(ctx)
         const nameDay = urDay.getNameDayWhenEmpty(d.getDay())

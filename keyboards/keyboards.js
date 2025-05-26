@@ -127,11 +127,12 @@ const selectLesson = (listLess) => {
     )
 }
 //------------------------------------------------
-const selectRemember = (class_id) => {
-    let arrAction = [
-        [Markup.button.callback("Удаление напоминалок", "delRems")],
+const selectRemember = (class_id, count_rems = 0) => {
+    let arrAction = []
+    if(count_rems){
+        arrAction.push([Markup.button.callback("Удаление напоминалок", "delRems")])
+    }
         // [Markup.button.callback("Привязка к дате и времени", "freeWords")],
-    ]
     if(class_id){
         arrAction.push([Markup.button.callback("Привязка к уроку", "nextLesson")])
     }

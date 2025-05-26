@@ -220,6 +220,16 @@ class EventsClass {
         this.sending = false
     }
     //---------------------------------------
+    async searchByText(text){
+        const sql = `SELECT id, dataTime dateTime, ec.text, cycle, cronTab
+                     FROM ivanych_bot.events_class ec
+                     WHERE text LIKE '%${text}%' 
+                        AND active > 0
+                    ORDER BY dataTime DESC
+                    ;`
+        return await call_q(sql, 'searchByText')
+    }
+    //---------------------------------------
     async getNotes(){
         this.arrEvents = this.arrEvents.concat(await this.getNotesByTime())
         if(!this.sending)
