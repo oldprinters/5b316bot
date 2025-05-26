@@ -45,17 +45,20 @@ bot.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
 })
 //---------------------------------------------
 bot.action(/^answerAccepted\d{1,12}/, async ctx => {
-    ctx.answerCbQuery('Loading')
-    const eC = new EventsClass(ctx)
-    const ec_id = ctx.match[0].slice(14)
-    const msg = (await eC.getNotesById(ec_id))[0]
-    if(msg.cronTab.length == 0){
-        await eC.updateActive(ec_id, 0)
-    } else
-        await eC.setNewPeriod(msg)
-    await ctx.replyWithHTML('<i>Готов к выполнению новых заданий! Обращайтесь.</i>')
-})
-
+    try {
+        ctx.answerCbQuery('Loading')
+        const eC = new EventsClass(ctx)
+        const ec_id = ctx.match[0].slice(14)
+        const msg = (await eC.getNotesById(ec_id))[0]
+        if(msg.cronTab.length == 0){
+            await eC.updateActive(ec_id, 0)
+        } else
+            await eC.setNewPeriod(msg)
+        await ctx.replyWithHTML('<i>Готов к выполнению новых заданий! Обращайтесь.</i>')
+    } catch (error) {
+        console.error('Ошибка при обработке answerAccepted:', error);
+    }
+})//---------------------------------------------------
 bot.on('text', async (ctx) => {
     await ctx.replyWithHTML(`<b>Перезапустите бот нажав /start</b>`);
 });
