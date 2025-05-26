@@ -48,7 +48,7 @@ shultz.help(ctx => {
 })
 //---------------------------------------------
 shultz.enter(async ctx => {
-    ctx.reply('Время пошло!')
+    ctx.reply('Время пошло!\nНайдите последовательно, от 1, все цифры и нажмите на кнопку "Найдены все цифры"')
     const shultz = new Shultz(ctx)
     await shultz.getUserId()
     const count = await shultz.getCount()
