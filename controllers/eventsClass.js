@@ -158,21 +158,6 @@ class EventsClass {
         if(msg.cronTab.length > 0){
             const dd = new Date(msg.dataTime)
             const dt = new Date()
-            // if(dt > dd) {
-            //     const arTab = msg.cronTab.split(' ')
-            //     if(arTab[0] != '*'){
-            //         const sdt = parseInt(arTab[0]) - dt.getDay()
-            //         const nNed = Math.floor((dt.getTime() - dd.getTime())/ (1000 * 3600 *24 * 7));
-            //         dd.setDate(dd.getDate() + (sdt > 0? sdt: 7 * (nNed + 1) - (sdt)))
-            //     }
-            //     if(arTab[1] != '*')
-            //         if(arTab[2] == '*'){
-            //             dd.setFullYear(dt.getFullYear())
-            //             dd.setMonth(dt.getMonth() + 1)
-            //         } else
-            //             dd.setFullYear(dd.getFullYear() + (dt.getFullYear() - dd.getFullYear()) + 1)
-            //     await this.updateDateTime(msg.id, dd)
-            // }
             if(dt > dd) {
                 const arTab = msg.cronTab.split(' ')
                 if(arTab[0] != '*'){
