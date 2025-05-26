@@ -224,6 +224,7 @@ class EventsClass {
         const sql = `SELECT id, dataTime dateTime, ec.text, cycle, cronTab
                      FROM ivanych_bot.events_class ec
                      WHERE text LIKE '%${text}%' 
+						AND client_id = ${this.user_id}
                         AND active > 0
                     ORDER BY dataTime DESC
                     ;`
