@@ -175,7 +175,7 @@ class EventsClass {
                     );
                     await this.updateDateTime(msg.id, result)
                 } else {
-                    if(arTab[1] != '*'){
+                    if(arTab[1] != '*' && arTab[2] == '*'){
                         dd.setFullYear(dt.getFullYear())
                         dd.setMonth(dt.getMonth() + 1)
                     } else {
