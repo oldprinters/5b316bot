@@ -11,6 +11,70 @@ import {
     remForDay, searchByLessonName, tomorrowRem, tomorrowRemT, everyDay, sanitizeInput
 } from '../utils.js'
 //---------------------------------
+const months= [
+  "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+  "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+];
+
+// Создаем регулярное выражение из первых 3 символов каждого месяца
+const monthsRegex = months.map(month => 
+  month.substring(0, 3).toLowerCase()
+).join('|');
+
+//-----------------------------------------------
+// Функция для получения календаря месяца
+function getCalendar(month, year) {
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const daysInMonth = lastDay.getDate();
+  const firstDayOfWeek = firstDay.getDay();
+  
+  // Корректировка для понедельника как первого дня недели
+  const startDay = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+  
+  let calendar = `📅 ${months[month]} ${year}\n`;
+  calendar += "Пн Вт Ср Чт Пт Сб Вс\n";
+  
+  // Добавляем пробелы для первых дней
+  let line = '';
+  for (let i = 0; i < startDay; i++) {
+    line += '   ';
+  }
+  
+  // Добавляем дни месяца
+  for (let day = 1; day <= daysInMonth; day++) {
+    line += day.toString().padStart(2, ' ') + ' ';
+    
+    if ((day + startDay) % 7 === 0 || day === daysInMonth) {
+      calendar += line + '\n';
+      line = '';
+    }
+  }
+  
+  return calendar;
+}
+//----------------------------------------------------------------
+// Функция для определения ближайшего месяца
+function getNearestMonth(targetMonth) {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth(); // 0-11
+  
+  let year, month;
+  
+  if (targetMonth > currentMonth) {
+    // Месяц в этом году еще будет
+    year = currentYear;
+    month = targetMonth;
+  } else {
+    // Месяц уже прошел в этом году, берем следующий год
+    year = currentYear + 1;
+    month = targetMonth;
+  }
+  
+  return { month, year };
+}
+
 
 const selectAction = new Scenes.BaseScene('SELECT_ACTION')
 //----------------------------------------
@@ -250,6 +314,38 @@ selectAction.hears(/^(завтра|Завтра) ([ _.,а-яА-ЯйЙёЁa-zA-Z0
 selectAction.hears(/^[Ее]жедневно (в )?\d{1,2}[:жЖ]\d{1,2} ([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
     await everyDay(ctx)
 })
+//-----------------------------------------------------------------------
+selectAction.hears(/^(янв|фев|мар|апр|май|июн|июл|авг|сен|окт|ноя|дек)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/i, (ctx) => {
+  const inputText = ctx.message.text;
+  const firstWord = inputText.split(' ')[0].toLowerCase();
+  const firstThreeChars = firstWord.substring(0, 3);
+
+  // Находим полное название месяца
+  const matchedMonth = months.find(month => 
+    month.toLowerCase().startsWith(firstThreeChars)
+  );
+
+  if (matchedMonth) {
+    // Выполняем действие если соответствует
+    ctx.reply(`✅ Вы указали месяц: ${matchedMonth}`);
+
+    const monthIndex = months.indexOf(matchedMonth);
+    const { month, year } = getNearestMonth(monthIndex);
+    
+    const calendar = getCalendar(month, year);
+    
+    ctx.reply(`📆 Ближайший ${matchedMonth.toLowerCase()}:\n\n\`\`\`\n${calendar}\`\`\``, { 
+      parse_mode: 'Markdown'
+    });
+
+    // Здесь можно добавить любую логику
+    // Например:
+    // - обработка данных связанных с месяцем
+    // - сохранение в базу данных
+    // - вызов другой функции
+    // - и т.д.
+  }
+});
 //--------------------------------------
 selectAction.on('text', async (ctx) => {
     try {
