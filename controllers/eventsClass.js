@@ -66,6 +66,36 @@ class EventsClass {
         return await call_q(sql, 'getForDayNed')
     }
     //----------------------------------------
+    async getForDayFuture(textdate){
+        const [dd, mm] = textdate.split('.');   // ваша дата dd.mm
+        const year = new Date().getFullYear(); // или свой год
+        // Одна и та же календарная дата
+        const baseDate = new Date(year, Number(mm) - 1, Number(dd));
+
+        // Начало дня 00:00
+        const start = new Date(baseDate);
+        start.setHours(0, 0, 0, 0);
+        // Конец дня 23:59
+        const end = new Date(baseDate);
+        end.setHours(23, 59, 59, 999); // или 23, 59, 59, 999 если нужны секунды и мс
+
+        if(end < new Date()){
+            start.setFullYear(new Date().getFullYear() + 1)
+            end.setFullYear(new Date().getFullYear() + 1)
+        }
+
+        const sql = `
+            SELECT id, dataTime dateTime, ec.text
+            FROM ivanych_bot.events_class ec
+            WHERE ec.active > 0
+            AND client_id = ${this.user_id}
+            AND dataTime > '${getDateTimeBD(start)}'
+            AND dataTime < '${getDateTimeBD(end)}'
+            ORDER BY dataTime ASC;
+        `
+        return await call_q(sql, 'getForDayUser')
+    }
+    //----------------------------------------
     async getForDayUser(){
         const de = new Date()
         de.setHours(23, 59)

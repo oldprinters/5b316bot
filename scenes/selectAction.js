@@ -7,8 +7,8 @@ import UrDay from '../controllers/urDay.js'
 import { selectShedActionMenu, selectActionAdminMenu, selectActionUserMenu } from '../keyboards/keyboards.js'
 import { 
     dayToRem, getRoleName, getSheduleToday, helpForSearch, everyMonth, everyYear,
-    fullToRem, dmhmToRem, dmNnToRem, nHoursToRem, nHMtoRem, nMinutesToRem, outSelectedDay, outDateTime, 
-    remForDay, searchByLessonName, tomorrowRem, tomorrowRemT, everyDay, sanitizeInput
+    fullToRem, dmhmToRem, dmNnToRem, nHoursToRem, nHMtoRem, nMinutesToRem, outSelectedDay, outDateTime, outDate,
+    remForDay, searchByLessonName, tomorrowRem, tomorrowRemT, everyDay, sanitizeInput, outTimeDate
 } from '../utils.js'
 //---------------------------------
 const months= [
@@ -174,6 +174,7 @@ selectAction.help(ctx => {
         '<u>Пример:</u> <i>Повтор 4.02 10:00 др Лёни</i> - напоминалки о днях рождения\n\n'+
         'Повтор [дд] [чч:мм] [сообщение] - ежемесячное напоминание\n'+
         '<i>Повтор 6 11:05 оплатить телефон</i> - ежемесячная оплата 6-го числа.\n\n'+
+        'dd.mm - Запрос напоминалок на число\n\n'+
         '<b><u>Удаление напоминалок</u></b> - Меню -> Напоминалки -> Удаление напоминалок\n\n'+
         helpForSearch(ctx)
     )
@@ -271,7 +272,7 @@ selectAction.hears(/^\d{1,2}\.\d{1,2} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙ�
     await dmhmToRem(ctx)
 })
 //-------------------------------------- дата однократно без времени
-selectAction.hears(/^\d{1,2}\.\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
+selectAction.hears(/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2]) [ _.,а-яА-ЯйЙёЁa-zA-Z0-9+\-=<>]+/, async ctx => {
     await dmNnToRem(ctx)
 })//--------------------------------------
 selectAction.hears(/^\d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
@@ -345,6 +346,18 @@ selectAction.hears(/^(янв|фев|мар|апр|май|июн|июл|авг|с
     // - вызов другой функции
     // - и т.д.
   }
+});
+//-----------------------------------------------------------------------
+selectAction.hears(/^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])$/gm, async ctx => {
+//запрос напоминалок на это число
+    const eC = new EventsClass(ctx)
+    const arr = await eC.getForDayFuture(ctx.message.text)
+    let list = '\n' + arr.length > 0? '\n<b>Планы:</b>\n': 'Событий не запланировано.'
+    arr.forEach(el => {
+        const d = new Date(el.dateTime)
+        list += `${outTimeDate(d)} ${el.text}\n`
+    })
+    await ctx.replyWithHTML(list)
 });
 //--------------------------------------
 selectAction.on('text', async (ctx) => {
