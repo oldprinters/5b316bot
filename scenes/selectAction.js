@@ -364,8 +364,22 @@ selectAction.on('text', async (ctx) => {
     try {
         await dayToRem(ctx)
     } catch (err) {
-        if(!(await searchByLessonName(ctx)))
-            await ctx.reply('Не понял запрос, извините.')
+        if(!(await searchByLessonName(ctx))){
+            ctx.scene.session.state.msgText = sanitizeInput(ctx.message.text).replaceAll("'", '"').replaceAll("`", '"').trim()
+            const eC = new EventsClass(ctx)
+            const res = await eC.searchByText(ctx.scene.session.state.msgText)
+            let text = ''
+            if(res.length > 0){
+                ctx.session.arrRems = res
+                for(let el of res){
+                    text += `${outDateTime(el.dateTime)} ${el.text}\n`
+                }
+            } else {
+                ctx.session.arrRems = []
+                text ='Такого текста нет в напоминалках.'
+            }
+            await ctx.reply(text)
+        }
     }
 })
 

@@ -256,7 +256,7 @@ class EventsClass {
                      WHERE text LIKE '%${text}%' 
 						AND client_id = ${this.user_id}
                         AND active > 0
-                    ORDER BY dataTime DESC
+                    ORDER BY dataTime ASC
                     ;`
         return await call_q(sql, 'searchByText')
     }
