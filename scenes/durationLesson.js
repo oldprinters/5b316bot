@@ -1,6 +1,7 @@
 import {Telegraf, Markup, Scenes, session} from "telegraf"
 import MyClass from '../controllers/classes.js'
 import {createNewClassMenu, queryYesNoMenu, selectRoleMenu} from '../keyboards/keyboards.js'
+import { sanitizeInput } from '../utils.js'
 
 const durationLesson = new Scenes.BaseScene('DURATION_LESSON')
 //-----------------------------
