@@ -196,7 +196,7 @@ class EventsClass {
         const url = `https://api.telegram.org/bot${process.env.KEY}/sendMessage`
 
         const payload = {
-            'chat_id': msg.client_id, 
+            'chat_id': String(msg.client_id),
             'text': '<b><u>Внимание!</u></b>\n' + this.escapeHtml(msg.text),
             parse_mode : 'HTML',
             reply_markup : JSON.stringify({
