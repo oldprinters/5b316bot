@@ -2,6 +2,7 @@ import { call_q } from '../config/query.js'
 import axios from 'axios'
 import { getDateTimeBD, outTimeDate } from '../utils.js'
 import {Telegraf} from "telegraf"
+
 //eventsClass.js класс работает с событиями (каникулы, экскурсии и т.п.)
 //каждое событие имеет дату и время начала и окончания. Дата окончания включена в событие.
 //событие может быть привязано к чему-либо, как-то название урока, доб занятие, времени
@@ -165,11 +166,38 @@ class EventsClass {
         return await call_q(sql, 'listForDel')
     }
     //----------------------------------------
+    async clearAllEvents(user_tlg_id){
+        const sql = `
+            UPDATE ivanych_bot.events_class SET active = 0, cycle = 0 WHERE client_id = ${user_tlg_id};
+        `
+        return await call_q(sql, 'clearAllEvents')
+    }
+   //---------------------------------------
+    async deactivateUserById(tlg_id){
+        const sql = `
+            UPDATE ivanych_bot.users 
+            SET active = 0
+            WHERE tlg_id = ${tlg_id}
+            ;
+        `
+        return await call_q(sql, 'deactivateById')
+    }
+    //----------------------------------------
+    escapeHtml(text = '') {
+        return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+    //----------------------------------------
     async sendTlgMessage(msg){
         const url = `https://api.telegram.org/bot${process.env.KEY}/sendMessage`
-        return await axios.get(url, { params: {
+
+        const payload = {
             'chat_id': msg.client_id, 
-            'text': '<b><u>Внимание!</u></b>\n' + msg.text,
+            'text': '<b><u>Внимание!</u></b>\n' + this.escapeHtml(msg.text),
             parse_mode : 'HTML',
             reply_markup : JSON.stringify({
                 inline_keyboard : [
@@ -181,8 +209,77 @@ class EventsClass {
                     ]
                 ]
             })}
-        })
+
+        try {
+        const response = await axios.post(url, payload, {
+                timeout: 10000
+            });
+
+            return {
+                ok: true,
+                status: 'sent',
+                data: response.data
+            };
+        } catch (err) {
+            const status = err.response?.status;
+            const description = err.response?.data?.description || err.message || 'Unknown error';
+
+            try {
+                if (status === 403 && description.includes('bot was blocked by the user')) {
+                    console.warn(`Пользователь ${msg.client_id} заблокировал бота. Сообщение не доставлено.`);
+                    await this.clearAllEvents(msg.client_id);
+
+                    return {
+                        ok: false,
+                        status: 'blocked',
+                        description
+                    };
+                }
+
+                if (status === 403 && description.includes('user is deactivated')) {
+                    console.warn(`Пользователь ${msg.client_id} деактивирован. Сообщение не доставлено.`);
+                    await this.clearAllEvents(msg.client_id);
+                    await this.deactivateUserById(msg.client_id);
+
+                    return {
+                        ok: false,
+                        status: 'deactivated',
+                        description
+                    };
+                }
+            } catch (dbErr) {
+                console.error('Ошибка при обновлении БД после ошибки Telegram:', dbErr);
+                throw dbErr;
+            }
+
+            console.error('Ошибка отправки в Telegram:', {
+                status,
+                description,
+                chat_id: msg.client_id,
+                msg_id: msg.id
+            });
+
+            throw err;
+        }
     }
+    // async sendTlgMessage(msg){
+    //     const url = `https://api.telegram.org/bot${process.env.KEY}/sendMessage`
+    //     return await axios.get(url, { params: {
+    //         'chat_id': msg.client_id, 
+    //         'text': '<b><u>Внимание!</u></b>\n' + msg.text,
+    //         parse_mode : 'HTML',
+    //         reply_markup : JSON.stringify({
+    //             inline_keyboard : [
+    //                 [
+    //                     {
+    //                         text: 'Принято',
+    //                         callback_data: `answerAccepted${msg.id}`
+    //                     }
+    //                 ]
+    //             ]
+    //         })}
+    //     })
+    // }
     //--------------------------------------- пересчитываем следующую остановку
     async setNewPeriod(msg){
         if(msg.cronTab.length > 0){

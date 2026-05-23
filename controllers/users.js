@@ -38,6 +38,16 @@ class Users {
         return this.#id
     }
     //---------------------------------------
+    async deactivateById(tlg_id){
+        const sql = `
+            UPDATE ivanych_bot.users 
+            SET active = 0
+            WHERE tlg_id = ${tlg_id}
+            ;
+        `
+        return await call_q(sql, 'deactivateById')
+    }
+    //---------------------------------------
     async getUserByTlgId (tlg_id) {
         const sql = `
             SELECT * 
