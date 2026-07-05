@@ -68,17 +68,14 @@ class EventsClass {
     }
     //----------------------------------------
     async getForDayFuture(textdate){
-        const [dd, mm] = textdate.split('.');   // ваша дата dd.mm
-        const year = new Date().getFullYear(); // или свой год
-        // Одна и та же календарная дата
+        const [dd, mm] = textdate.split('.');
+        const year = new Date().getFullYear();
         const baseDate = new Date(year, Number(mm) - 1, Number(dd));
 
-        // Начало дня 00:00
         const start = new Date(baseDate);
         start.setHours(0, 0, 0, 0);
-        // Конец дня 23:59
         const end = new Date(baseDate);
-        end.setHours(23, 59, 59, 999); // или 23, 59, 59, 999 если нужны секунды и мс
+        end.setHours(23, 59, 59, 999);
 
         if(end < new Date()){
             start.setFullYear(new Date().getFullYear() + 1)
@@ -112,11 +109,14 @@ class EventsClass {
         return await call_q(sql, 'getForDayUser')
     }
     //--------------------------------------
+    // Берём только те события, у которых подошёл dataTime
+    // и нет отложенного retry (next_try_at IS NULL или уже прошло)
     async getNotesByTime(){
         const sql = `
             SELECT * FROM ivanych_bot.events_class
             WHERE dataTime <= NOW()
-            AND active > 0;
+              AND active > 0
+              AND (next_try_at IS NULL OR next_try_at <= NOW());
         `
         return await call_q(sql, 'getNotesByTime')
     }
@@ -192,94 +192,147 @@ class EventsClass {
             .replace(/'/g, '&#39;');
     }
     //----------------------------------------
-    async sendTlgMessage(msg){
-        const url = `https://api.telegram.org/bot${process.env.KEY}/sendMessage`
-
-        const payload = {
-            'chat_id': String(msg.client_id),
-            'text': '<b><u>Внимание!</u></b>\n' + this.escapeHtml(msg.text),
-            parse_mode : 'HTML',
-            reply_markup : JSON.stringify({
-                inline_keyboard : [
-                    [
-                        {
-                            text: 'Принято',
-                            callback_data: `answerAccepted${msg.id}`
-                        }
-                    ]
-                ]
-            })}
-
-        try {
-        const response = await axios.post(url, payload, {
-                timeout: 10000
-            });
-
-            return {
-                ok: true,
-                status: 'sent',
-                data: response.data
-            };
-        } catch (err) {
-            const status = err.response?.status;
-            const description = err.response?.data?.description || err.message || 'Unknown error';
-
-            try {
-                if (status === 403 && description.includes('bot was blocked by the user')) {
-                    console.warn(`Пользователь ${msg.client_id} заблокировал бота. Сообщение не доставлено.`);
-                    await this.clearAllEvents(msg.client_id);
-
-                    return {
-                        ok: false,
-                        status: 'blocked',
-                        description
-                    };
-                }
-
-                if (status === 403 && description.includes('user is deactivated')) {
-                    console.warn(`Пользователь ${msg.client_id} деактивирован. Сообщение не доставлено.`);
-                    await this.clearAllEvents(msg.client_id);
-                    await this.deactivateUserById(msg.client_id);
-
-                    return {
-                        ok: false,
-                        status: 'deactivated',
-                        description
-                    };
-                }
-            } catch (dbErr) {
-                console.error('Ошибка при обновлении БД после ошибки Telegram:', dbErr);
-                throw dbErr;
-            }
-
-            console.error('Ошибка отправки в Telegram:', {
-                status,
-                description,
-                chat_id: msg.client_id,
-                msg_id: msg.id
-            });
-
-            throw err;
-        }
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms))
     }
-    // async sendTlgMessage(msg){
-    //     const url = `https://api.telegram.org/bot${process.env.KEY}/sendMessage`
-    //     return await axios.get(url, { params: {
-    //         'chat_id': msg.client_id, 
-    //         'text': '<b><u>Внимание!</u></b>\n' + msg.text,
-    //         parse_mode : 'HTML',
-    //         reply_markup : JSON.stringify({
-    //             inline_keyboard : [
-    //                 [
-    //                     {
-    //                         text: 'Принято',
-    //                         callback_data: `answerAccepted${msg.id}`
-    //                     }
-    //                 ]
-    //             ]
-    //         })}
-    //     })
-    // }
+    //----------------------------------------
+    isNetworkError(err) {
+        return !err.response &&
+            ['EAI_AGAIN', 'ECONNRESET', 'ETIMEDOUT', 'ENOTFOUND', 'ECONNABORTED'].includes(err.code)
+    }
+    //----------------------------------------
+    // Обновляем технический статус доставки, не трогая бизнес-поля active/cycle/dataTime
+    async setSendStatus(id, status, lastError = null, nextTryAt = null) {
+        const nextTryVal = nextTryAt ? `'${getDateTimeBD(nextTryAt)}'` : 'NULL'
+        const lastErrVal = lastError
+            ? `'${String(lastError).replace(/'/g, '"').substring(0, 255)}'`
+            : 'NULL'
+        const sql = `
+            UPDATE ivanych_bot.events_class
+            SET send_status   = '${status}',
+                send_attempts = send_attempts + 1,
+                last_error    = ${lastErrVal},
+                next_try_at   = ${nextTryVal}
+            WHERE id = ${id};
+        `
+        return call_q(sql, 'setSendStatus')
+    }
+    //----------------------------------------
+    // Сбрасываем технические поля после успешной отправки циклического события
+    // (чтобы на следующий год начать с чистого листа)
+    async resetSendAttempts(id) {
+        const sql = `
+            UPDATE ivanych_bot.events_class
+            SET send_status   = 'pending',
+                send_attempts = 0,
+                last_error    = NULL,
+                next_try_at   = NULL
+            WHERE id = ${id};
+        `
+        return call_q(sql, 'resetSendAttempts')
+    }
+    //----------------------------------------
+    async sendTlgMessage(msg, maxNetworkRetries = 3) {
+        const url = `https://api.telegram.org/bot${process.env.KEY}/sendMessage`
+        const payload = {
+            chat_id:      String(msg.client_id),
+            text:         '<b><u>Внимание!</u></b>\n' + this.escapeHtml(msg.text),
+            parse_mode:   'HTML',
+            reply_markup: JSON.stringify({
+                inline_keyboard: [[{
+                    text:          'Принято',
+                    callback_data: `answerAccepted${msg.id}`
+                }]]
+            })
+        }
+
+        for (let attempt = 1; attempt <= maxNetworkRetries; attempt++) {
+            try {
+                const response = await axios.post(url, payload, { timeout: 10000 })
+                return { ok: true, status: 'sent', data: response.data }
+
+            } catch (err) {
+                const httpStatus  = err.response?.status || null
+                const data        = err.response?.data || {}
+                const description = data.description || err.message || 'Unknown error'
+                const retryAfter  = Number(data.parameters?.retry_after || 0)
+
+                // --- 403: постоянные ошибки на стороне пользователя ---
+                if (httpStatus === 403) {
+                    if (description.includes('bot was blocked by the user')) {
+                        return { ok: false, status: 'blocked', description }
+                    }
+                    if (description.includes('user is deactivated')) {
+                        return { ok: false, status: 'deactivated', description }
+                    }
+                    // kicked, no rights, can't initiate conversation
+                    return { ok: false, status: 'forbidden', description }
+                }
+
+                // --- 400: невалидный chat_id ---
+                if (httpStatus === 400 && (
+                    description.includes('chat not found') ||
+                    description.includes('user not found') ||
+                    description.includes('PEER_ID_INVALID')
+                )) {
+                    return { ok: false, status: 'chat_invalid', description }
+                }
+
+                // --- 400: битый текст/разметка ---
+                if (httpStatus === 400 && (
+                    description.includes("can't parse entities") ||
+                    description.includes('message text is empty') ||
+                    description.includes('TEXT_INVALID')
+                )) {
+                    return { ok: false, status: 'bad_payload', description }
+                }
+
+                // --- 401: сломан токен --- всё сломано, нет смысла ретраить
+                if (httpStatus === 401) {
+                    return { ok: false, status: 'fatal', description }
+                }
+
+                // --- 429: rate limit --- ждём retry_after из ответа Telegram
+                if (httpStatus === 429) {
+                    const delay = retryAfter > 0 ? retryAfter * 1000 : attempt * 5000
+                    if (attempt < maxNetworkRetries) {
+                        console.warn(`429 TooManyRequests chat=${msg.client_id}, ждём ${delay}мс`)
+                        await this.sleep(delay)
+                        continue
+                    }
+                    const nextTry = new Date(Date.now() + (retryAfter > 0 ? retryAfter * 1000 : 60000))
+                    return { ok: false, status: 'retry', description, nextTryAt: nextTry }
+                }
+
+                // --- 5xx: ошибки на стороне Telegram --- ретраим с паузой
+                if (httpStatus >= 500) {
+                    if (attempt < maxNetworkRetries) {
+                        await this.sleep(attempt * 3000)
+                        continue
+                    }
+                    const nextTry = new Date(Date.now() + 5 * 60 * 1000)
+                    return { ok: false, status: 'retry', description, nextTryAt: nextTry }
+                }
+
+                // --- Сетевые ошибки DNS/TCP (EAI_AGAIN, ECONNRESET и т.п.) ---
+                if (this.isNetworkError(err)) {
+                    if (attempt < maxNetworkRetries) {
+                        console.warn(`Сетевая ошибка ${err.code} (попытка ${attempt}/${maxNetworkRetries})`)
+                        await this.sleep(attempt * 3000)
+                        continue
+                    }
+                    const nextTry = new Date(Date.now() + 5 * 60 * 1000)
+                    return { ok: false, status: 'retry', description: err.code, nextTryAt: nextTry }
+                }
+
+                // --- Всё остальное --- логируем, не роняем процесс
+                console.error('Необработанная ошибка Telegram:', { httpStatus, description, id: msg.id })
+                return { ok: false, status: 'error', description }
+            }
+        }
+
+        return { ok: false, status: 'retry', description: 'Retries exhausted' }
+    }
     //--------------------------------------- пересчитываем следующую остановку
     async setNewPeriod(msg){
         if(msg.cronTab.length > 0){
@@ -295,7 +348,6 @@ class EventsClass {
                         dt.getFullYear(),
                         dt.getMonth(),
                         dt.getDate(),
-                        // Время берем из dd
                         dd.getHours(),
                         dd.getMinutes(),
                         dd.getSeconds()
@@ -330,21 +382,96 @@ class EventsClass {
     //---------------------------------------
     async sendMsg() {
         this.sending = true
-        while(this.arrEvents.length > 0){
-            const msg = this.arrEvents.pop()
-            if(msg.userORclass == 'user'){
-                if(msg.active > 0){
-                    await this.updateActive(msg.id, msg.active - 1)
-                    if(msg.active == 1 && msg.cycle)
-                        await this.setNewPeriod(msg)
-                    if(msg.active%5 == 0)
-                        await this.sendTlgMessage(msg)
+        try {
+            while (this.arrEvents.length > 0) {
+                const msg = this.arrEvents.pop()
+
+                if (msg.userORclass !== 'user') {
+                    console.log('sendMsg class msg =', msg)
+                    continue
                 }
-            } else {
-                console.log("sendMsg class msg =", msg)
+
+                if (!(msg.active > 0)) continue
+
+                // Уменьшаем счётчик в любом случае
+                await this.updateActive(msg.id, msg.active - 1)
+
+                // Для цикличных событий: пересчитываем период при последнем тике
+                if (msg.active === 1 && msg.cycle) {
+                    await this.setNewPeriod(msg)
+                    await this.resetSendAttempts(msg.id)
+                    continue
+                }
+
+                // Отправляем только на контрольных точках: 30, 25, 20, 15, 10, 5
+                if (msg.active % 5 !== 0) continue
+
+                let result
+                try {
+                    result = await this.sendTlgMessage(msg)
+                } catch (err) {
+                    // Совсем неожиданная ошибка — не роняем цикл
+                    console.error('Критическая ошибка sendTlgMessage:', err)
+                    result = { ok: false, status: 'fatal', description: err.message }
+                }
+
+                switch (result.status) {
+                    case 'sent':
+                        await this.setSendStatus(msg.id, 'sent')
+                        break
+
+                    case 'retry':
+                        // Временная ошибка: откатываем active назад, чтобы не потерять попытку
+                        // (уже уменьшили выше — восстанавливаем)
+                        await this.updateActive(msg.id, msg.active)
+                        console.warn(`Откладываем msg.id=${msg.id} до ${result.nextTryAt}, причина: ${result.description}`)
+                        await this.setSendStatus(msg.id, 'retry', result.description, result.nextTryAt || null)
+                        break
+
+                    case 'blocked':
+                    case 'deactivated':
+                        console.warn(`${result.status}: очищаем события для client_id=${msg.client_id}`)
+                        await this.setSendStatus(msg.id, result.status, result.description)
+                        try {
+                            await this.clearAllEvents(msg.client_id)
+                            if (result.status === 'deactivated')
+                                await this.deactivateUserById(msg.client_id)
+                        } catch (dbErr) {
+                            console.error('Ошибка очистки после blocked/deactivated:', dbErr)
+                        }
+                        break
+
+                    case 'forbidden':
+                    case 'chat_invalid':
+                        // Постоянная ошибка конкретного чата — деактивируем только это событие
+                        console.warn(`${result.status} chat=${msg.client_id}: ${result.description}`)
+                        await this.setSendStatus(msg.id, result.status, result.description)
+                        await this.updateActive(msg.id, 0)
+                        break
+
+                    case 'bad_payload':
+                        // Битый текст — деактивируем событие, не трогаем пользователя
+                        console.error(`bad_payload msg.id=${msg.id}: ${result.description}`)
+                        await this.setSendStatus(msg.id, 'bad_payload', result.description)
+                        await this.updateActive(msg.id, 0)
+                        break
+
+                    case 'fatal':
+                        // Сломан токен или внутренняя ошибка — логируем, ничего не трогаем
+                        console.error(`FATAL msg.id=${msg.id}: ${result.description}`)
+                        await this.setSendStatus(msg.id, 'error', result.description)
+                        break
+
+                    default:
+                        console.error(`Неизвестный статус msg.id=${msg.id}:`, result)
+                        await this.setSendStatus(msg.id, 'error', result.description)
+                }
             }
+        } catch (err) {
+            console.error('Критическая ошибка в sendMsg:', err)
+        } finally {
+            this.sending = false
         }
-        this.sending = false
     }
     //---------------------------------------
     async searchByText(text){
