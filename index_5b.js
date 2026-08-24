@@ -44,7 +44,7 @@ bot.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
     return ctx.scene.enter('FREE_WORDS')
 })
 //---------------------------------------------
-bot.action(/^answerAccepted\d{1,12}/, async ctx => {
+bot.action(/^answerAccepted\d{1,12}$/, async ctx => {
     try {
         await ctx.answerCbQuery('Loading')
 
@@ -72,9 +72,25 @@ bot.on('text', async (ctx) => {
     await ctx.replyWithHTML(`<b>Перезапустите бот нажав /start</b>`);
 });
 
-cron.schedule('* * * * *', () => {getNotesTime()});
+// cron.schedule('* * * * *', () => {getNotesTime()});
 
-cron.schedule('25 2 * * *', () => {backup()});
+// cron.schedule('25 2 * * *', () => {backup()});
+
+cron.schedule('* * * * *', async () => {
+    try {
+        await getNotesTime()
+    } catch (e) {
+        console.error('getNotesTime error:', e)
+    }
+})
+
+cron.schedule('25 2 * * *', async () => {
+    try {
+        await backup()
+    } catch (e) {
+        console.error('backup error:', e)
+    }
+})
 
 bot.launch()
     .then(res => {
