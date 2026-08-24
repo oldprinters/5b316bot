@@ -1,26 +1,25 @@
 import {pool} from './mariadb.js'
 
-const query = async (sql) => {
+const query = async (sql, params = []) => {
     let conn
     try {
         conn = await pool.getConnection()
-        const rows = await conn.query(sql)
+        const rows = await conn.query(sql, params)
         return rows
     } catch (err) {
         throw err
     } finally {
-        if(conn)
-            conn.end()
+        if(conn) conn.end()
     }
 }
 //++++++++++++++++++++++++++++++++
-const call_q = async (sql, message = '') => {
+const call_q = async (sql, message = '', params = []) => {
     try {
-        let res = await query(sql)
+        let res = await query(sql, params)
         return res
     }
     catch (err) {
-        console.log(`call_q() ${message}: `, sql)
+        console.error(`call_q() ${message}: `, sql)
         throw err
     }
 }

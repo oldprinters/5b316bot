@@ -20,16 +20,23 @@ class BaseName {
     this.class_name = class_name.trim()
   }
   //*********************************** */
-  async insert_str(str){
-    if(str.length > 0){
-        const searchRegExp = /'/g
-        const sql = `INSERT INTO basename SET name = '${str.replace(searchRegExp ,'"').trim()}', class_name = '${this.class_name.trim()}';`
-        const res = await query(sql)
-        return res.insertId
-    } else {
-      return 0
-    }
+  // async insert_str(str){
+  //   if(str.length > 0){
+  //       const searchRegExp = /'/g
+  //       const sql = `INSERT INTO basename SET name = '${str.replace(searchRegExp ,'"').trim()}', class_name = '${this.class_name.trim()}';`
+  //       const res = await query(sql)
+  //       return res.insertId
+  //   } else {
+  //     return 0
+  //   }
+  // }
+  async insert_str(str) {
+      if (str.length === 0) return 0
+      const sql = `INSERT INTO basename SET name = ?, class_name = ?`
+      const res = await query(sql, [str.trim(), this.class_name.trim()])
+      return res.insertId
   }
+
   //*********************************** */
   async update(callback){
     const sql = `UPDATE basename SET name = '${this.str}', active = ${this.active} WHERE id = ${this.id}`
@@ -46,23 +53,29 @@ class BaseName {
     }
   }
 //***************************************************** */
-  async search(str){
-    try {
-      const sql = ` SELECT id, name 
-                    FROM basename 
-                    WHERE name = '${str.replaceAll("'" ,'"')}' 
-                     AND class_name = '${this.class_name}';`
-      let rows = await call_q(sql)
-      // console.log("search rows =", rows)
-      if(rows[0] == undefined)
-        return 0 //rows[0] = {id : 0}  //TODO проверить: разные возвращаемые значения
-      else 
-        return rows[0].id
-    } catch (err) {
-      console.error("ERROR basename search catch", err)
-      throw err
-    }
+  // async search(str){
+  //   try {
+  //     const sql = ` SELECT id, name 
+  //                   FROM basename 
+  //                   WHERE name = '${str.replaceAll("'" ,'"')}' 
+  //                    AND class_name = '${this.class_name}';`
+  //     let rows = await call_q(sql)
+  //     // console.log("search rows =", rows)
+  //     if(rows[0] == undefined)
+  //       return 0 //rows[0] = {id : 0}  //TODO проверить: разные возвращаемые значения
+  //     else 
+  //       return rows[0].id
+  //   } catch (err) {
+  //     console.error("ERROR basename search catch", err)
+  //     throw err
+  //   }
+  // }
+  async search(str) {
+      const sql = `SELECT id, name FROM basename WHERE name = ? AND class_name = ?`
+      const rows = await call_q(sql, '', [str, this.class_name])
+      return rows[0]?.id ?? 0
   }
+
   //************************************************** */
   async readById(id){
     const sql = `SELECT * FROM basename WHERE id = ${id}`
@@ -107,10 +120,14 @@ class BaseName {
     return this.id
   }
   //********************************************************** */
-  async getList(){
-    const sql = `SELECT * FROM basename WHERE active > 0 AND class_name = '${this.class_name}' ORDER BY ${name}`
-    let rows = await call_q(sql)
-    return rows
+  // async getList(){
+  //   const sql = `SELECT * FROM basename WHERE active > 0 AND class_name = '${this.class_name}' ORDER BY ${name}`
+  //   let rows = await call_q(sql)
+  //   return rows
+  // }
+  async getList() {
+    const sql = `SELECT * FROM basename WHERE active > 0 AND class_name = ? ORDER BY \`name\``
+    return await call_q(sql, '', [this.class_name])
   }
 }
 //*********************************** */
