@@ -24,47 +24,47 @@ setTimesUr.enter( async ctx => {
     const urTimeList = await ut.getListTimes(ctx.session.class_id)
     if(urTimeList.length == 0){
         ctx.scene.session.state.arTimesUr = []
-        ctx.reply('Последовательно введите время начала каждого занятия в формате \'09:00\'. Для завершения введите букву q.')
-        ctx.reply(`Введите время начала ${ctx.scene.session.state.arTimesUr.length + 1} занятия или "q" для завершения ввода.`)
+        await ctx.reply('Последовательно введите время начала каждого занятия в формате \'09:00\'. Для завершения введите букву q.')
+        await ctx.reply(`Введите время начала ${ctx.scene.session.state.arTimesUr.length + 1} занятия или "q" для завершения ввода.`)
     } else {
         await outListTimes(ctx)
         await ctx.reply('Данные верны?', queryYesNoMenu())
     }
 })
 //------------------
-setTimesUr.start( ctx => { ctx.scene.enter('SELECT_ACTION') })
+setTimesUr.start( async ctx => { await ctx.scene.enter('SELECT_ACTION') })
 //------------------
-setTimesUr.command('settings', ctx => ctx.scene.enter('SELECT_ACTION'))
+setTimesUr.command('settings', async ctx => { await ctx.scene.enter('SELECT_ACTION') })
 //-------------------------------------------------
 setTimesUr.command('games', async ctx => {
-    ctx.scene.enter('GAMES')
+    await ctx.scene.enter('GAMES')
 })
 //-------------------------------
-setTimesUr.help( ctx => {
-    ctx.replyWithHTML('<b><u>HELP</u></b>\nОкончание уроков расчитывается автоматически, суммируя время начала урока и его продолжительность.\n'+
+setTimesUr.help( async ctx => {
+    await ctx.replyWithHTML('<b><u>HELP</u></b>\nОкончание уроков расчитывается автоматически, суммируя время начала урока и его продолжительность.\n'+
         'Если данные неверны, можно повторить ввод (кнопка "Да"). При этом <b>расписание придется вводить заново</b>.\n'+
         'Либо изменить значение времени для отдельных уроков (кнопка "Нет")\n'+
         `Продолжительность урока у этого класса ${ctx.session.classList[ctx.session.i].duration.slice(0,5)}.`)
 })
 //-----------
 setTimesUr.action('queryDel', async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     const ut = new UrTime()
     const res = await ut.delTimesForClass(ctx.session.class_id)
     if(res.affectedRows > 0)
         await ctx.scene.reenter()
     else
-        ctx.reply('Ошибка удаления данных времени.')
+        await ctx.reply('Ошибка удаления данных времени.')
 })
 //-----------
 setTimesUr.action('queryYes2', async ctx => {
-    ctx.answerCbQuery('Loading')
-    ctx.scene.enter('CREATE_SCHEDULE')
+    await ctx.answerCbQuery('Loading')
+    await ctx.scene.enter('CREATE_SCHEDULE')
 })
 //-----------
 setTimesUr.action('queryNo2', async ctx => {
-    ctx.answerCbQuery('Loading')
-    ctx.reply('Удалить текущие установки? Расписание уроков придется вводить заново.', queryDelCancelMenu()) //TODO сделать запрос на наличие расписания
+    await ctx.answerCbQuery('Loading')
+    await ctx.reply('Удалить текущие установки? Расписание уроков придется вводить заново.', queryDelCancelMenu()) //TODO сделать запрос на наличие расписания
 })
 //-----------
 setTimesUr.hears(/^[0-9]{1,2}[:жЖ][0-5][0-9]$/, async ctx =>{
@@ -76,7 +76,7 @@ setTimesUr.hears(/^[0-9]{1,2}[:жЖ][0-5][0-9]$/, async ctx =>{
         if(isNaN(pause)){
             return await ctx.reply('Считаем, что в часу не более 59 минут, повторите ввод.')
         } else if(pause <= 0){
-            return ctx.reply('Предыдущий урок ещё не закончен, проверьте и повторите ввод.')
+            return await ctx.reply('Предыдущий урок ещё не закончен, проверьте и повторите ввод.')
         } else {
             await ctx.reply(`Перерыв ${outTime(pause)} мин.`)
         }
@@ -101,7 +101,7 @@ setTimesUr.hears(/^[0-9]{3,4}$/, async ctx =>{
         }
     }
     ctx.scene.session.state.arTimesUr.push(t)
-    ctx.reply(`Введите время начала ${ctx.scene.session.state.arTimesUr.length + 1} занятия или "q" для завершения ввода.`)
+    await ctx.reply(`Введите время начала ${ctx.scene.session.state.arTimesUr.length + 1} занятия или "q" для завершения ввода.`)
 })
 //----------- изменение времени одного урока
 setTimesUr.hears(/^\d\s\d{1,2}[:жЖ]\d{2}$/, async ctx =>{
@@ -110,10 +110,10 @@ setTimesUr.hears(/^\d\s\d{1,2}[:жЖ]\d{2}$/, async ctx =>{
     const ut = new UrTime()
     const res = await ut.updateTime(ctx.session.class_id, nUr - 1, time_s, ctx.session.classList[ctx.session.i].duration)
     if(res == 1){
-        ctx.reply('Время успешно изменено.\nПродолжайте изменения или /start для перехода в основное меню.')
+        await ctx.reply('Время успешно изменено.\nПродолжайте изменения или /start для перехода в основное меню.')
         await outListTimes(ctx)
     } else
-        ctx.reply('Ошибка сохранения')
+        await ctx.reply('Ошибка сохранения')
 })
 //-----------
 setTimesUr.hears(/^[qQйЙ]$/, async ctx =>{
@@ -151,13 +151,13 @@ setTimesUr.action('queryNo3', async ctx => {
 //-----------
 setTimesUr.action('queryCancel', async ctx => {
     ctx.session.i = 0
-    ctx.reply('Для изменения времени одного урока введите номер урока и время начала урока (ex: "2 9:30") или /start для перехода в главное меню.')
+    await ctx.reply('Для изменения времени одного урока введите номер урока и время начала урока (ex: "2 9:30") или /start для перехода в главное меню.')
 })
 //-----------
 setTimesUr.on('text', ctx => ctx.reply('Время указывается в формате ЧЧ:ММ, для завершения ввода нажмите кнопку q.'))
 //-----------
 setTimesUr.start(async ctx => {
-    ctx.scene.enter('SELECT_ACTION')
+    await ctx.scene.enter('SELECT_ACTION')
 })
 
 export default setTimesUr

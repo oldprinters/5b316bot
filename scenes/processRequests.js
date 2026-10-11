@@ -22,14 +22,14 @@ processRequests.enter( async ctx => {
         list = `От "${el.textQuery}" (${member.first_name}) в класс "${el.className}\n"`
         ar.push(Markup.button.callback(list, `iRequest_${i++}`))
     }
-    ctx.reply(`Список запросов:\n`, Markup.inlineKeyboard(ar))
+    await ctx.reply(`Список запросов:\n`, Markup.inlineKeyboard(ar))
 })
 //-------------------------------------
-processRequests.help( ctx => {
-    ctx.reply('<b><u>HELP</u></b>\nВаше право решать давать доступ к боту или нет. Для родителей это удобно, но не более.')
+processRequests.help( async ctx => {
+    await ctx.reply('<b><u>HELP</u></b>\nВаше право решать давать доступ к боту или нет. Для родителей это удобно, но не более.')
 })
 //------------------
-processRequests.start( ctx => { ctx.scene.enter('FIRST_STEP') })
+processRequests.start( async ctx => { await ctx.scene.enter('FIRST_STEP') })
 //--------------------------------------
 processRequests.action(/^iRequest_[0-9]{1,2}$/, async ctx => {
     ctx.answerCbQuery('Loading')
@@ -37,7 +37,7 @@ processRequests.action(/^iRequest_[0-9]{1,2}$/, async ctx => {
     const el = ctx.scene.session.state.arrReq[i]
     ctx.scene.session.state.qA_id = el.id
     ctx.scene.session.state.el = el
-    ctx.reply(`Добавить "${el.textQuery}" в "${el.className}?"`, queryYesNoMenu())
+    await ctx.reply(`Добавить "${el.textQuery}" в "${el.className}?"`, queryYesNoMenu())
 })
 //------------------------------
 processRequests.action('queryYes2', async ctx => {

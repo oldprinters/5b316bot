@@ -488,7 +488,7 @@ class EventsClass {
     async getNotes(){
         this.arrEvents = this.arrEvents.concat(await this.getNotesByTime())
         if(!this.sending)
-            this.sendMsg()
+            await this.sendMsg()
     }
 }
 

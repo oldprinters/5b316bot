@@ -142,24 +142,24 @@ selectAction.hears(/^(Список|список|list|List)$/, async ctx => {
     const eC = new EventsClass(ctx)
     const list = await eC.listForUser()
     if(list.length == 0){
-        ctx.reply('Нет запланированных напоминалок.')
+        await ctx.reply('Нет запланированных напоминалок.')
     } else {
         let arOut = ''
         for(let el of list){
             arOut += `${el.cycle?'<u>':''}${outDateTime(el.dateTime)}${el.cycle?'</u>':''} ${el.text}\n`
         }
-        ctx.replyWithHTML(`Список напоминалок:\n${arOut}`)
+        await ctx.replyWithHTML(`Список напоминалок:\n${arOut}`)
     }
 })
 //-------------
-selectAction.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
+selectAction.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, async ctx => {
     return ctx.scene.enter('FREE_WORDS')
 })
 //-------------------------------------------------
-selectAction.help(ctx => {
+selectAction.help(async ctx => {
     const tempTime = Math.floor(Math.random() * 55) + 3
     const tt = tempTime > 9? tempTime: `0${tempTime}`
-    ctx.replyWithHTML('<b><u>Основное меню слева от поля ввода</u></b>\n' +
+    await ctx.replyWithHTML('<b><u>Основное меню слева от поля ввода</u></b>\n' +
         '/start - перезапуск бота\n/settings - настройки расписания\n\n' +
         '<u><b>Планирование:</b></u>\nдд.мм.гггг чч:мм [сообщение]\nдд.мм чч:мм [сообщение]\nчч:мм [сообщение] - на текущий день\nзавтра в чч:мм [сообщение]\n'+
         'Завтра [сообщение] - в 10:00\nЗавтра утром [сообщение] - в 08:00\nЗавтра днем [сообщение] - в 14:00\nЗавтра вечером [сообщение] - в 17:00\n'+
@@ -316,7 +316,7 @@ selectAction.hears(/^[Ее]жедневно (в )?\d{1,2}[:жЖ]\d{1,2} ([ _.,а
     await everyDay(ctx)
 })
 //-----------------------------------------------------------------------
-selectAction.hears(/^(янв|фев|мар|апр|май|июн|июл|авг|сен|окт|ноя|дек)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>!?:;])*/i, (ctx) => {
+selectAction.hears(/^(янв|фев|мар|апр|май|июн|июл|авг|сен|окт|ноя|дек)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>!?:;])*/i, async (ctx) => {
   const inputText = ctx.message.text;
   const firstWord = inputText.split(' ')[0].toLowerCase();
   const firstThreeChars = firstWord.substring(0, 3);
@@ -328,14 +328,14 @@ selectAction.hears(/^(янв|фев|мар|апр|май|июн|июл|авг|с
 
   if (matchedMonth) {
     // Выполняем действие если соответствует
-    ctx.reply(`✅ Вы указали месяц: ${matchedMonth}`);
+    await ctx.reply(`✅ Вы указали месяц: ${matchedMonth}`);
 
     const monthIndex = months.indexOf(matchedMonth);
     const { month, year } = getNearestMonth(monthIndex);
     
     const calendar = getCalendar(month, year);
     
-    ctx.reply(`📆 Ближайший ${matchedMonth.toLowerCase()}:\n\n\`\`\`\n${calendar}\`\`\``, { 
+    await ctx.reply(`📆 Ближайший ${matchedMonth.toLowerCase()}:\n\n\`\`\`\n${calendar}\`\`\``, { 
       parse_mode: 'Markdown'
     });
 

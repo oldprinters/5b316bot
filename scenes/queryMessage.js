@@ -4,8 +4,8 @@ import QueryAdmin from '../controllers/queryAdmin.js'
 
 const sendQueryAdmin = new Scenes.BaseScene('SEND_QUERY_ADMIN')
 //-----------------------------
-sendQueryAdmin.enter( ctx => {
-    ctx.reply(`Пишем письмо. \nАдминистратор: ${getRoleName(ctx.session.admin.role)}\nПредставтесь пожалуйста:`)
+sendQueryAdmin.enter( async ctx => {
+    await ctx.reply(`Пишем письмо. \nАдминистратор: ${getRoleName(ctx.session.admin.role)}\nПредставтесь пожалуйста:`)
 })
 //------------------
 sendQueryAdmin.start( ctx => { ctx.scene.enter('FIRST_STEP') })

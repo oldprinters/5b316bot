@@ -32,8 +32,8 @@ catalogList.enter(async ctx => {
     }
 })
 //-----------------------------
-catalogList.help( ctx => {
-    ctx.replyWithHTML('<b><u>HELP</u></b>\n'+
+catalogList.help( async ctx => {
+    await ctx.replyWithHTML('<b><u>HELP</u></b>\n'+
     'Система каталогов предназначена для систематизации различных бытовых данных:\n'+
     '<b>Для автолюбителей</b> - это возможность регулярного сохранения значения пробега при проведении ТО, замене важных узлов, замера расстояния и т.д.;\n'+
     '<b>Тем, кто заботится о здоровье</b> - сохранение результатов анализов, веса, роста и т.д.;\n'+
@@ -79,7 +79,7 @@ catalogList.action('catalogFile', async ctx => {
         await folder.getFile(ctx, ctx.session.parentId)
     } catch (err) {
         console.log("!!!CATCH catalogFile =>", err)
-        ctx.reply('Обнаружена ошибка. Сообщите разработчику.')
+        await ctx.reply('Обнаружена ошибка. Сообщите разработчику.')
     }
 
 })

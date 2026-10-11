@@ -97,6 +97,11 @@ const getDnTime = (str) => {
     let obj = undefined //{dn: undefined, time_s: undefined, time_e: undefined}
     if(seachDn.test(str.toLowerCase())){
         const arT = str.match(/\d{1,2}[:жЖ]\d{2}/g)
+        if (!arT) {
+            throw new Error(
+                'Проверьте значение времени. Формат: чч:мм.'
+            );
+        }
         const arTime = arT.map( el => el.replace(/[жЖ]/, ':'))
         if(arTime != null){
             const dayName = str.slice(0, str.indexOf(' '))
@@ -107,7 +112,7 @@ const getDnTime = (str) => {
                 time_e: arTime[1]
             }
         } else {
-            throw 'Проверьте значение времени. Формат: чч:мм чч:мм.'
+            throw new Error('Проверьте значение времени. Формат: чч:мм чч:мм.')
         }
     } else {
         throw 'Не разобрал день недели, проверьте, пожалуйста.'
@@ -279,11 +284,16 @@ const remForDay = async (ctx, next) => {
         dt.setMinutes(arDt[1])
         const eC = new EventsClass(ctx)
         try {
-            if(eC.addEvent(dt, text, `${cronTab}`))
-                ctx.reply(`Еженедельное напоминание. Ближайшее напоминание "${text}" запланировано на ${outDate(dt)} ${outTimeDate(dt)}.`)
-            }catch (err){
-                ctx.reply("Ошибка сохранения.")
-                console.log("!!!Catch ", err)
+            const result = await eC.addEvent(dt, text, cronTab);
+            // if(eC.addEvent(dt, text, `${cronTab}`))
+            if(result){
+                await ctx.reply(`Еженедельное напоминание. Ближайшее напоминание "${text}" запланировано на ${outDate(dt)} ${outTimeDate(dt)}.`)
+            } else {
+                await ctx.reply('Ошибка сохранения.');
+            }
+        }catch (err){
+            console.error('Ошибка сохранения еженедельного события:', error);
+            await ctx.reply('Не удалось сохранить напоминание. Попробуйте ещё раз.');
         }
         return true
     } else {
@@ -359,7 +369,7 @@ const everyDay = async (ctx) => {
         await outTextRem(ctx, now, text, `${now.getDay()} * *`)
         now.setDate(now.getDate() + 1)
     }
-    ctx.reply(`Созданы напоминания на каждый день недели.\n«${text}» в ${timeS}`)
+    await ctx.reply(`Созданы напоминания на каждый день недели.\n«${text}» в ${timeS}`)
 }
 //-------------------------------------------
 const searchRem = async (ctx) => {
@@ -416,7 +426,7 @@ const searchByLessonName = async (ctx) => {
                 return true
             } else {
                 await ctx.replyWithHTML('Не определил день недели.')
-                return ctx.scene.reenter()
+                return await ctx.scene.reenter()
             }
         } else if(seachSdv.test(ctx.message.text.trim().toLowerCase())){
             const nDay = getNDayByWord(ctx.message.text)
@@ -554,9 +564,9 @@ const outTextRem = async (ctx, date, textE, croneTab = '') => {
     const eC = new EventsClass(ctx)
     const textT = textE.length > 0? textE: "***"
     if(await eC.addEvent(date, textE, croneTab))
-        ctx.reply(`Напоминание "${textT}" запланировано на ${outDate(date)} ${outTimeDate(date)}.`)
+        await ctx.reply(`Напоминание "${textT}" запланировано на ${outDate(date)} ${outTimeDate(date)}.`)
     else
-        ctx.reply("Ошибка сохранения.")
+        await ctx.reply("Ошибка сохранения.")
 }
 //-------------------------------------------
 const outDateTime = (dd) => {

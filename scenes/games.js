@@ -8,13 +8,13 @@ const arrGame = [
 ]
 //--------------------------------------
 games.enter(async ctx => {
-    ctx.reply('Выберите игру', selectGame(arrGame))
+    await ctx.reply('Выберите игру', selectGame(arrGame))
 })
 //--------------------------------------
 games.start( ctx => ctx.scene.enter('FIRST_STEP'))
 //--------------------------------------
-games.help(ctx => {
-    ctx.replyWithHTML('<b><u>Развивалки</u></b>\n Описание игры в игре.')
+games.help(async ctx => {
+    await ctx.replyWithHTML('<b><u>Развивалки</u></b>\n Описание игры в игре.')
 })
 //--------------------------------------
 games.action('shultz', ctx => {

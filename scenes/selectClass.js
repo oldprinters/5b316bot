@@ -7,10 +7,10 @@ import { outTextRem, sanitizeInput } from '../utils.js'
 const selectClass = new Scenes.BaseScene('SELECT_CLASS')
 //--------------------------------------
 selectClass.enter(async ctx => {
-    ctx.reply('Выберите класс.', selectClassMenu(ctx.session.classList))
+    await ctx.reply('Выберите класс.', selectClassMenu(ctx.session.classList))
 })
 //--------------------------------------
-selectClass.start( ctx => ctx.scene.enter('FIRST_STEP'))
+selectClass.start( async ctx =>  await ctx.scene.enter('FIRST_STEP'))
 //-------------------------------------------------
 selectClass.command('remember', async ctx => { 
     ctx.scene.enter('REMEMBER')
@@ -29,12 +29,12 @@ selectClass.action('createNewClass', async ctx => {
     ctx.scene.enter('CREATE_CLASS')
 })
 //--------------------------------------
-selectClass.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
-    return ctx.scene.enter('FREE_WORDS')
+selectClass.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, async ctx => {
+    return await ctx.scene.enter('FREE_WORDS')
 })
 //-------------------------------------------------
 selectClass.help(async ctx => {
-    ctx.replyWithHTML(`<b><u>HELP</u></b>\nВы зарегистрированы в ${ctx.session.classList.length} классах. Выберите любой из них и Вы сможете смотреть его данные.\n`+
+    await ctx.replyWithHTML(`<b><u>HELP</u></b>\nВы зарегистрированы в ${ctx.session.classList.length} классах. Выберите любой из них и Вы сможете смотреть его данные.\n`+
     'Для удаления класса наберите: delete [Имя класса]')
 })
 //----------------------------------------
@@ -48,12 +48,12 @@ selectClass.hears(/^delete [a-zA-Z. а-яА-ЯёЁйЙ-]*/, async ctx =>{
     if(mC != undefined){
         const res = myClass.deleteUserClass (user.id, mC.id)
         if(res.affectedRows)
-            ctx.reply('Класс удалён.')
+            await ctx.reply('Класс удалён.')
     } else {
-        ctx.reply(`Класс с именем ${name} не найден.`)
+        await ctx.reply(`Класс с именем ${name} не найден.`)
     }
     ctx.session.classList = await myClass.searchClasses(user.id)
-    ctx.scene.enter('FIRST_STEP')
+    await ctx.scene.enter('FIRST_STEP')
 })
 //----------------------------------------
 selectClass.action(/^iClass_[0-9]*/, async ctx => {
@@ -61,7 +61,7 @@ selectClass.action(/^iClass_[0-9]*/, async ctx => {
     ctx.session.i = ctx.callbackQuery.data.match(/[0-9]$/)[0]
     ctx.session.class_id = ctx.session.classList[ctx.session.i].class_id
     ctx.session.isAdmin = ctx.session.classList[ctx.session.i].isAdmin
-    ctx.scene.enter('SELECT_ACTION')
+    await ctx.scene.enter('SELECT_ACTION')
 })
 //------------------------------------------
 //--------------------------------------

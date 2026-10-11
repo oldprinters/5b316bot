@@ -27,18 +27,18 @@ additionalLessons.enter(async ctx => {
         await ctx.reply('Дополнительные занятия привязываются к учебному классу. Введите расписание уроков.')
 })
 //-----------------------------
-additionalLessons.help( ctx => {
-    ctx.replyWithHTML('<b><u>HELP</u></b>\nДни недели пишем по русски, полностью.')
+additionalLessons.help( async ctx => {
+    await ctx.replyWithHTML('<b><u>HELP</u></b>\nДни недели пишем по русски, полностью.')
 })
 //------------------------------------------------------
-additionalLessons.start( ctx => {ctx.scene.enter('SELECT_ACTION')})
+additionalLessons.start( ctx => {return ctx.scene.enter('SELECT_ACTION')})
 //-------------------------------------------------
 additionalLessons.command('settings', async ctx => { 
     await ctx.scene.enter('SELECT_ACTION')
 })
 //-------------------------------------------------
 additionalLessons.command('games', async ctx => {
-    ctx.scene.enter('GAMES')
+    return await ctx.scene.enter('GAMES')
 })
 //------------------------------------------------------
 additionalLessons.action(/^idDelLess_\d{1,1000000}$/, async ctx => {
@@ -50,9 +50,9 @@ additionalLessons.action(/^idDelLess_\d{1,1000000}$/, async ctx => {
     await ctx.scene.enter('SELECT_ACTION')
 })
 //------------------------------------------------------
-additionalLessons.action('createAdditional', ctx => {
+additionalLessons.action('createAdditional', async ctx => {
     ctx.answerCbQuery('Loading')
-        ctx.reply('Введите название занятия:')
+        await ctx.reply('Введите название занятия:')
 })
 //------------------------------------------------------
 additionalLessons.action('deleteAdditional', async ctx => {
@@ -60,7 +60,7 @@ additionalLessons.action('deleteAdditional', async ctx => {
     const aC = new AdditionalClass(ctx)
     const res = await aC.getListLessonsName()
     if(res[0] != undefined)
-        ctx.replyWithHTML('<b>Удаление дополнительного занятия</b>\nДанное действие нельзя будет отменить.', selectAddLessonMenu(res))
+        await ctx.replyWithHTML('<b>Удаление дополнительного занятия</b>\nДанное действие нельзя будет отменить.', selectAddLessonMenu(res))
     else {
         await ctx.replyWithHTML('Зарегистрированных кружков пока нет.')
         return await ctx.scene.enter('SELECT_ACTION')
@@ -70,7 +70,7 @@ additionalLessons.action('deleteAdditional', async ctx => {
 additionalLessons.on('text', async ctx => {
     if(ctx.scene.session.state.name == undefined){
         ctx.scene.session.state.name = sanitizeInput(ctx.message.text.trim())
-        ctx.reply('Введите, через запятую, дни недели, время начала и окончания занятий\n Пример: вторник 19:10 20:30, четверг 20:10 21:30 и т.д.')
+        await ctx.reply('Введите, через запятую, дни недели, время начала и окончания занятий\n Пример: вторник 19:10 20:30, четверг 20:10 21:30 и т.д.')
     } else if(ctx.scene.session.state.arALT == undefined){
         const str = ctx.message.text.trim().replaceAll("'", '"').toLowerCase()
         const classOi = new ClassOi()
@@ -79,16 +79,16 @@ additionalLessons.on('text', async ctx => {
             const arALT = alt.validat(str)
             ctx.scene.session.state.arALT = arALT
         } catch(err){
-            return ctx.replyWithHTML(`<b>Ошибка</b>: ${err}`)
+            return await ctx.replyWithHTML(`<b>Ошибка</b>: ${err}`)
         }
         const res = await classOi.getOiName(str)
         if(res != undefined){
             ctx.scene.session.state.oi_id = res.id
             ctx.scene.session.state.oi_name = res.name
         } else {
-            return ctx.reply('Ошибка сохранения данных.')
+            return await ctx.reply('Ошибка сохранения данных.')
         }
-        ctx.reply('Введите примечание, адрес и т.д., либо дефис для пропуска.')
+        await ctx.reply('Введите примечание, адрес и т.д., либо дефис для пропуска.')
     } else if(ctx.scene.session.state.note == undefined){
         const st = ctx.scene.session.state
         st.note = ctx.message.text.trim().replaceAll("'", '"')
@@ -96,7 +96,7 @@ additionalLessons.on('text', async ctx => {
         let list = `<b><u>${st.name}</u></b>\n`
         st.arALT.forEach(el => {list +=`${el.name} ${el.time_s} - ${el.time_e}\n`})
         if(st.note != '')list +=`\nВажно: <i>${st.note}</i>`
-        ctx.replyWithHTML(`Всё правильно?\n${list}\nЗаписываем?`, queryYesNoMenu())
+        await ctx.replyWithHTML(`Всё правильно?\n${list}\nЗаписываем?`, queryYesNoMenu())
     }
     
 })
@@ -111,13 +111,13 @@ additionalLessons.action('queryYes2', async ctx => {
             const alt = new AddLessTime()
             try {
                 await alt.addListLess(res.insertId, st.arALT)
-                ctx.reply('Данные сохранены.')
+                await ctx.reply('Данные сохранены.')
             } catch(err){
-                ctx.reply(`ERROR ${err}`)
+                await ctx.reply(`ERROR ${err}`)
             }
         }
     } catch (err) {
-        await  ctx.reply(`ERROR ${err}`)
+        await ctx.reply(`ERROR ${err}`)
     }        
     await ctx.scene.enter('SELECT_ACTION')
 })

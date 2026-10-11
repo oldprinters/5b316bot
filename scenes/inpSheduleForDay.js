@@ -69,7 +69,7 @@ inpSheduleForDay.hears(/^[0-9] del+$/, async ctx =>{
         return await ctx.scene.reenter()
     }
     ctx.scene.session.state.delId = ur.id
-    ctx.reply(`${urDay.getNameDayWhen(ctx.session.dayN)} удаляем ${ctx.scene.session.state.urNum + 1} урок (${ur.name}).`, queryDelCancelMenu())
+    await ctx.reply(`${urDay.getNameDayWhen(ctx.session.dayN)} удаляем ${ctx.scene.session.state.urNum + 1} урок (${ur.name}).`, queryDelCancelMenu())
 })
 //------------------------ редактирование конкретного урока
 inpSheduleForDay.hears(/^[0-9] [a-zA-Z. а-яА-ЯёЁйЙ-]+/, async ctx =>{
@@ -110,7 +110,7 @@ inpSheduleForDay.hears(/^\d{1,2}.\d{1,2}.\d{4} \d{1,2}.\d{1,2}.\d{4} [0-9] [a-zA
     const n = parseInt(ctx.message.text[secondSpace+1]) - 1
     if(!isNaN(n) && n >= 0){
         const str = ctx.message.text.slice(secondSpace + 3).trim()
-        ctx.reply(`Замена урока ${n+1} => ${str}`)
+        await ctx.reply(`Замена урока ${n+1} => ${str}`)
         const urTime = new UrTime()
         const urDay = new UrDay()
         const urTimeId = await urTime.getByOrder(ctx.session.class_id, n)
@@ -125,13 +125,13 @@ inpSheduleForDay.hears(/^\d{1,2}.\d{1,2}.\d{4} \d{1,2}.\d{1,2}.\d{4} [0-9] [a-zA
                 const list = await getList(ctx)
                 await ctx.replyWithHTML(list)
                 ctx.scene.session.state.urNum += 1
-                ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
+                await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или q для окончания ввода:`)
             }
         } catch(err){
             console.log("Catch inpSheduleForDay", err)
         }
     } else {
-        ctx.reply('Такого урока не бывает.')
+        await ctx.reply('Такого урока не бывает.')
     }
 })
 //------------------ ввод нового урока
@@ -149,7 +149,7 @@ inpSheduleForDay.hears(/^[\(\)a-zA-Zа-яё. А-ЯЁйЙ-]+$/, async ctx => {
             const res = await urDay.insertUrDayPermanent(ctx.session.class_id, ctx.session.dayN, urTimeId.id, ctx.message.text )
             if(res.affectedRows > 0){
                 ctx.scene.session.state.urNum += 1
-                ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или "q" для окончания ввода:`)
+                await ctx.replyWithHTML(`<u>${urDay.getNameDay(ctx.session.dayN)}</u> Введите название ${ctx.scene.session.state.urNum + 1} урока или "q" для окончания ввода:`)
             }
         } catch(err){
             console.log("Catch inpSheduleForDay", err)
@@ -158,17 +158,13 @@ inpSheduleForDay.hears(/^[\(\)a-zA-Zа-яё. А-ЯЁйЙ-]+$/, async ctx => {
         await ctx.reply(`${urDay.getNameDayWhen(ctx.session.dayN)} с ${ur[0].time_s.slice(0, 5)} по ${ur[0].time_e.slice(0, 5)} "${ur[0].name}"`)
         ctx.scene.session.state.change = ctx.message.text
         ctx.scene.session.state.ud_id = ur[0].id
-        ctx.reply( 'Временное изменение расписания?', queryYesNoMenu() )
+        await ctx.reply( 'Временное изменение расписания?', queryYesNoMenu() )
     }
 //    console.log("@@@ res =", res)
 })
 //-------------------- 
 inpSheduleForDay.on('text', async ctx => {
- //   if(ctx.message.text.length < 2){
-        ctx.reply('Название урока не может содержать эти символы')
-//    } else {
-
-//    }
+        await ctx.reply('Название урока не может содержать эти символы')
 })
 //---------------------------------------
 inpSheduleForDay.action('queryDel', async ctx => {

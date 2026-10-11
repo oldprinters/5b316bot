@@ -43,17 +43,17 @@ shultz.action("gameStop", async ctx => {
 //---------------------------------------------
 shultz.start( ctx => {ctx.scene.enter('SELECT_ACTION')})
 //--------------------------------------
-shultz.help(ctx => {
-    ctx.replyWithHTML(helpText)
+shultz.help( async ctx => {
+    await ctx.replyWithHTML(helpText)
 })
 //---------------------------------------------
 shultz.enter(async ctx => {
-    ctx.reply('Время пошло!\nНайдите последовательно, от 1, все цифры и нажмите на кнопку "Найдены все цифры"')
+    await ctx.reply('Время пошло!\nНайдите последовательно, от 1, все цифры и нажмите на кнопку "Найдены все цифры"')
     const shultz = new Shultz(ctx)
     await shultz.getUserId()
     const count = await shultz.getCount()
     if(!count)
-        ctx.replyWithHTML(helpText)
+        await ctx.replyWithHTML(helpText)
     const game_id = await shultz.newGame()
     ctx.scene.session.state.shultzId = game_id
     const arr = shultz.generateArray()

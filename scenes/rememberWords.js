@@ -13,8 +13,8 @@ freeWords.enter(async ctx => {
         await ctx.reply('Когда и что? ( дд.мм.гггг чч:мм текст )')
 })
 //--------------------------------------
-freeWords.help(ctx => {
-    ctx.replyWithHTML('<u>Планирование:</u>\n дд.мм.уууу чч:мм [сообщение]\nдд.мм чч:мм [сообщение]\nчч:мм [сообщение] - на текущий день\nзавтра в чч:мм [сообщение]\n'+
+freeWords.help(async ctx => {
+    await ctx.replyWithHTML('<u>Планирование:</u>\n дд.мм.уууу чч:мм [сообщение]\nдд.мм чч:мм [сообщение]\nчч:мм [сообщение] - на текущий день\nзавтра в чч:мм [сообщение]\n'+
     '[день недели] чч:мм [сообщение]\nЕжедневно чч:мм [сообщение] - <i>ежедневное напоминание</i>\n\n'+
     '<u>Отложенное сообщение:</u>\nMM мин [сообщение] - <i>сообщение через несколько минут</i>\n' +
     'ЧЧ час [сообщение] - <i>отложить на несколько часов</i>\n\nсписок  - вывод списка активных напоминалок. (list тоже работает) ')
@@ -24,17 +24,17 @@ freeWords.hears(/^(Список|список|list|List)$/, async ctx => {
     const eC = new EventsClass(ctx)
     const list = await eC.listForUser()
     if(list.length == 0){
-        ctx.reply('Нет запланированных напоминалок.')
+        await ctx.reply('Нет запланированных напоминалок.')
     } else {
         let arOut = ''
         for(let el of list){
             arOut += `${outDateTime(el.dateTime)} ${el.text}${el.cycle?' (c)':''}\n`
         }
-        ctx.replyWithHTML(`Список напоминалок:\n${arOut}`)
+        await ctx.replyWithHTML(`Список напоминалок:\n${arOut}`)
     }
 })
 //--------------------------------------
-freeWords.start( ctx => ctx.scene.enter('FIRST_STEP'))
+freeWords.start( async ctx =>  await ctx.scene.enter('FIRST_STEP'))
 //-------------------------------------------------
 freeWords.command('games', async ctx => {
     ctx.scene.enter('GAMES')
@@ -84,10 +84,10 @@ freeWords.hears(/^[пП](овтор) \d{1,2}.\d{1,2} (в )?\d{1,2}[:жЖ]\d{1,2}
 freeWords.on('text', async ctx => {
     try {
         if(!(await dayToRem(ctx)))
-            ctx.reply('Текст не распознан. После указания времени не забыли написать сообщение?')
+            await ctx.reply('Текст не распознан. После указания времени не забыли написать сообщение?')
     } catch (err) {
-        ctx.reply('Не понял задания. Посмотрите /help')
-        ctx.scene.reenter()
+        await ctx.reply('Не понял задания. Посмотрите /help')
+        await ctx.scene.reenter()
     }
 })
 

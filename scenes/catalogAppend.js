@@ -22,11 +22,11 @@ catalogAppend.enter(async ctx => {
     }
 })
 //-----------------------------
-catalogAppend.help( ctx => {
-    ctx.replyWithHTML('<b><u>HELP</u></b>\nДля работы с каталогом добавьте название нового раздела.')
+catalogAppend.help( async ctx => {
+    await ctx.replyWithHTML('<b><u>HELP</u></b>\nДля работы с каталогом добавьте название нового раздела.')
 })
 //---------------------------------------------
-catalogAppend.start( ctx => {ctx.scene.enter('SELECT_ACTION')})
+catalogAppend.start( ctx => {return ctx.scene.enter('SELECT_ACTION')})
 //------------------------------------------------
 catalogAppend.action( /(catalogList_)\d/, async ctx => {
     ctx.answerCbQuery('Loading')
@@ -60,14 +60,14 @@ catalogAppend.action( /^(period_)[N,M,Y]$/, async ctx => {
     const eC = new EventsClass(ctx)
     await eC.addEvent(dt, ctx.scene.session.state.name, cronText)
     await ctx.reply(`Вы будете получать сообщение «${ctx.scene.session.state.name}» ${text} в 10:10.`)
-    ctx.scene.enter('CATALOG_LIST')
+    await ctx.scene.enter('CATALOG_LIST')
 })
 //-------------------------------------------------
 catalogAppend.command('catalog', ctx => ctx.scene.reenter())
 //-------------------------------------------------
 catalogAppend.action('queryYes2', async ctx => {
     ctx.answerCbQuery()
-    ctx.reply('Выберите период напоминаний:', menuPeriod())
+    await ctx.reply('Выберите период напоминаний:', menuPeriod())
 })
 //-------------------------------------------------
 catalogAppend.action('queryNo2', async ctx => {

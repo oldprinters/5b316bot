@@ -44,30 +44,57 @@ bot.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, ctx => {
     return ctx.scene.enter('FREE_WORDS')
 })
 //---------------------------------------------
+// Подтверждение полученного напоминания.
 bot.action(/^answerAccepted\d{1,12}$/, async ctx => {
     try {
-        await ctx.answerCbQuery('Loading')
+        // Сначала убираем индикатор ожидания на кнопке.
+        // Просроченный callback не должен мешать обработке самого события.
+        try {
+            await ctx.answerCbQuery();
+        } catch (error) {
+            const description = error.response?.description ?? '';
 
-        const eC = new EventsClass(ctx)
-        const ec_id = ctx.match[0].slice(14)
-        const msg = (await eC.getNotesById(ec_id))[0]
+            const isExpiredCallback =
+                error.response?.error_code === 400 &&
+                /query is too old|query ID is invalid/i.test(description);
 
-        if (!msg) {
-            await ctx.reply('Событие не найдено')
-            return
+            if (!isExpiredCallback) {
+                // Остальные ошибки передаём во внешний catch.
+                throw error;
+            }
+
+            console.warn('answerAccepted: callback уже недействителен', {
+                updateId: ctx.update.update_id,
+                callbackId: ctx.callbackQuery?.id,
+                callbackData: ctx.callbackQuery?.data,
+                receivedAt: new Date().toISOString()
+            });
         }
 
-        if(msg.cronTab.length == 0){
-            await eC.updateActive(ec_id, 0)
-        } else
-            await eC.setNewPeriod(msg)
+        // Обрабатываем событие даже при просроченном подтверждении кнопки.
+        const eC = new EventsClass(ctx);
+        const ec_id = ctx.match[0].slice(14);
+        const msg = (await eC.getNotesById(ec_id))[0];
 
-        await ctx.replyWithHTML('<i>Готов к выполнению новых заданий! Обращайтесь.</i>')
+        if (!msg) {
+            await ctx.reply('Событие не найдено');
+            return;
+        }
 
+        if (msg.cronTab.length === 0) {
+            await eC.updateActive(ec_id, 0);
+        } else {
+            await eC.setNewPeriod(msg);
+        }
+
+        await ctx.replyWithHTML(
+            '<i>Готов к выполнению новых заданий! Обращайтесь.</i>'
+        );
     } catch (error) {
         console.error('Ошибка при обработке answerAccepted:', error);
     }
-})//---------------------------------------------------
+});
+//---------------------------------------------------
 bot.on('text', async (ctx) => {
     await ctx.replyWithHTML(`<b>Перезапустите бот нажав /start</b>`);
 });

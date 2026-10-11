@@ -9,8 +9,8 @@ createClass.enter(async ctx => {
     await ctx.reply('Введите код класса, состоящий, к примеру, из номера класса, буквы и номера школы (ex: 1a 33):')
 })
 //-----------------------------
-createClass.help( ctx => {
-    ctx.replyWithHTML('<b><u>HELP</u></b>\nНазвание класса может быть любым. Я рекомендую составлять из номера и литеры класса и школы.\n'+
+createClass.help( async ctx => {
+    await ctx.replyWithHTML('<b><u>HELP</u></b>\nНазвание класса может быть любым. Я рекомендую составлять из номера и литеры класса и школы.\n'+
     'К примеру "5б 316" однозначно определяет класс в рамках города. Можно добавить любой дополнительный текст.')
 })
 //---------------------------------------------
@@ -31,7 +31,7 @@ createClass.on('text', async ctx => {
             const res = await myClass.getAdmin(tClass.id)
             ctx.session.admin = res[0]
             ctx.session.admin.class_id = tClass.id
-            ctx.reply(`Класс с названием "${ctx.session.className}" существует.\n Отправить администратору запрос на допуск к группе?`, queryYesNoMenu())
+            await ctx.reply(`Класс с названием "${ctx.session.className}" существует.\n Отправить администратору запрос на допуск к группе?`, queryYesNoMenu())
         }
 })
 //-----------------------------------------

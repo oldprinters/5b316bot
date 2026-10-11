@@ -4,8 +4,8 @@ import { buttonsRems } from '../keyboards/keyboards.js'
 
 const delRems = new Scenes.BaseScene('DEL_REMS')
 //----------------------------------------------
-delRems.help( ctx => {
-    ctx.reply('Знак (C) отмечает повторяющееся напоминание. Удаляется полностью.')
+delRems.help( async ctx => {
+    await ctx.reply('Знак (C) отмечает повторяющееся напоминание. Удаляется полностью.')
 })
 //----------------------------------------------
 delRems.enter(async ctx => {
@@ -21,11 +21,11 @@ delRems.action(/^(delRem_)\d+/, async ctx => {
     if(await eC.delRemById(id))
         ctx.scene.enter('REMEMBER')
     else
-        ctx.reply('Ошибка удаления.')
+        await ctx.reply('Ошибка удаления.')
 })
 //----------------------------------------------
-delRems.on('text', ctx => {
-    ctx.reply('Я Вас тоже люблю!')
+delRems.on('text', async ctx => {
+    await ctx.reply('Я Вас тоже люблю!')
     ctx.scene.enter('SELECT_ACTION')
 })
 // delRems.
