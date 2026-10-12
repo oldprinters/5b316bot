@@ -99,17 +99,37 @@ bot.on('text', async (ctx) => {
     await ctx.replyWithHTML(`<b>Перезапустите бот нажав /start</b>`);
 });
 
-// cron.schedule('* * * * *', () => {getNotesTime()});
-
-// cron.schedule('25 2 * * *', () => {backup()});
+// Общая блокировка минутной рассылки в этом процессе.
+// Если отправка затянулась, следующий тик пропускаем,
+// а не запускаем вторую рассылку поверх первой.
+let notesJobRunning = false;
+let notesJobStartedAt = null;
 
 cron.schedule('* * * * *', async () => {
-    try {
-        await getNotesTime()
-    } catch (e) {
-        console.error('getNotesTime error:', e)
+    if (notesJobRunning) {
+        console.warn('getNotesTime: пропускаем пересекающийся запуск', {
+            runningForSeconds: Math.round(
+                (Date.now() - notesJobStartedAt) / 1000
+            )
+        });
+        return;
     }
-})
+
+    // Ставим блокировку до первого await.
+    notesJobRunning = true;
+    notesJobStartedAt = Date.now();
+
+    try {
+        // Должны дождаться всей цепочки вплоть до sendMsg().
+        await getNotesTime();
+    } catch (error) {
+        console.error('getNotesTime error:', error);
+    } finally {
+        // Снимаем блокировку и после успеха, и после ошибки.
+        notesJobRunning = false;
+        notesJobStartedAt = null;
+    }
+});
 
 cron.schedule('25 2 * * *', async () => {
     try {
