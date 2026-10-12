@@ -10,7 +10,7 @@ delRems.help( async ctx => {
 //----------------------------------------------
 delRems.enter(async ctx => {
     const eC = new EventsClass(ctx)
-    console.log('remember.on res =', ctx.session.arrRems)
+//    console.log('remember.on res =', ctx.session.arrRems)
     await ctx.reply('Для удаления напоминалки нажмите на кнопку. Действие необратимо.', buttonsRems(ctx.session.arrRems))
 })
 //----------------------------------------------
