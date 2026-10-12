@@ -8,7 +8,7 @@ sendQueryAdmin.enter( async ctx => {
     await ctx.reply(`Пишем письмо. \nАдминистратор: ${getRoleName(ctx.session.admin.role)}\nПредставтесь пожалуйста:`)
 })
 //------------------
-sendQueryAdmin.start( ctx => { ctx.scene.enter('FIRST_STEP') })
+sendQueryAdmin.start( async ctx => { return await ctx.scene.enter('FIRST_STEP') })
 //-----------------------------
 sendQueryAdmin.on('text', async ctx => {
     const queryAdmin = new QueryAdmin()

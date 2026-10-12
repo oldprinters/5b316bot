@@ -15,7 +15,7 @@ processRequests.enter( async ctx => {
     let ar = []
     let i = 0
     if(arrReq.length == 0)
-        return ctx.scene.enter('SELECT_ACTION')
+        return await ctx.scene.enter('SELECT_ACTION')
     for(let el of arrReq){
         const member = (await ctx.telegram.getChatMember(arrReq[0].whoTlgId, arrReq[0].whoTlgId)).user
         el.className = (await myClass.getClassName(el.class_id)).name
@@ -32,7 +32,7 @@ processRequests.help( async ctx => {
 processRequests.start( async ctx => { await ctx.scene.enter('FIRST_STEP') })
 //--------------------------------------
 processRequests.action(/^iRequest_[0-9]{1,2}$/, async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     const i = parseInt(ctx.match[0].slice(9))
     const el = ctx.scene.session.state.arrReq[i]
     ctx.scene.session.state.qA_id = el.id
@@ -57,14 +57,14 @@ processRequests.action(/['studentRole', 'parentRole', 'teacherRole', 'c_teacherR
     const name = await myClass.getClassName(ctx.scene.session.state.el.class_id)
     await ctx.telegram.sendMessage(ctx.scene.session.state.el.whoTlgId, 
         `Заявка на вступление в группу "${name.name}" принята. Для начала просмотра нажмите /start`)
-    ctx.scene.reenter()
+    await ctx.scene.reenter()
 })
 //------------------------------
 processRequests.action('queryNo2', async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     const qA = new QueryAdmin()
     await qA.setResult(ctx.scene.session.state.qA_id, -1)
-    ctx.scene.reenter()
+    await ctx.scene.reenter()
 })
 
 export default processRequests

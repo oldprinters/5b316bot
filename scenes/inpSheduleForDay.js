@@ -44,8 +44,8 @@ inpSheduleForDay.help( async ctx => {
         '<i>Где "N" - номер урока</i>.')
 })
 //------------------
-inpSheduleForDay.start( ctx => { 
-    ctx.scene.enter('SELECT_ACTION')
+inpSheduleForDay.start( async ctx => { 
+    return await ctx.scene.enter('SELECT_ACTION')
 })
 //----------------------
 inpSheduleForDay.hears(/^[qQйЙ]$/, async ctx => {
@@ -182,16 +182,16 @@ inpSheduleForDay.action('queryDel', async ctx => {
 //---------------------------------------
 inpSheduleForDay.action('queryCancel', async ctx => {
     await ctx.answerCbQuery('Loading')
-    ctx.scene.reenter()
+    await ctx.scene.reenter()
 })
 //--------------------------------------- временное изменение расписание
-inpSheduleForDay.action('queryYes2', ctx => {
-    ctx.answerCbQuery('Loading')
+inpSheduleForDay.action('queryYes2', async ctx => {
+    await ctx.answerCbQuery('Loading')
 
 })
 //-------------------------------------------------
 inpSheduleForDay.command('games', async ctx => {
-    ctx.scene.enter('GAMES')
+    await ctx.scene.enter('GAMES')
 })
 //--------------------------------------- постоянное изменение расписания
 inpSheduleForDay.action('queryNo2', async ctx => {

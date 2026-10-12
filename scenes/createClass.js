@@ -14,10 +14,10 @@ createClass.help( async ctx => {
     'К примеру "5б 316" однозначно определяет класс в рамках города. Можно добавить любой дополнительный текст.')
 })
 //---------------------------------------------
-createClass.start( ctx => {ctx.scene.enter('SELECT_ACTION')})
+createClass.start( async ctx => {return await ctx.scene.enter('SELECT_ACTION')})
 //-------------------------------------------------
 createClass.command('games', async ctx => {
-    ctx.scene.enter('GAMES')
+    await ctx.scene.enter('GAMES')
 })
 //---------------------------------------------
 createClass.on('text', async ctx => {
@@ -26,7 +26,7 @@ createClass.on('text', async ctx => {
         await myClass.init()
         const tClass = await myClass.searchClassesByName(ctx.session.className)
         if(tClass == undefined){
-            ctx.scene.enter('DURATION_LESSON')
+            await ctx.scene.enter('DURATION_LESSON')
         } else {
             const res = await myClass.getAdmin(tClass.id)
             ctx.session.admin = res[0]

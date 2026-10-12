@@ -31,7 +31,7 @@ additionalLessons.help( async ctx => {
     await ctx.replyWithHTML('<b><u>HELP</u></b>\nДни недели пишем по русски, полностью.')
 })
 //------------------------------------------------------
-additionalLessons.start( ctx => {return ctx.scene.enter('SELECT_ACTION')})
+additionalLessons.start( async ctx => {return await ctx.scene.enter('SELECT_ACTION')})
 //-------------------------------------------------
 additionalLessons.command('settings', async ctx => { 
     await ctx.scene.enter('SELECT_ACTION')
@@ -42,7 +42,7 @@ additionalLessons.command('games', async ctx => {
 })
 //------------------------------------------------------
 additionalLessons.action(/^idDelLess_\d{1,1000000}$/, async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     const id = parseInt(ctx.match[0].slice(10))
     const aC = new AdditionalClass(ctx)
     const res = await aC.delLessonById(id)
@@ -51,12 +51,12 @@ additionalLessons.action(/^idDelLess_\d{1,1000000}$/, async ctx => {
 })
 //------------------------------------------------------
 additionalLessons.action('createAdditional', async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
         await ctx.reply('Введите название занятия:')
 })
 //------------------------------------------------------
 additionalLessons.action('deleteAdditional', async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     const aC = new AdditionalClass(ctx)
     const res = await aC.getListLessonsName()
     if(res[0] != undefined)
@@ -102,7 +102,7 @@ additionalLessons.on('text', async ctx => {
 })
 //-----------------------------------------
 additionalLessons.action('queryYes2', async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     const st = ctx.scene.session.state
     const aC = new AdditionalClass(ctx)
     try {

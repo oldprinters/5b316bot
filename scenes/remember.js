@@ -38,7 +38,7 @@ remember.hears(/^(Список|список|list|List)$/, async ctx => {
 })
 //--------------------------------------
 remember.action('nextLesson', async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     if(ctx.session.class_id > 0){ 
         const myClass = new MyClass(ctx)
         const listLessons = await myClass.getLessonsList(ctx.session.class_id)
@@ -55,17 +55,17 @@ remember.action('nextLesson', async ctx => {
 })
 //--------------------------------------
 remember.action('freeWords', async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     await ctx.scene.enter('FREE_WORDS')
 })
 //--------------------------------------
 remember.action('delRems', async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     await ctx.scene.enter('DEL_REMS')
 })
 //---------------------------------------
 remember.action(/^iSelectedLess_\d+$/, async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     const name_id = parseInt(ctx.match[0].slice(14))
     const myClass = new MyClass(ctx)
     const urList = await myClass.getUrByNameId(name_id, ctx.session.class_id)
@@ -129,14 +129,14 @@ remember.on('text', async ctx => {
 })
 //-------------------------------------------------------------
 remember.action('queryYes2', async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     const eC = new EventsClass(ctx)
     eC.addEvent(ctx.scene.session.state.rmDay, 'Доброе утро! :-) ' + ctx.scene.session.state.urName + '. ' + ctx.scene.session.state.msgText)
     await ctx.scene.enter('SELECT_ACTION')
 })
 //-------------------------------------------------------------
 remember.action('queryNo2', async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     ctx.scene.session.state = {}
     await ctx.scene.reenter()
 })

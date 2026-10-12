@@ -132,11 +132,11 @@ setTimesUr.hears(/^[qQйЙ]$/, async ctx =>{
 })
 //-----------
 setTimesUr.action('queryYes3', async ctx => {
-    ctx.answerCbQuery('Сохраняю данные.')
+    await ctx.answerCbQuery('Сохраняю данные.')
     if(ctx.session.classList.length > 0){
         const ut = new UrTime()
         const res = await ut.saveNewTimes(ctx.session.class_id, ctx.scene.session.state.arTimesUr, ctx.session.classList[ctx.session.i].duration)
-        ctx.scene.enter('SET_SHEDULE_DAY')
+        await ctx.scene.enter('SET_SHEDULE_DAY')
     } else {
         await ctx.reply('Отсутствуют введенные данные. Сохранять нечего.')
         ctx.session.i = 0
@@ -145,8 +145,8 @@ setTimesUr.action('queryYes3', async ctx => {
 })
 //-----------
 setTimesUr.action('queryNo3', async ctx => {
-    ctx.answerCbQuery('Loading')
-    ctx.scene.reenter()
+    await ctx.answerCbQuery('Loading')
+    await ctx.scene.reenter()
 })
 //-----------
 setTimesUr.action('queryCancel', async ctx => {

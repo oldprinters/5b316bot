@@ -26,17 +26,17 @@ catalogAppend.help( async ctx => {
     await ctx.replyWithHTML('<b><u>HELP</u></b>\nДля работы с каталогом добавьте название нового раздела.')
 })
 //---------------------------------------------
-catalogAppend.start( ctx => {return ctx.scene.enter('SELECT_ACTION')})
+catalogAppend.start( async ctx => {return await ctx.scene.enter('SELECT_ACTION')})
 //------------------------------------------------
 catalogAppend.action( /(catalogList_)\d/, async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     const folder_id = ctx.match[0].slice(12)
     ctx.scene.session.state.id = folder_id
     ctx.scene.session.state.parentId = folder_id
 })
 //-------------------------------------------------
 catalogAppend.action( /^(period_)[N,M,Y]$/, async ctx => {
-    ctx.answerCbQuery()
+    await ctx.answerCbQuery()
     const pr = ctx.match[0].slice(7)
     let text = ''
     const dt = new Date()
@@ -63,20 +63,20 @@ catalogAppend.action( /^(period_)[N,M,Y]$/, async ctx => {
     await ctx.scene.enter('CATALOG_LIST')
 })
 //-------------------------------------------------
-catalogAppend.command('catalog', ctx => ctx.scene.reenter())
+catalogAppend.command('catalog', async ctx => { await ctx.scene.reenter() })
 //-------------------------------------------------
 catalogAppend.action('queryYes2', async ctx => {
-    ctx.answerCbQuery()
+    await ctx.answerCbQuery()
     await ctx.reply('Выберите период напоминаний:', menuPeriod())
 })
 //-------------------------------------------------
 catalogAppend.action('queryNo2', async ctx => {
-    ctx.answerCbQuery()
-    ctx.scene.enter('CATALOG_LIST')
+    await ctx.answerCbQuery()
+    await ctx.scene.enter('CATALOG_LIST')
 })
 //-------------------------------------------------
-catalogAppend.hears(/^\/[а-яА-ЯёЁйЙa-zA-Z0-9]+$/, ctx => {
-        ctx.scene.reenter()
+catalogAppend.hears(/^\/[а-яА-ЯёЁйЙa-zA-Z0-9]+$/, async ctx => {
+        await ctx.scene.reenter()
 })
 //-------------------------------------------------
 catalogAppend.hears(/^[а-яА-ЯёЁйЙa-zA-Z0-9_+-=<> ]+/, async ctx => {

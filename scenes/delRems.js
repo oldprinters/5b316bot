@@ -15,18 +15,18 @@ delRems.enter(async ctx => {
 })
 //----------------------------------------------
 delRems.action(/^(delRem_)\d+/, async ctx => {
-    ctx.answerCbQuery()
+    await ctx.answerCbQuery()
     const id = parseInt(ctx.match[0].slice(7))
     const eC = new EventsClass(ctx)
     if(await eC.delRemById(id))
-        ctx.scene.enter('REMEMBER')
+        await ctx.scene.enter('REMEMBER')
     else
         await ctx.reply('Ошибка удаления.')
 })
 //----------------------------------------------
 delRems.on('text', async ctx => {
     await ctx.reply('Я Вас тоже люблю!')
-    ctx.scene.enter('SELECT_ACTION')
+    await ctx.scene.enter('SELECT_ACTION')
 })
 // delRems.
 

@@ -13,20 +13,20 @@ selectClass.enter(async ctx => {
 selectClass.start( async ctx =>  await ctx.scene.enter('FIRST_STEP'))
 //-------------------------------------------------
 selectClass.command('remember', async ctx => { 
-    ctx.scene.enter('REMEMBER')
+    await ctx.scene.enter('REMEMBER')
 })
 //-------------------------------------------------
 selectClass.command('settings', async ctx => { 
-    ctx.scene.enter('FIRST_STEP')
+    await ctx.scene.enter('FIRST_STEP')
 })
 //-------------------------------------------------
 selectClass.command('games', async ctx => {
-    ctx.scene.enter('GAMES')
+    await ctx.scene.enter('GAMES')
 })
 //-----------------------------
 selectClass.action('createNewClass', async ctx => {
     await ctx.answerCbQuery('Loading')
-    ctx.scene.enter('CREATE_CLASS')
+    await ctx.scene.enter('CREATE_CLASS')
 })
 //--------------------------------------
 selectClass.hears(/^(rem|Rem|напоминалки|Напоминалки)$/, async ctx => {

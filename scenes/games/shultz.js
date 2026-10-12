@@ -20,28 +20,28 @@ const outTable5x5 = async (ctx, arr) => {
 }
 //-------------------------------------------------
 shultz.command('games', async ctx => {
-    ctx.scene.enter('GAMES')
+    await ctx.scene.enter('GAMES')
 })
 //---------------------------------------------
 shultz.action("gameOver", async ctx => {
-    ctx.answerCbQuery()
+    await ctx.answerCbQuery()
     const shultz = new Shultz(ctx)
     clearTimeout(ctx.scene.session.state.tOut)
     await shultz.endGame(ctx.scene.session.state.shultzId)
     const t = await shultz.getTime(ctx.scene.session.state.shultzId)
     await ctx.reply(`Ваш результат ${t} сек.`)
-    ctx.scene.reenter()
+    await ctx.scene.reenter()
 })
 //---------------------------------------------
 shultz.action("gameStop", async ctx => {
-    ctx.answerCbQuery()
+    await ctx.answerCbQuery()
     const shultz = new Shultz(ctx)
     clearTimeout(ctx.scene.session.state.tOut)
     const res = await shultz.delSet(ctx.scene.session.state.shultzId)
-    if(res > 0)ctx.scene.enter('SELECT_ACTION')
+    if(res > 0)await ctx.scene.enter('SELECT_ACTION')
 })
 //---------------------------------------------
-shultz.start( ctx => {ctx.scene.enter('SELECT_ACTION')})
+shultz.start( async ctx => {return await ctx.scene.enter('SELECT_ACTION')})
 //--------------------------------------
 shultz.help( async ctx => {
     await ctx.replyWithHTML(helpText)

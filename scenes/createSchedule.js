@@ -13,17 +13,17 @@ createSchedule.enter(async ctx => {
     }
     await ctx.reply('Давайте введем настройки расписания занятий.', selectShedActionMenu())
     //    console.log("ctx.session.classList = ", ctx.session.classList)
-    ctx.scene.enter('SET_SHEDULE_DAY')
+    await ctx.scene.enter('SET_SHEDULE_DAY')
 })
 //-----------------------------------------------
-createSchedule.start( ctx => { ctx.scene.enter('SELECT_ACTION')})
+createSchedule.start( async ctx => { return await ctx.scene.enter('SELECT_ACTION') })
 //-------------------------------------------------
 createSchedule.command('games', async ctx => {
-    ctx.scene.enter('GAMES')
+    await ctx.scene.enter('GAMES')
 })
 //-------------------------------------------------
 createSchedule.action('setTimesUrMenu', async ctx => {
-    ctx.scene.enter('SET_TIMES_UR')
+    await ctx.scene.enter('SET_TIMES_UR')
 }) 
 
 export default createSchedule

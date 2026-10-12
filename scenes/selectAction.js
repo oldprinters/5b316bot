@@ -237,11 +237,11 @@ selectAction.action('additionalLessons', async ctx => {
 })
 //-------------------------------------------------
 selectAction.command('games', async ctx => {
-    ctx.scene.enter('GAMES')
+    await ctx.scene.enter('GAMES')
 })
 //-------------------------------------------------
 selectAction.command('catalogs', async ctx => {
-    ctx.scene.enter('CATALOG_LIST')
+    await ctx.scene.enter('CATALOG_LIST')
 })
 //-------------------------------------------------
 selectAction.command('settings', async ctx => { 
@@ -252,8 +252,8 @@ selectAction.command('settings', async ctx => {
     }
 })
 //-------------------------------------------------
-selectAction.command('remember', ctx => { 
-    ctx.scene.enter('REMEMBER')
+selectAction.command('remember', async ctx => { 
+    await ctx.scene.enter('REMEMBER')
 })
 //------------------------------------------- каждый месяц 
 selectAction.hears(/^[пП](овтор) \d{1,2} (в )?\d{1,2}[:жЖ]\d{1,2} ([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>!?:;])*/, async ctx => {

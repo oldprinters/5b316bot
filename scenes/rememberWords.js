@@ -37,7 +37,7 @@ freeWords.hears(/^(Список|список|list|List)$/, async ctx => {
 freeWords.start( async ctx =>  await ctx.scene.enter('FIRST_STEP'))
 //-------------------------------------------------
 freeWords.command('games', async ctx => {
-    ctx.scene.enter('GAMES')
+    await ctx.scene.enter('GAMES')
 })
 //-------------------------------------- dd.mm.yyyy hh:mm
 freeWords.hears(/^\d{1,2}\.\d{1,2}\.\d{2,4} \d{1,2}[:жЖ]\d{1,2}([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, async ctx => {
@@ -65,7 +65,7 @@ freeWords.hears(/^\d{1,2} (час)([ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>])*/, as
 })
 //-------------------------------------------------
 freeWords.command('remember', async ctx => { 
-    ctx.scene.reenter()
+    await ctx.scene.reenter()
 })
 //------------------------------------------ обрабатываем каждый день недели 
 freeWords.hears(/^(кажд|Кажд)(ый|ую|ое)\s(понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\s(в )?\d{1,2}[:жЖ]\d{1,2} [ _.,а-яА-ЯйЙёЁa-zA-Z0-9+-=<>]*/, 

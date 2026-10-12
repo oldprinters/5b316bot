@@ -26,7 +26,7 @@ catalogList.enter(async ctx => {
         await outRes(ctx, res)
     else {
         if(ctx.session.parentId == -1)
-            ctx.scene.enter('CATALOG_APPEND')
+            await ctx.scene.enter('CATALOG_APPEND')
         else
             await ctx.replyWithHTML(`Введите данные`, menuActionCL(res.folders, false, ctx.session.parentId))
     }
@@ -44,19 +44,19 @@ catalogList.help( async ctx => {
     '   « del » - удалить каталог,\n   « >> » - сохранить данных в файл.' )
 })
 //-------------------------------------
-catalogList.action('break_up', ctx => {
-    ctx.answerCbQuery()
-    ctx.scene.enter('FIRST_STEP')
+catalogList.action('break_up', async ctx => {
+    await ctx.answerCbQuery()
+    await ctx.scene.enter('FIRST_STEP')
 })
 
 //-------------------------------------
-catalogList.action('catalogAppend', ctx => {
-    ctx.answerCbQuery()
-    ctx.scene.enter('CATALOG_APPEND')
+catalogList.action('catalogAppend', async ctx => {
+    await ctx.answerCbQuery()
+    await ctx.scene.enter('CATALOG_APPEND')
 })
 //-------------------------------------
 catalogList.action('catalogDel', async ctx => {
-    ctx.answerCbQuery()
+    await ctx.answerCbQuery()
     const folder = new Folder(ctx)//, ctx.session.id, ctx.session.parentId)
     await folder.getById(ctx.session.parentId)
     await folder.delByParentId(ctx.session.parentId)
@@ -65,7 +65,7 @@ catalogList.action('catalogDel', async ctx => {
 })
 //-------------------------------------
 catalogList.action('catalogBack', async ctx => {
-    ctx.answerCbQuery()
+    await ctx.answerCbQuery()
     const folder = new Folder(ctx, ctx.session.id, ctx.session.parentId)
     await folder.getById(ctx.session.parentId)
     const res = await getListCat(ctx, folder.getParentId())
@@ -73,7 +73,7 @@ catalogList.action('catalogBack', async ctx => {
 })
 //-------------------------------------
 catalogList.action('catalogFile', async ctx => {
-    ctx.answerCbQuery()
+    await ctx.answerCbQuery()
     const folder = new Folder(ctx, ctx.session.id, ctx.session.parentId)
     try {
         await folder.getFile(ctx, ctx.session.parentId)
@@ -106,10 +106,10 @@ const outRes = async (ctx, res) => {
     }
 }
 //---------------------------------------------
-catalogList.start( ctx => {ctx.scene.enter('SELECT_ACTION')})
+catalogList.start( async ctx => {return await ctx.scene.enter('SELECT_ACTION')})
 //------------------------------------------------
 catalogList.action( /(cL_)\d/, async ctx => {
-    ctx.answerCbQuery('Loading')
+    await ctx.answerCbQuery('Loading')
     const folder_id = ctx.match.input.slice(3)
     ctx.session.parentId = folder_id
     const res = await getListCat(ctx, folder_id)
@@ -117,7 +117,7 @@ catalogList.action( /(cL_)\d/, async ctx => {
     // ctx.scene.enter('CATALOG_APPEND')
 })
 //-------------------------------------------------
-catalogList.hears(/^\/[а-яА-ЯёЁйЙa-zA-Z0-9]+$/, ctx => ctx.scene.enter('SELECT_ACTION'))
+catalogList.hears(/^\/[а-яА-ЯёЁйЙa-zA-Z0-9]+$/, async ctx => { return await ctx.scene.enter('SELECT_ACTION') })
 //-------------------------------------------------
 catalogList.hears(/^[а-яА-ЯёЁйЙa-zA-Z0-9_+-=<> ]+/, async ctx => {
     const str = sanitizeInput(ctx.match.input)

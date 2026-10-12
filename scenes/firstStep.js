@@ -11,17 +11,17 @@ firstStep.enter(async ctx => {
     ctx.session.parentId = -1
     if(classList.length == 0){
         ctx.session.i = -1  //класс отсутствует
-        ctx.scene.enter('SELECT_ACTION')
+        await ctx.scene.enter('SELECT_ACTION')
     } else {
         ctx.session.classList = classList
         if(classList.length > 1){
-            ctx.scene.enter('SELECT_CLASS')
+            await ctx.scene.enter('SELECT_CLASS')
         } else {
             ctx.session.i = 0   //index текущего класса в массиве
             ctx.session.class_id = classList[0].class_id
             ctx.session.isAdmin = classList[0].isAdmin
             setCommands(ctx)
-            ctx.scene.enter('SELECT_ACTION')
+            await ctx.scene.enter('SELECT_ACTION')
         }
     }
 })
