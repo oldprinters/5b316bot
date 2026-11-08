@@ -139,9 +139,23 @@ cron.schedule('25 2 * * *', async () => {
     }
 })
 
-bot.launch()
-    .then(res => {
-        console.log('Started')
-    }).catch ( err => {
-        console.log('Error', err)
+//---------------------------------------------
+// Запускаем приём обновлений Telegram.
+// При polling Promise от launch() работает до его остановки,
+// поэтому .then() не используем как сообщение об успешном старте.
+console.log('Запускаем ivanych_bot...')
+
+bot.launch().catch(err => {
+    // Не выводим весь объект ошибки:
+    // в сетевых настройках запроса может находиться токен бота.
+    console.error('Ошибка запуска или остановка polling:', {
+        name: err?.name,
+        code: err?.code || err?.cause?.code,
+        telegramCode: err?.response?.error_code,
+        message: err?.message
     })
+
+    // Cron может удерживать процесс живым даже без polling.
+    // Завершаем процесс, чтобы PM2 запустил бота заново.
+    process.exit(1)
+})
