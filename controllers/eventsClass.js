@@ -14,6 +14,7 @@ class EventsClass {
     user_id
     arrEvents = []
     sending = false
+    checkingNotes = false
     //-------------------------------------
     constructor(ctx) {
         if(ctx){
@@ -485,10 +486,30 @@ class EventsClass {
         return await call_q(sql, 'searchByText')
     }
     //---------------------------------------
-    async getNotes(){
-        this.arrEvents = this.arrEvents.concat(await this.getNotesByTime())
-        if(!this.sending)
+    // Один проход: загрузили события из БД и обработали очередь.
+    // Пока он не закончен, следующий запуск ничего не добавляет.
+    async getNotes() {
+        if (this.checkingNotes) return
+
+        this.checkingNotes = true
+
+        try {
+            // База — источник актуальных событий.
+            // Не накапливаем повторные копии при долгих сетевых запросах.
+            this.arrEvents = await this.getNotesByTime()
+
             await this.sendMsg()
+        } catch (err) {
+            // Сбой чтения БД не должен останавливать будущие проверки.
+            // Не выводим весь Axios error: в нём может оказаться токен.
+            console.error('Ошибка проверки напоминаний:', {
+                code: err?.code,
+                message: err?.message
+            })
+        } finally {
+            // Обязательно разрешаем следующий проход даже после ошибки.
+            this.checkingNotes = false
+        }
     }
 }
 
