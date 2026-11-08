@@ -17,7 +17,7 @@
     "mariadb": "^3.0.1",
     "moment-timezone": "^0.5.38",
     "node-cron": "^3.0.2",
-    "telegraf": "^4.9.2"
+    "telegraf": "4.16.3"
   },
   "description": "",
   "type": "module",
